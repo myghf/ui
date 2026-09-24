@@ -1,0 +1,81 @@
+:root {
+  /* surfaces */
+  --ahc-background: 248 249 250;      /* #f8f9fa */
+  --ahc-foreground: 15 23 42;
+  --ahc-surface: 255 255 255;
+  --ahc-surface-muted: 243 244 246;
+  --ahc-border: 229 231 235;
+  --ahc-muted: 156 163 175;           /* #9ca3af (also the "grey" alias) */
+
+  /* brand: primary (blue) */
+  --ahc-primary-50: 240 249 253;
+  --ahc-primary-100: 217 241 250;
+  --ahc-primary-200: 173 225 244;
+  --ahc-primary-300: 115 204 236;
+  --ahc-primary-400: 56 182 228;
+  --ahc-primary-500: 0 162 221;
+  --ahc-primary-600: 0 130 177;
+  --ahc-primary-700: 0 100 137;
+  --ahc-primary-800: 0 73 99;
+  --ahc-primary-900: 0 49 66;
+
+  /* brand: secondary (plum) */
+  --ahc-secondary-50: 249 244 247;
+  --ahc-secondary-100: 240 228 235;
+  --ahc-secondary-200: 222 198 213;
+  --ahc-secondary-300: 198 157 183;
+  --ahc-secondary-400: 175 115 153;
+  --ahc-secondary-500: 152 76 124;
+  --ahc-secondary-600: 122 61 99;
+  --ahc-secondary-700: 94 47 77;
+  --ahc-secondary-800: 68 34 56;
+  --ahc-secondary-900: 46 23 37;
+
+  /* feedback: success (teal) */
+  --ahc-success-50: 240 250 249;
+  --ahc-success-100: 219 242 240;
+  --ahc-success-200: 178 227 224;
+  --ahc-success-300: 122 207 201;
+  --ahc-success-400: 66 186 179;
+  --ahc-success-500: 13 167 157;
+  --ahc-success-600: 10 134 126;
+  --ahc-success-700: 8 104 97;
+  --ahc-success-800: 6 75 71;
+  --ahc-success-900: 4 50 47;
+
+  /* feedback: warning (amber) */
+  --ahc-warning-50: 254 250 242;
+  --ahc-warning-100: 252 242 223;
+  --ahc-warning-200: 249 227 186;
+  --ahc-warning-300: 245 207 136;
+  --ahc-warning-400: 241 187 87;
+  --ahc-warning-500: 237 168 39;
+  --ahc-warning-600: 190 134 31;
+  --ahc-warning-700: 147 104 24;
+  --ahc-warning-800: 107 76 18;
+  --ahc-warning-900: 71 50 12;
+
+  /* feedback: error (pink; maps to PrimeVue "danger") */
+  --ahc-error-50: 254 240 245;
+  --ahc-error-100: 254 217 230;
+  --ahc-error-200: 252 173 201;
+  --ahc-error-300: 250 115 163;
+  --ahc-error-400: 247 56 124;
+  --ahc-error-500: 245 0 87;
+  --ahc-error-600: 196 0 70;
+  --ahc-error-700: 152 0 54;
+  --ahc-error-800: 110 0 39;
+  --ahc-error-900: 74 0 26;
+
+  /* feedback: info (same range as primary, kept separate for semantics) */
+  --ahc-info-50: 240 249 253;
+  --ahc-info-100: 217 241 250;
+  --ahc-info-200: 173 225 244;
+  --ahc-info-300: 115 204 236;
+  --ahc-info-400: 56 182 228;
+  --ahc-info-500: 0 162 221;
+  --ahc-info-600: 0 130 177;
+  --ahc-info-700: 0 100 137;
+  --ahc-info-800: 0 73 99;
+  --ahc-info-900: 0 49 66;
+}
