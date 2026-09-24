@@ -7,13 +7,13 @@ const root = fileURLToPath(new URL('../..', import.meta.url))
 function definedVars(): Set<string> {
   const css = readFileSync(`${root}/src/tokens.css`, 'utf8')
   return new Set(
-    [...css.matchAll(/--ahc-[\w-]+\s*:/g)].map((m) => m[0].replace(/\s*:$/, '')),
+    [...css.matchAll(/--myghf-[\w-]+\s*:/g)].map((m) => m[0].replace(/\s*:$/, '')),
   )
 }
 
 function referencedVars(): Set<string> {
   const js = readFileSync(`${root}/src/tailwindPreset.js`, 'utf8')
-  return new Set([...js.matchAll(/var\((--ahc-[\w-]+)\)/g)].map((m) => m[1]))
+  return new Set([...js.matchAll(/var\((--myghf-[\w-]+)\)/g)].map((m) => m[1]))
 }
 
 describe('design tokens vs tailwind preset', () => {

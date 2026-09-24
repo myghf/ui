@@ -16,7 +16,7 @@ Guidance for AI agents (and humans) working in the `@myghf/ui` repository.
 ```
 src/
   index.ts              public entry — re-export everything consumers import
-  tokens.css            design tokens (--ahc-*), exported as @myghf/ui/tokens.css
+  tokens.css            design tokens (--myghf-*), exported as @myghf/ui/tokens.css
   tailwindPreset.js     Tailwind preset, exported as @myghf/ui/tailwind-preset
   components/<name>/     one folder per component (+ <name>.spec.ts colocated)
   lib/                  shared utilities and their tests

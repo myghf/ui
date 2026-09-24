@@ -118,7 +118,7 @@ function onClear() {
         v-for="opt in options"
         :key="String(valueOf(opt))"
         :value="valueOf(opt)"
-        class="relative flex cursor-pointer select-none items-center rounded px-2 py-1.5 pr-8 text-sm text-foreground outline-none transition-colors focus:bg-surface-muted data-[highlighted]:bg-surface-muted data-[disabled]:opacity-50"
+        class="relative flex cursor-pointer select-none items-center rounded px-2 py-1.5 pe-8 text-sm text-foreground outline-none transition-colors focus:bg-surface-muted data-[highlighted]:bg-surface-muted data-[disabled]:opacity-50"
       >
         <SelectItemText>{{ labelOf(opt) }}</SelectItemText>
         <SelectItemIndicator class="absolute end-2 flex items-center justify-center text-primary-600">
