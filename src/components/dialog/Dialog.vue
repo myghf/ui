@@ -48,7 +48,7 @@ function onOpenChange(v: boolean) {
       <slot name="trigger" />
     </DialogTrigger>
     <DialogPortal>
-      <DialogOverlay class="fixed inset-0 z-50 bg-black/50" />
+      <DialogOverlay class="fixed inset-0 z-50 bg-black/50 dark:bg-black/70" />
       <DialogContent
         :class="[
           'fixed left-1/2 top-1/2 z-50 w-full max-h-[85vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-surface shadow-dialog focus-visible:outline-none',

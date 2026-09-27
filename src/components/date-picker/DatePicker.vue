@@ -173,7 +173,7 @@ const display = computed(() => {
             type="button"
             :class="[
               'flex h-8 items-center justify-center rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-              inRange(cell) ? 'bg-primary-100 text-primary-800' : 'hover:bg-surface-muted',
+              inRange(cell) ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-200' : 'hover:bg-surface-muted',
               start && start.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
               end && end.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
             ]"
