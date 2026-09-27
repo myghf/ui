@@ -122,14 +122,20 @@ Add a top-level key (outside `theme`):
 
 ```js
 export default {
-  darkMode: ['selector', '.dark, [data-theme="dark"]'],
+  darkMode: ['class', '.dark'],
   theme: { /* unchanged */ },
 }
 ```
 
-Implementation note: verify the comma selector compiles under Tailwind 3.4 and that `dark:`
-utilities respond to both selectors. If Tailwind rejects a comma list, fall back to the canonical
-`['class', '.dark']` and document `data-theme` as a CSS-only alias for the token block.
+Implementation note (verified empirically on Tailwind 3.4): a comma-separated selector such as
+`['selector', '.dark, [data-theme="dark"]']` generates
+`:is(.dark, [data-theme="dark"], .dark, [data-theme="dark"] *)` — the descendant wildcard is only
+appended to the last comma-item, so descendants of `.dark` would not match and `dark:` utilities
+would silently fail. The canonical `['class', '.dark']` generates `:is(.dark *)` and is therefore
+required. `[data-theme="dark"]` remains a supported, documented alias **for the token block only**;
+`useTheme` applies both `.dark` and `data-theme="dark"` by default so both mechanisms work together.
+Consumers who set `data-theme="dark"` by hand get token theming but not `dark:` utilities — this
+caveat is documented in the README.
 
 ### 6.3 `src/lib/theme.ts` — `useTheme`
 
@@ -457,7 +463,7 @@ jsdom where DOM is required. Concrete coverage:
 
 | Risk | Mitigation |
 | --- | --- |
-| Tailwind rejects the comma `darkMode` selector | Fall back to `['class', '.dark']`; keep the token block on both selectors and document. |
+| Tailwind comma `darkMode` selector silently breaks descendants | Resolved: use canonical `['class', '.dark']` (verified). `data-theme` is a token-block alias documented in the README. |
 | Dark tint contrast fails WCAG AA | Choose `*-900/40` backgrounds with `*-200` text; verify contrast during implementation and document values. |
 | `useToast()` called outside setup | Throw a clear error naming `<Toaster>`; document setup-only usage. |
 | SSR access to `window` | Guard all DOM access in `theme.ts`; Toast queue is provider-scoped and empty on the server. |
