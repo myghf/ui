@@ -34,7 +34,10 @@ building with this library — lives in
 [`DESIGN.md`](https://github.com/myghf/ui/blob/main/DESIGN.md). Follow it literally, and
 extend it rather than writing a parallel design document.
 
-## Principles
+## Highlights
+
+`DESIGN.md` §5 holds the full rule set (logo handling and typography included); these are the
+rules that come up most when building:
 
 1. **Tokens first.** Use `--myghf-*` variables or the preset's Tailwind classes. Never
    hard-code a hex value, and add a token only when no existing token fits.

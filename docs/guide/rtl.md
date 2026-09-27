@@ -76,14 +76,17 @@ These components already handle direction:
 
 - **`Drawer`** — exposes logical `start`/`end` positions that mirror `left`/`right` and flip
   their slide transform under RTL; the close button uses `ms-auto`.
-- **`Toaster`** — each viewport is placed with logical `start-*`/`end-*`, so all six
-  positions (`top-start` … `bottom-end`) mirror automatically.
+- **`Toaster`** — each viewport is placed with logical `start-*`/`end-*`, so the four
+  corner positions (`top-start`, `top-end`, `bottom-start`, `bottom-end`) mirror
+  automatically. The center positions (`top-center`, `bottom-center`) use
+  `inset-x-0 mx-auto` and are direction-neutral.
 - **`DatePicker`** — month navigation chevrons use `rtl:rotate-180`, and labels are
   locale-formatted and overridable through the `labels` prop and `label-*` slots.
 - **`Input`** — leading and trailing icons are positioned with `start-3`/`end-3`, and the
   field padding uses `ps-*`/`pe-*`.
 - **`Password`** — the visibility toggle sits at `end-2`, and the field reserves `pe-10`.
-- **`InputNumber`** — `prefix`/`suffix` are spaced logically with `ms-*`.
+- **`InputNumber`** — `prefix`, the input, and `suffix` sit in a flex container with `gap-1`,
+  so their spacing is direction-safe; the stepper-buttons container adds `ms-1`.
 - **`TablePagination`** — previous/next chevrons use `rtl:rotate-180`.
 - **`Tag`** — the remove button uses `ms-0.5`/`-me-0.5`.
 - **`DropdownMenu`** and **`Select`** — overlay positioning comes from Reka UI's popper
