@@ -18,6 +18,7 @@ export default defineConfig({
   ],
 
   themeConfig: {
+    logo: { src: '/logo.png', alt: 'MYGHF UI logo' },
     nav: [
       { text: 'Guide', link: '/guide/introduction', activeMatch: '/guide/' },
       { text: 'Components', link: '/components/index', activeMatch: '/components/' },
