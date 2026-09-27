@@ -78,7 +78,6 @@ Extract the Tag tone → class map into `src/lib/tones.ts`:
 export type Tone = 'info' | 'success' | 'warning' | 'danger' | 'secondary'
 
 export interface ToneClasses {
-  solid: string   // readable on the tone's own background
   soft: string    // tinted background + readable foreground
   outline: string // border + readable foreground
   icon: string    // text color for a leading icon
@@ -88,8 +87,9 @@ export interface ToneClasses {
 export const toneClasses: Record<Tone, ToneClasses> = { /* light + dark classes */ }
 ```
 
-`Tag`, `Alert`/`Message`, and `Toast` consume `toneClasses`. `TagTone` is redefined as `Tone` while
-keeping the existing export name so consumers' imports keep working.
+`Tag`, `Alert`/`Message`, and `Toast` consume `toneClasses`. `Tag` uses only `soft` and `icon`
+today; `outline` and `role` are for Alert/Toast. `TagTone` is redefined as `Tone` while keeping the
+existing export name so consumers' imports keep working.
 
 ## 6. Feature 1 — Dark mode
 
@@ -157,7 +157,11 @@ export interface UseThemeReturn {
 }
 
 export function useTheme(options?: UseThemeOptions): UseThemeReturn
+export function createTheme(options?: UseThemeOptions): UseThemeReturn
 ```
+
+`createTheme()` builds an independent controller (used directly and by tests); `useTheme()` lazily
+builds one shared instance on first call and returns it thereafter.
 
 Behavior:
 - Initial `mode` = stored value if valid, else `defaultMode`.
@@ -237,7 +241,11 @@ export interface ToastOptions {
   action?: { label: string; onClick: () => void }
 }
 
-export interface ToastApi {
+export interface ToastItem extends ToastOptions { id: string }
+
+export interface ToastStore extends ToastApi {
+  items: Ref<ToastItem[]>
+  visible: ComputedRef<ToastItem[]> // items capped at max, in insertion order
   add(options: ToastOptions): string
   remove(id: string): void
   clear(): void
@@ -248,13 +256,25 @@ export interface ToastApi {
   secondary(title: string, description?: string): string
 }
 
-export function useToast(): ToastApi
+export interface ToastStoreOptions {
+  max?: number          // default 4
+  duration?: number     // default 5000
+  position?: ToastPosition // default 'top-end'
+}
+
+export function createToastStore(options?: ToastStoreOptions): ToastStore
+export function useToast(): ToastStore
 ```
 
-- `useToast()` must be called during `setup`; it `inject()`s the queue and throws a clear error
-  when no `<Toaster>` is mounted upstream.
+- `createToastStore(options?)` is the injectable store factory; `Toaster` calls it and `provide()`s
+  the result, and `useToast()` `inject()`s it (throwing a clear error when no `<Toaster>` is
+  mounted upstream). The factory is exported so specs can exercise ordering/queueing without a DOM.
 - `add()` returns a generated id and applies defaults from `Toaster` props.
-- Severity drives `role` (`alert` for `danger`/`warning`, else `status`) and the tone classes.
+- Reka's `ToastRoot` owns the dismiss timer, pause/resume, and swipe gestures; the store owns
+  ordering, the `max` cap, and removal. A toast's `duration` (0 = persistent) is forwarded to
+  `ToastRoot`, which overrides the `ToastProvider` default.
+- Severity drives reka's `type` (`foreground` for `danger`/`warning`, else `background`) and the
+  tone classes; reka renders the `aria-live` announcements.
 
 ## 8. Feature 3 — Alert / Message
 
@@ -300,23 +320,23 @@ New `src/components/drawer/Drawer.vue`, built on reka `DialogRoot`, `DialogTrigg
 swipeable bottom sheet).
 
 - Controlled: `v-model:open` (`open?: boolean`, emits `update:open`).
-- Props: `position` (`'left' | 'right' | 'top' | 'bottom'`, default `'right'`; plus logical
-  `'start' | 'end'` aliases resolved against document direction), `size` (`'sm' | 'md' | 'lg' |
-  'full'`, default `'md'`), `backdrop` (default true), `closeOnEscape` (default true),
-  `closeOnOutside` (default true), `title`, `description`, `showClose` (default true),
-  `preventScroll` (default true).
+- Props: `position` (`'left' | 'right' | 'top' | 'bottom' | 'start' | 'end'`, default `'right'`),
+  `size` (`'sm' | 'md' | 'lg' | 'full'`, default `'md'`), `backdrop` (default true),
+  `closeOnEscape` (default true), `closeOnOutside` (default true), `title`, `description`,
+  `showClose` (default true), `preventScroll` (default true).
 - Slots: `trigger`, `header`, `default`, `footer`, `close`.
 - Emits: `update:open`, `open`, `close`.
-- Position class map:
-  - `right`: `inset-y-0 end-0 h-full w-*` translating from `translate-x-full`
-  - `left`: `inset-y-0 start-0 h-full w-*` translating from `-translate-x-full`
-  - `top`: `inset-x-0 top-0 w-full h-*` translating from `-translate-y-full`
-  - `bottom`: `inset-x-0 bottom-0 w-full h-*` translating from `translate-y-full`
+- Position class map (`left`/`right` are physical; `start`/`end` mirror them logically and flip in
+  RTL via the `rtl:` variant — no runtime direction detection needed):
+  - `right`: `inset-y-0 right-0 h-full w-*` / `translate-x-full`
+  - `left`: `inset-y-0 left-0 h-full w-*` / `-translate-x-full`
+  - `end`: `inset-y-0 end-0 h-full w-*` / `translate-x-full rtl:-translate-x-full`
+  - `start`: `inset-y-0 start-0 h-full w-*` / `-translate-x-full rtl:translate-x-full`
+  - `top`: `inset-x-0 top-0 w-full h-*` / `-translate-y-full`
+  - `bottom`: `inset-x-0 bottom-0 w-full h-*` / `translate-y-full`
 - `size` maps to `max-w-*` for horizontal drawers and `max-h-*` for vertical drawers.
 - Reka requires a `DialogTitle`; when neither `title`, `header` slot, nor `$slots.header` is
   present, render a visually hidden title (`VisuallyHidden`) for screen readers.
-- Logical `start`/`end` are computed from the nearest element's `dir` (or `document.dir`) at open
-  time, so RTL consumers get correct edges.
 
 ## 11. Feature 6 — DatePicker enhancements
 
@@ -401,12 +421,12 @@ jsdom where DOM is required. Concrete coverage:
 - `lib/theme.spec.ts` (jsdom): system default resolution, stored override, `setMode`/`toggle`/
   `enable`/`disable`/`reset`, class + attribute application, storage writes/removals, SSR guard
   (no `window`).
-- `lib/locale.spec.ts`: first-day-of-week for `en-US` (Sun) and `en-GB`/`ar` (Mon), weekday label
-  order and count, month/date/time formatting for `12` and `24`.
+- `lib/locale.spec.ts`: first-day-of-week for `en-US` (Sunday) and `en-GB`/`de-DE` (Monday),
+  weekday label order and count, month/date/time formatting for `12` and `24`.
 - `lib/tokens.spec.ts` (extended): the dark block defines the same `--myghf-*` set as `:root`.
 - `toast.spec.ts` (jsdom): `useToast()` throws without a provider; `add` returns an id and defaults;
-  severity convenience methods; `remove`/`clear`; `max` caps visible and queues overflow;
-  auto-dismiss with fake timers; `0` duration persists.
+  severity convenience methods; `remove`/`clear`; `visible` respects `max` and overflow waits;
+  duration forwarded to `ToastRoot` (`0` = persistent) — actual timers are browser-verified.
 - `alert.spec.ts` (jsdom): tone classes present (incl. dark tint), `role` by tone, `closable`
   emits `close`, auto-dismiss with fake timers, pause-on-hover.
 - `input-number.spec.ts` (jsdom): v-model reflects, empty → `null`, min/max clamp on blur, step via
