@@ -10,9 +10,12 @@ export default defineConfig({
   ],
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/index.ts'),
+      entry: {
+        index: resolve(import.meta.dirname, 'src/index.ts'),
+        nuxt: resolve(import.meta.dirname, 'src/nuxt.ts'),
+      },
       formats: ['es'],
-      fileName: () => 'index.js',
+      fileName: (_format, entryName) => `${entryName}.js`,
     },
     rollupOptions: {
       external: [
@@ -24,6 +27,8 @@ export default defineConfig({
         'tailwind-merge',
         'tailwind-variants',
         /^@tanstack\//,
+        '@nuxt/kit',
+        '@myghf/ui/tailwind-preset',
       ],
     },
     sourcemap: true,
