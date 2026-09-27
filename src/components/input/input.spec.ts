@@ -57,13 +57,14 @@ describe('Input', () => {
 
   it('wires id, describedby, invalid, and required from the FormField context', () => {
     const input = mount(FormField, {
-      props: { id: 'email', description: 'Help', error: 'Required' },
+      props: { id: 'email', description: 'Help', error: 'Required', required: true },
       slots: { default: () => h(Input) },
     }).get('input')
 
     expect(input.attributes('id')).toBe('email')
     expect(input.attributes('aria-describedby')).toBe('email-description email-error')
     expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('required')).toBeDefined()
   })
 
   it('uses the context generated id when no explicit id is given', () => {
@@ -89,5 +90,18 @@ describe('Input', () => {
     const input = mountWithField({ invalid: false, required: false }).get('input')
     expect(input.attributes('aria-invalid')).toBeUndefined()
     expect(input.attributes('required')).toBeUndefined()
+  })
+
+  it('lets a consumer aria-describedby attr win over the context value', () => {
+    const input = mountWithField({ 'aria-describedby': 'external-help' }).get('input')
+    expect(input.attributes('aria-describedby')).toBe('external-help')
+  })
+
+  it('omits aria-describedby when the FormField has no description or error', () => {
+    const input = mount(FormField, {
+      props: { id: 'email' },
+      slots: { default: () => h(Input) },
+    }).get('input')
+    expect(input.attributes('aria-describedby')).toBeUndefined()
   })
 })
