@@ -65,6 +65,20 @@ describe('createTheme', () => {
     expect(b.mode.value).toBe('system')
   })
 
+  it('reset returns to system even when defaultMode is explicit', () => {
+    stubMatchMedia(false)
+    const theme = createTheme({ defaultMode: 'dark' })
+    expect(theme.mode.value).toBe('dark')
+    expect(theme.isDark.value).toBe(true)
+
+    theme.reset()
+
+    expect(theme.mode.value).toBe('system')
+    expect(localStorage.getItem('myghf-theme')).toBeNull()
+    // 'system' now follows the stubbed OS preference (light).
+    expect(theme.isDark.value).toBe(false)
+  })
+
   it('does not throw without a window and resolves to light', () => {
     const originalWindow = globalThis.window
     // @ts-expect-error simulate an SSR environment

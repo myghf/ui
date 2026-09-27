@@ -133,7 +133,9 @@ export function createTheme(options: UseThemeOptions = {}): UseThemeReturn {
   }
 
   function reset(): void {
-    mode.value = defaultMode
+    // Always return to 'system', regardless of defaultMode: defaultMode only
+    // seeds the initial mode when nothing is stored.
+    mode.value = 'system'
     if (hasDom()) {
       try {
         window.localStorage.removeItem(storageKey)
