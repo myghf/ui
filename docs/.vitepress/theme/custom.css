@@ -41,8 +41,11 @@
   --vp-c-neutral: rgb(var(--myghf-foreground));
   --vp-c-neutral-inverse: rgb(var(--myghf-surface));
   --vp-c-text-1: rgb(var(--myghf-foreground));
-  --vp-c-text-2: rgb(var(--myghf-muted));
-  --vp-c-text-3: rgb(var(--myghf-muted));
+  /* Secondary/tertiary text is derived from `foreground` with alpha rather than the
+   * brand `muted` token, which is only ~3.75:1 on the light background and fails AA.
+   * This keeps the hierarchy token-derived and passes AA in both themes (~9:1 / ~4.9:1 light). */
+  --vp-c-text-2: rgb(var(--myghf-foreground) / 0.72);
+  --vp-c-text-3: rgb(var(--myghf-foreground) / 0.56);
   /* lines */
   --vp-c-divider: rgb(var(--myghf-border));
   --vp-c-border: rgb(var(--myghf-border));
