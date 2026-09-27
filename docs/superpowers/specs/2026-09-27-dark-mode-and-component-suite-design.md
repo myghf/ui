@@ -59,10 +59,13 @@ The installed reka-ui (2.10.5, satisfying the `^2.2.0` peer range) already provi
 
 ### 5.1 Theming layers
 
-1. **Semantic token layer** — `:root` (light) and `[data-theme="dark"], .dark` (dark) define the
-   same set of `--myghf-*` variables. Every component that styles with semantic utilities
-   (`bg-surface`, `text-foreground`, `border-border`, `bg-surface-muted`, `text-muted`) adapts
-   automatically and needs no per-component edit.
+1. **Semantic token layer** — `:root` (light) defines the full `--myghf-*` set;
+   `[data-theme="dark"], .dark` (dark) overrides only the six semantic variables and inherits the
+   brand scales. The dark block must NOT re-declare brand-scale variables: doing so would shadow a
+   consumer's `:root` brand-scale overrides whenever dark mode is active, breaking the documented
+   "override any `--myghf-*` variable" theming pattern. Every component that styles with semantic
+   utilities (`bg-surface`, `text-foreground`, `border-border`, `bg-surface-muted`, `text-muted`)
+   adapts automatically and needs no per-component edit.
 2. **Brand-tint layer** — components that use light brand tints (`bg-primary-100`,
    `bg-success-100`, etc.) receive explicit `dark:` variants because those tints are unreadable on
    dark surfaces.
@@ -112,7 +115,8 @@ Add a dark block immediately after `:root`:
 }
 ```
 
-Only the semantic layer is remapped; the brand scales are unchanged. All values must pass WCAG AA
+Only the semantic layer is remapped; the brand scales are unchanged and intentionally not
+re-declared, so consumer `:root` overrides survive into dark mode. All values must pass WCAG AA
 against `--myghf-surface` (body 4.5:1) before merge; `--myghf-muted` is verified as secondary text
 (≈6.6:1) and `--myghf-foreground` as body text (≈15:1). `--myghf-border` is non-text and exempt.
 
@@ -433,7 +437,8 @@ jsdom where DOM is required. Concrete coverage:
   (no `window`).
 - `lib/locale.spec.ts`: first-day-of-week for `en-US` (Sunday) and `en-GB`/`de-DE` (Monday),
   weekday label order and count, month/date/time formatting for `12` and `24`.
-- `lib/tokens.spec.ts` (extended): the dark block defines the same `--myghf-*` set as `:root`.
+- `lib/tokens.spec.ts` (extended): the dark block's `--myghf-*` set is a strict subset of `:root`'s,
+  contains all six required semantic overrides, and re-declares no brand-scale variable.
 - `toast.spec.ts` (jsdom): `useToast()` throws without a provider; `add` returns an id and defaults;
   severity convenience methods; `remove`/`clear`; `visible` respects `max` and overflow waits;
   duration forwarded to `ToastRoot` (`0` = persistent) — actual timers are browser-verified.

@@ -13,7 +13,7 @@
 ## Global Constraints
 
 - Preset must set top-level `darkMode: ['class', '.dark']`. Comma-separated selectors break descendant matching (verified: Tailwind emits `:is(.dark, [data-theme="dark"], .dark, [data-theme="dark"] *)`, dropping `.dark *`).
-- Dark token block selector is exactly `[data-theme='dark'], .dark`; it sets `color-scheme: dark` and defines exactly the same `--myghf-*` set as `:root`.
+- Dark token block selector is exactly `[data-theme='dark'], .dark`; it sets `color-scheme: dark` and overrides only the six semantic variables as a strict subset of `:root` (brand scales inherited, never re-declared).
 - Dark semantic values (verbatim): `--myghf-background: 15 18 23`, `--myghf-foreground: 243 244 246`, `--myghf-surface: 26 30 37`, `--myghf-surface-muted: 39 44 53`, `--myghf-border: 55 61 71`, `--myghf-muted: 156 163 175`. Brand scales are unchanged.
 - Never hard-code hex or inline colors in components; use `--myghf-*` tokens or preset Tailwind classes.
 - Use logical utilities (`ps/pe/ms/me/start/end`, `text-start/end`) and `rtl:` variants; never physical left/right for direction.
@@ -66,24 +66,35 @@ function varsInBlock(css: string, selector: string): Set<string> {
   )
 }
 
-it('defines the same variables in the dark block as in :root', () => {
+it('overrides only the semantic layer in the dark block', () => {
   const css = readFileSync(`${root}/src/tokens.css`, 'utf8')
   const light = varsInBlock(css, ':root')
   const dark = varsInBlock(css, "[data-theme='dark']")
+  const required = [
+    '--myghf-background',
+    '--myghf-foreground',
+    '--myghf-surface',
+    '--myghf-surface-muted',
+    '--myghf-border',
+    '--myghf-muted',
+  ]
   expect(light.size).toBeGreaterThan(0)
-  expect([...dark].sort()).toEqual([...light].sort())
+  for (const name of required) expect(dark.has(name)).toBe(true)
+  // A strict subset: no variable is introduced, and brand scales are not re-declared.
+  expect([...dark].filter((name) => !light.has(name))).toEqual([])
+  expect(dark.size).toBeLessThan(light.size)
 })
 
-it('enables the .dark class variant in the preset', async () => {
-  const preset = (await import('../tailwindPreset.js')).default
-  expect(JSON.stringify(preset.darkMode)).toContain('.dark')
+it('enables the .dark class variant in the preset', () => {
+  const js = readFileSync(`${root}/src/tailwindPreset.js`, 'utf8')
+  expect(js).toMatch(/darkMode\s*:\s*\[\s*['"]class['"]\s*,\s*['"]\.dark['"]\s*\]/)
 })
 ```
 
 - [ ] **Step 2: Run the guard and watch it fail**
 
 Run: `npx vitest run src/lib/tokens.spec.ts`
-Expected: FAIL — the dark set is empty, and `preset.darkMode` is `undefined`.
+Expected: FAIL — the dark set is empty (all six required names absent), and the preset has no `darkMode`.
 
 - [ ] **Step 3: Add the dark block and preset key**
 
@@ -102,6 +113,10 @@ In `src/tokens.css`, immediately after the closing `}` of `:root`, add:
   --myghf-muted: 156 163 175;
 }
 ```
+
+> The dark block intentionally declares only the six semantic variables. Do NOT re-declare the
+> brand scales here: inheriting them from `:root` is what lets a consumer's `:root` brand-scale
+> overrides survive into dark mode.
 
 In `src/tailwindPreset.js`, add `darkMode: ['class', '.dark'],` as the first key of the exported object.
 
