@@ -150,6 +150,34 @@ emphasis. Never introduce new hues.
   small sizes (contrast fails).
 - Maintain WCAG AA contrast (4.5:1 body, 3:1 large text) — verify before shipping.
 
+### Dark Mode
+
+Dark mode activates via `[data-theme="dark"]` or `.dark` on `<html>`. The shared
+[`tokens.css`](./src/tokens.css) block remaps **only** the semantic layer and sets
+`color-scheme: dark` (so native controls match). The brand scales (`primary`…`info`, steps
+`50`–`900`) are **unchanged** in dark mode — never re-declare them in a dark block, or you shadow a
+consumer's `:root` overrides whenever dark mode is active.
+
+| Token | Light (`:root`) | Dark | Role |
+| --- | --- | --- | --- |
+| `--myghf-background` | `248 249 250` | `15 18 23` | App background |
+| `--myghf-foreground` | `0 0 0` | `243 244 246` | Body text |
+| `--myghf-surface` | `255 255 255` | `26 30 37` | Cards, panels |
+| `--myghf-surface-muted` | `243 244 246` | `39 44 53` | Muted surfaces |
+| `--myghf-border` | `230 230 230` | `55 61 71` | Dividers, borders |
+| `--myghf-muted` | `128 128 128` | `156 163 175` | Secondary text, placeholders |
+
+Brand-tinted surfaces must not reuse light tints on dark. The rule: dark tints pair a **`*-900/40`
+background with `*-200` text** (and `*-700` borders for outlines), e.g.
+`dark:bg-primary-900/40 dark:text-primary-200`. This is codified in
+[`src/lib/tones.ts`](./src/lib/tones.ts) and consumed by `Tag`, `Alert`/`Message`, and `Toaster`.
+
+Components that style with semantic utilities (`bg-surface`, `text-foreground`, `border-border`)
+adapt automatically; only tinted or edge-case components need explicit `dark:` variants.
+
+> Tailwind `dark:` utilities require the `.dark` class. `[data-theme="dark"]` alone drives the token
+> block only — see Divergences & Known Gaps.
+
 ---
 
 ## 4. Typography
@@ -185,6 +213,9 @@ emphasis. Never introduce new hues.
 
 1. **Tokens first.** Use the `--myghf-*` custom properties or the Tailwind classes from the preset.
    Do not hard-code hex values in components. Add a new token only if no existing token fits.
+   `Alert`/`Message`, `Toaster`, `InputNumber`, and `Drawer` style from the shared semantic tokens
+   (and the `lib/tones.ts` map) rather than raw colors; use the `*-900/40` / `*-200` dark-tint rule
+   from §3 when a brand tint is needed.
 2. **Blue as primary.** Use `primary-500` for primary actions and brand surfaces; `warning-500` and
    `error-500` as accents only.
 3. **Logo handling.** The library ships no logo. Consumers must use an official asset, preserve
@@ -195,7 +226,10 @@ emphasis. Never introduce new hues.
 5. **Bilingual / RTL.** Support `dir="rtl"` and never mix scripts inside a lockup. Prefer
    **logical** utilities (`ps-*`, `pe-*`, `ms-*`, `me-*`, `start-*`, `end-*`, `text-start`,
    `text-end`) over physical ones (`pl-*`, `pr-*`, `ml-*`, `mr-*`, `left-*`, `right-*`).
-   Directional icons use the `rtl:` variant (e.g. `rtl:rotate-180`).
+   Directional icons use the `rtl:` variant (e.g. `rtl:rotate-180`). Newer components follow this:
+   `Drawer` exposes logical `start`/`end` positions that mirror and flip in RTL, `Toaster` viewports
+   use `start-*`/`end-*` (one per logical position), `InputNumber` places `prefix`/`suffix` with
+   logical spacing, and `DatePicker`'s nav chevrons use `rtl:rotate-180`.
 6. **Accessibility.** Check contrast against the palette above; do not invent colors to fix
    contrast — switch to black/white text instead. Interactive elements must be keyboard reachable
    and expose accessible names.
@@ -218,8 +252,18 @@ manual:
   replaced by the Helvetica Neue stack. Helvetica Neue / Trajan Pro / GE SS Two / Adobe Arabic are
   not webfonts bundled here — consumers must supply them or rely on the fallbacks.
 - **Logo.** No logo asset or component is included in the package.
-- **RTL coverage.** Directional icon flips and one logical-property fix are in place; new
-  components must be checked against rule 5 above. There is no automated RTL visual test yet.
+- **Dark mode selector.** Tailwind `dark:` utilities require the `.dark` class. The
+  `[data-theme="dark"]` selector drives the token block only, so applying `data-theme="dark"` by
+  hand without `.dark` yields dark tokens but keeps `dark:` variants inactive. `useTheme` (default
+  `attribute: 'both'`) sets both so the two agree.
+- **Dark tint contrast.** Dark brand tints use `*-900/40` backgrounds with `*-200` text; contrast is
+  verified per component rather than by an automated palette guard.
+- **Drawer scroll lock.** `preventScroll: false` is only effective with `backdrop: false`, because
+  reka's dialog overlay owns the body scroll lock whenever a backdrop is rendered.
+- **RTL coverage.** Directional icon flips and logical-property fixes are in place — including
+  `Drawer`'s `start`/`end` positions, `Toaster`'s logical viewports, and `DatePicker`'s
+  `rtl:rotate-180` chevrons. New components must be checked against rule 5 above. There is still no
+  automated RTL visual test.
 - **Fonts.** No `@font-face` declarations are shipped.
 
 ---

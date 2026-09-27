@@ -71,11 +71,85 @@ import { Button, Input, DataTable } from '@myghf/ui'
 
 | Area | Exports |
 | --- | --- |
-| Actions & display | `Button`, `Tag`, `Icon` |
-| Form controls | `Input`, `Textarea`, `Password`, `Checkbox`, `Select`, `SelectButton`, `DatePicker`, `TreeSelect` |
-| Navigation & overlays | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`, `Dialog`, `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` |
+| Actions & display | `Button`, `Tag`, `Icon`, `ThemeToggle`, `Alert`, `Message` |
+| Feedback | `Toaster`, `useToast`, `createToastStore` |
+| Form controls | `Input`, `InputNumber`, `Textarea`, `Password`, `Checkbox`, `Select`, `SelectButton`, `DatePicker`, `TreeSelect` |
+| Navigation & overlays | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent`, `Dialog`, `Drawer`, `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` |
 | Data | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, `TableEmpty`, `TablePagination`, `DataTable`, `TreeTable`, `TransferList` |
-| Utilities & types | `cn`, date helpers, `toPascalCase`, `resolveIconName`, `TagTone`, `DataTableFeatures`, `TreeTableColumn`, `TreeNode`, `FlatTreeRow`, `CheckedState` |
+| Utilities & types | `cn`, date and locale helpers, `toNumberOrNull`, `mergeFormatOptions`, `toPascalCase`, `resolveIconName`, `toneClasses`, `useTheme`, `createTheme`, `toastKey`, `TagTone`, `Tone`, `AlertVariant`, `DatePickerLabels`, `DrawerPosition`, `DrawerSize`, `ThemeMode`, `ToastSeverity`, `ToastPosition`, `DataTableFeatures`, `TreeTableColumn`, `TreeNode`, `FlatTreeRow`, `CheckedState` |
+
+### Component examples
+
+**Toasts** — mount one `<Toaster>` near the root and call `useToast()` from a descendant setup:
+
+```vue
+<!-- App.vue -->
+<template>
+  <Toaster position="top-end" :max="4" />
+  <SaveButton />
+</template>
+```
+
+```vue
+<!-- SaveButton.vue -->
+<script setup lang="ts">
+import { useToast } from '@myghf/ui'
+
+const toast = useToast() // setup-only; requires an ancestor <Toaster />
+toast.success('Saved', 'Your changes were saved.')
+toast.add({ title: 'Uploading…', severity: 'info', duration: 0 }) // 0 = persistent
+</script>
+```
+
+`useToast()` throws unless a `<Toaster>` is mounted above the calling component. Positions are
+logical (`top-start`…`bottom-end`, default `top-end`); severities are `info`, `success`, `warning`,
+`danger`, `secondary`. For tests or a pre-seeded queue, build a store with `createToastStore()` and
+pass it via `<Toaster :store="store">`.
+
+**Alert / Message** — the same component under two names, sharing Tag's tones:
+
+```vue
+<Alert tone="success" title="Payment received" description="Receipt sent by email." show-icon />
+<Message tone="danger" variant="outline" closable @close="dismissed = true">Something failed.</Message>
+```
+
+Tones: `info` (default), `success`, `warning`, `danger`, `secondary`; `variant` is `soft` (default)
+or `outline`. Pass `duration` (ms) to auto-dismiss, pausable on hover/focus; `0`/omitted is
+persistent.
+
+**InputNumber** — numeric `v-model` that emits `number | null`:
+
+```vue
+<InputNumber v-model="amount" :min="0" :max="100" :step="5" integer show-buttons />
+<InputNumber v-model="price" currency="USD" locale="en-US" prefix="$" />
+```
+
+Empty input emits `null`. Supports `min`/`max`/`step`/`stepSnapping`/`integer`, `locale`,
+`formatOptions`/`currency`, `prefix`/`suffix`, `showButtons`, and `size`; renders `role="spinbutton"`
+with formatted `aria-valuetext`.
+
+**Drawer** — controlled via `v-model:open`:
+
+```vue
+<Drawer v-model:open="open" position="end" size="md" title="Filters">
+  <p>Drawer body</p>
+  <template #footer><Button @click="open = false">Done</Button></template>
+</Drawer>
+```
+
+Positions: `left`, `right` (default), `top`, `bottom`, plus logical `start`/`end` that mirror them
+and flip in RTL. Sizes: `sm`, `md`, `lg`, `full`. Also supports `backdrop`, `closeOnEscape`,
+`closeOnOutside`, `showClose`, and `preventScroll`.
+
+> **Drawer caveat:** `preventScroll: false` only takes effect with `backdrop: false`; when a
+> backdrop is shown, reka's overlay owns the body scroll lock.
+
+**DatePicker i18n/time** — `DatePicker` accepts `hourFormat` (`'12' | '24'`, default `'24'`),
+`minuteStep` (default `1`), `locale` (BCP-47, default runtime locale), `labels` (partial overrides
+for `placeholder`, `previousMonth`, `nextMonth`, `clear`, `apply`, `today`, `time`, `hour`,
+`minute`, `am`, `pm`), `weekStartsOn`, and `defaultOpen`. Month and weekday headers and the display
+text are locale-formatted, and the nav chevrons flip in RTL. Override individual labels with
+`label-<key>` slots.
 
 ### Entry points
 
@@ -99,6 +173,48 @@ Override any `--myghf-*` variable after importing `tokens.css`:
 
 Do not hard-code hex values in component code — use the tokens or the Tailwind classes. See
 [DESIGN.md](./DESIGN.md) for the full palette and rules.
+
+### Dark mode
+
+The preset sets `darkMode: ['class', '.dark']`, and importing `@myghf/ui/tokens.css` ships a dark
+token block under both `[data-theme='dark']` and `.dark`. It overrides **only** the six semantic
+variables; the brand colour scales are unchanged, so your own `--myghf-*` overrides still apply in
+dark mode:
+
+```css
+/* shipped by tokens.css */
+[data-theme='dark'],
+.dark {
+  color-scheme: dark;
+  --myghf-background: 15 18 23;
+  --myghf-foreground: 243 244 246;
+  --myghf-surface: 26 30 37;
+  --myghf-surface-muted: 39 44 53;
+  --myghf-border: 55 61 71;
+  --myghf-muted: 156 163 175;
+}
+```
+
+Use `useTheme()` — a shared singleton — or `createTheme()` for an independent controller:
+
+```ts
+import { useTheme } from '@myghf/ui'
+
+const { mode, resolved, isDark, setMode, toggle, enable, disable, reset } = useTheme()
+// defaults: storageKey 'myghf-theme', attribute 'both', defaultMode 'system'
+```
+
+```vue
+<ThemeToggle />
+```
+
+`useTheme` follows the OS preference when `mode` is `'system'`, persists explicit choices to
+`localStorage`, and writes **both** `.dark` and `data-theme="dark"` on `<html>` (`attribute: 'both'`).
+`createTheme()` accepts the same options and returns an isolated instance.
+
+> **Caveat:** Tailwind `dark:` utilities only activate under the `.dark` class. Setting
+> `data-theme="dark"` by hand drives the token block but **not** `dark:` utilities. `useTheme` sets
+> both so they always agree — if you apply the theme yourself, add `class="dark"` as well.
 
 ## Bilingual & RTL
 
