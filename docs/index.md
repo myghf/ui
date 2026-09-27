@@ -34,17 +34,3 @@ features:
     link: /components/index
     linkText: Browse the components
 ---
-
-## Install
-
-```bash
-npm install @myghf/ui
-```
-
-Then import the tokens once in your app entry stylesheet and load the Tailwind preset:
-
-```css
-@import '@myghf/ui/tokens.css';
-```
-
-Use the **Guide** for installation and setup, and **Components** for live examples.
