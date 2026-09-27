@@ -156,9 +156,10 @@ const effectiveLocale = computed(() => props.locale || 'en')
 
 const resolvedLabels = computed<DatePickerLabels>(() => ({
   ...defaultLabels(effectiveLocale.value),
-  ...props.labels,
-  // The legacy `placeholder` prop is an explicit override of the label.
+  // The legacy `placeholder` prop fills in only when the new labels API has no
+  // value; `labels.placeholder` is spread last so it wins over both.
   ...(props.placeholder !== undefined ? { placeholder: props.placeholder } : {}),
+  ...props.labels,
 }))
 
 function flatten(node: unknown): string {

@@ -36,4 +36,30 @@ describe('DatePicker', () => {
   it('flips navigation chevrons in RTL', () => {
     expect(open().get('[aria-label="Previous month"]').html()).toContain('rtl:rotate-180')
   })
+
+  it('renders labels from the labels prop', () => {
+    const wrapper = open({ labels: { clear: 'Effacer', apply: 'Valider' } })
+    expect(wrapper.text()).toContain('Effacer')
+    expect(wrapper.text()).toContain('Valider')
+  })
+
+  it('still honors the legacy placeholder prop', () => {
+    const wrapper = mount(DatePicker, { props: { mode: 'date', defaultOpen: true, placeholder: 'Pick a day' } })
+    expect(wrapper.get('[aria-haspopup="dialog"]').text()).toContain('Pick a day')
+  })
+
+  it('prefers labels.placeholder over the legacy placeholder prop', () => {
+    const wrapper = open({ placeholder: 'Pick a day', labels: { placeholder: 'Choose date' } })
+    const trigger = wrapper.get('[aria-haspopup="dialog"]').text()
+    expect(trigger).toContain('Choose date')
+    expect(trigger).not.toContain('Pick a day')
+  })
+
+  it('lets a label slot override the resolved text', () => {
+    const wrapper = mount(DatePicker, {
+      props: { mode: 'datetime', defaultOpen: true },
+      slots: { 'label-clear': 'Nuke' },
+    })
+    expect(wrapper.text()).toContain('Nuke')
+  })
 })
