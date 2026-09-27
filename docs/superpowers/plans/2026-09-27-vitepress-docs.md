@@ -255,7 +255,7 @@ Read each `src/components/<name>/<Name>.vue` and document exact props/defaults/e
 `InputNumber` include the `number | null` v-model, min/max/step/integer/locale/formatOptions/currency,
 and the `role="spinbutton"`/`aria-invalid`/`aria-valuetext` behavior. For `DatePicker` document
 `mode`, `hourFormat`, `minuteStep`, `locale`, `labels` (+ `label-*` slots), `weekStartsOn`, and
-`defaultOpen`. Include at least one live demo per page. Append the overlays group to `docs/components/index.md`. Append the form group to
+`defaultOpen`. Include at least one live demo per page. Append the form group to
 `docs/components/index.md`.
 
 - [ ] **Step 2: Wire the sidebar and build**
@@ -292,7 +292,7 @@ Read each component's source. For `drawer` document `v-model:open`, positions
 `Toast.vue`, `useToast.ts`) document `<Toaster>` as the required provider, `useToast()`'s
 setup-only contract, severities, the six positions, duration (0 = persistent), and queueing. Use
 `<ClientOnly>` around demos that need browser APIs if SSR fails (Review Focus / risks). Include at
-least one live demo per page.
+least one live demo per page. Append the overlays group to `docs/components/index.md`.
 
 - [ ] **Step 2: Wire the sidebar and build**
 
