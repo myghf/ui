@@ -56,11 +56,15 @@
   },
   "peerDependencies": {
     "@nuxt/kit": ">=3.0.0",
+    "@nuxt/schema": ">=3.0.0",
     "tailwindcss": "^3.4.0",
     "vue": "^3.5.0"
   },
   "peerDependenciesMeta": {
     "@nuxt/kit": {
+      "optional": true
+    },
+    "@nuxt/schema": {
       "optional": true
     }
   },

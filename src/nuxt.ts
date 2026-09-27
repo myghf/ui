@@ -1,4 +1,4 @@
-import { addComponent, createResolver, defineNuxtModule } from '@nuxt/kit'
+import { addComponent, defineNuxtModule } from '@nuxt/kit'
 
 export interface ModuleOptions {
   /** Auto-import the component exports. */
@@ -65,7 +65,6 @@ export default defineNuxtModule<ModuleOptions>({
   meta: { name: '@myghf/ui', configKey: 'myghfUi' },
   defaults: { autoImports: true, prefix: '' },
   async setup(options, nuxt) {
-    createResolver(import.meta.url)
     nuxt.options.build.transpile.push('@myghf/ui')
     nuxt.options.css.unshift('@myghf/ui/tokens.css')
 
