@@ -251,7 +251,7 @@ export interface ToastOptions {
 
 export interface ToastItem extends ToastOptions { id: string }
 
-export interface ToastStore extends ToastApi {
+export interface ToastStore {
   items: Ref<ToastItem[]>
   visible: ComputedRef<ToastItem[]> // items capped at max, in insertion order
   add(options: ToastOptions): string
