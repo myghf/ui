@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { tv, type VariantProps } from 'tailwind-variants'
 
+defineOptions({ inheritAttrs: false })
+
 const skeleton = tv({
   base: 'animate-pulse bg-surface-muted',
   variants: {

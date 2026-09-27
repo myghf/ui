@@ -101,7 +101,6 @@ function onClear() {
       :id="id"
       :aria-invalid="invalid || undefined"
       :aria-describedby="describedBy"
-      :required="required || undefined"
       v-bind="$attrs"
     >
       <SelectValue :placeholder="placeholder">

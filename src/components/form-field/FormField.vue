@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, provide, useId, useSlots } from 'vue'
+import { computed, onBeforeUpdate, provide, ref, useId, useSlots } from 'vue'
 import { formFieldKey } from '../../lib/formField'
 import Label from '../label/Label.vue'
 import FormDescription from './FormDescription.vue'
@@ -27,19 +27,31 @@ const props = withDefaults(
 
 const slots = useSlots()
 
+// Slot functions are not reactive: Vue mutates the `slots` object in place
+// during the parent's update, which happens just before this component's
+// `onBeforeUpdate` hook. Bumping a version counter here invalidates `describedBy`
+// when a slot is added or removed after mount, so consumers re-read the
+// description/error ids instead of sticking to their initial value.
+const slotsVersion = ref(0)
+onBeforeUpdate(() => {
+  slotsVersion.value++
+})
+
 // `useId()` must run once, directly in setup — never inside a computed, which
 // could be evaluated in a different instance context.
 const generatedId = useId()
 const fieldId = computed(() => props.id ?? generatedId)
-const hasDescription = computed(() => Boolean(props.description) || Boolean(slots.description))
-const hasError = computed(() => Boolean(props.error) || Boolean(slots.error))
 const invalid = computed(() => props.invalid ?? Boolean(props.error))
 const required = computed(() => props.required ?? false)
 
+// Description/error content can come from a prop or a slot. `slotsVersion` is
+// read so slot-presence changes invalidate this computed; the template checks
+// `$slots` at render time for actually rendering the element.
 const describedBy = computed(() => {
+  void slotsVersion.value
   const ids: string[] = []
-  if (hasDescription.value) ids.push(`${fieldId.value}-description`)
-  if (hasError.value) ids.push(`${fieldId.value}-error`)
+  if (props.description || slots.description) ids.push(`${fieldId.value}-description`)
+  if (props.error || slots.error) ids.push(`${fieldId.value}-error`)
   return ids.length > 0 ? ids.join(' ') : undefined
 })
 
@@ -54,11 +66,11 @@ provide(formFieldKey, { id: fieldId, describedBy, invalid, required })
 
     <slot />
 
-    <FormDescription v-if="hasDescription" :id="`${fieldId}-description`">
+    <FormDescription v-if="description || $slots.description" :id="`${fieldId}-description`">
       <slot name="description">{{ description }}</slot>
     </FormDescription>
 
-    <FormMessage v-if="hasError" :id="`${fieldId}-error`">
+    <FormMessage v-if="error || $slots.error" :id="`${fieldId}-error`">
       <slot name="error">{{ error }}</slot>
     </FormMessage>
   </div>

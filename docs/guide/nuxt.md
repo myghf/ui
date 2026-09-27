@@ -11,16 +11,16 @@ following the [Setup guide](/guide/setup); nothing Nuxt-specific is loaded.
 ## Install
 
 ```bash
-npm install @myghf/ui @nuxt/kit
+npm install @myghf/ui
 ```
 
 `@nuxt/kit` is the runtime API the module uses, and `@nuxt/schema` is a declared peer for
-its types. Both are marked **optional** peer dependencies, and Nuxt already provides them,
-so you normally do not install them yourself — add them explicitly only if your package
-manager does not hoist Nuxt's copies:
+its types. Both are marked **optional** peer dependencies, and a Nuxt app already includes
+`@nuxt/kit` (and normally `@nuxt/schema`), so you do not need to install them yourself —
+add them explicitly only if your package manager does not hoist Nuxt's copies:
 
 ```bash
-npm install -D @nuxt/schema
+npm install -D @nuxt/kit @nuxt/schema
 ```
 
 ## Register the module
@@ -32,6 +32,17 @@ sensible defaults, so this is all that is required:
 // nuxt.config.ts
 export default defineNuxtConfig({
   modules: ['@myghf/ui/nuxt'],
+})
+```
+
+If you use the [Tailwind module](https://tailwindcss.nuxtjs.org) (`@nuxtjs/tailwindcss`),
+register `@myghf/ui/nuxt` **after** it — the module appends the content glob and preset to
+the Tailwind config at setup, so the Tailwind module must already be present:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@nuxtjs/tailwindcss', '@myghf/ui/nuxt'],
 })
 ```
 

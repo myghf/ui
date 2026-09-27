@@ -63,7 +63,9 @@ joined by commas. Clearing emits an empty array.
 | `disabled` | `boolean` | `false` | Disables the trigger and the popup. |
 | `multiple` | `boolean` | `false` | Allows multiple selections; the model becomes an array. |
 | `size` | `'sm' \| 'default'` | `'default'` | Trigger height. |
-| `invalid` | `boolean` | `false` | Applies the error border and focus ring. Visual only; it does not set `aria-invalid`. |
+| `invalid` | `boolean` | `undefined` (→ FormField, else `false`) | Applies the error border and focus ring and sets `aria-invalid`. Falls back to the enclosing `FormField`. |
+| `id` | `string` | FormField id | Trigger id. Falls back to the enclosing `FormField` id; an explicit value wins. |
+| `required` | `boolean` | `undefined` (→ FormField, else `false`) | Marks the field required, setting `aria-required` on the trigger. Falls back to the enclosing `FormField`; an explicit value wins. |
 
 ## Events
 
@@ -93,8 +95,16 @@ None. `Select` does not call `defineExpose`.
   ```
 - The built-in clear control is a `<button>` with `aria-label="Clear selection"`; it is
   focusable and does not close the popup.
-- `invalid` only changes colour. It does **not** set `aria-invalid` — add it via a
-  fall-through attribute when the field is in an error state.
+- `invalid` both changes colour and sets `aria-invalid`, so the trigger is announced as
+  invalid. When the select is inside a `FormField`, `invalid` defaults to the field's state;
+  pass `:invalid="false"` to override it.
+- `required` is forwarded to `SelectRoot`, which sets `aria-required` on the trigger (a
+  `<button role="combobox">` has no native `required`, so none is rendered). Inside a
+  `FormField` it defaults to the field's `required` flag; an explicit prop wins.
+- Form-field wiring: inside a [`FormField`](/components/form-field), the trigger picks up the
+  context `id`, `aria-describedby` (the description and error ids), `aria-invalid`, and
+  `aria-required`. Explicit props, and a consumer `aria-describedby` attribute, take
+  precedence — so a custom `aria-describedby` is not overwritten.
 - **Visual content is limited to option labels.** Because there is no option slot, richer
   rows (icons, descriptions, grouping) are not supported.
 

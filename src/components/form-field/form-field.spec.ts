@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, nextTick, ref } from 'vue'
 import { useFormField, type FormFieldContext } from '../../lib/formField'
+import Input from '../input/Input.vue'
 import Label from '../label/Label.vue'
 import FormDescription from './FormDescription.vue'
 import FormField from './FormField.vue'
@@ -96,6 +97,57 @@ describe('FormField', () => {
   it('does not render a label when none is supplied', () => {
     const wrapper = mount(FormField, { slots: { default: () => h('input') } })
     expect(wrapper.find('label').exists()).toBe(false)
+  })
+
+  it('picks up an #error slot added after mount and wires aria-describedby', async () => {
+    const showError = ref(false)
+    // The slot key is omitted entirely while hidden (mirroring a compiled
+    // `<template #error v-if>`), so Vue deletes the stale slot on update.
+    const Wrapper = defineComponent({
+      setup() {
+        return () => {
+          const slots: Record<string, () => unknown> = {
+            default: () => h(Input, { modelValue: '', id: 'email' }),
+          }
+          if (showError.value) slots.error = () => 'Required'
+          return h(FormField, { id: 'email' }, slots)
+        }
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    expect(wrapper.get('input').attributes('aria-describedby')).toBeUndefined()
+
+    showError.value = true
+    await nextTick()
+
+    expect(wrapper.get('[role="alert"]').text()).toBe('Required')
+    expect(wrapper.get('input').attributes('aria-describedby')).toBe('email-error')
+  })
+
+  it('drops the error id from aria-describedby when the slot is removed after mount', async () => {
+    const showError = ref(true)
+    const Wrapper = defineComponent({
+      setup() {
+        return () => {
+          const slots: Record<string, () => unknown> = {
+            default: () => h(Input, { modelValue: '', id: 'email' }),
+          }
+          if (showError.value) slots.error = () => 'Required'
+          return h(FormField, { id: 'email' }, slots)
+        }
+      },
+    })
+
+    const wrapper = mount(Wrapper)
+    expect(wrapper.get('input').attributes('aria-describedby')).toBe('email-error')
+
+    showError.value = false
+    await nextTick()
+
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    expect(wrapper.get('input').attributes('aria-describedby')).toBeUndefined()
   })
 
   it('renders description and error only when content exists', () => {

@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import type { Nuxt } from '@nuxt/schema'
 import myghfUiModule, { AUTO_IMPORT_COMPONENTS } from './nuxt'
@@ -23,5 +24,15 @@ describe('@myghf/ui Nuxt module', () => {
     expect(AUTO_IMPORT_COMPONENTS).toContain('DataTable')
     expect(AUTO_IMPORT_COMPONENTS.length).toBeGreaterThan(10)
     expect(new Set(AUTO_IMPORT_COMPONENTS).size).toBe(AUTO_IMPORT_COMPONENTS.length)
+  })
+
+  it('keeps AUTO_IMPORT_COMPONENTS in sync with the component exports in index.ts', () => {
+    const source = readFileSync(new URL('./index.ts', import.meta.url), 'utf8')
+    const exportedComponents = [
+      ...source.matchAll(/export\s*\{\s*default\s+as\s+(\w+)\s*\}/g),
+    ].map((match) => match[1])
+
+    expect(exportedComponents.length).toBeGreaterThan(10)
+    expect([...AUTO_IMPORT_COMPONENTS].sort()).toEqual(exportedComponents.sort())
   })
 })
