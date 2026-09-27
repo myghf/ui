@@ -20,6 +20,7 @@ Components that trigger actions or present short, non-interactive information.
 | [Tag](/components/tag) | `Tag` | Compact label or chip with tones, an optional icon, and an optional remove button. |
 | [Alert / Message](/components/alert) | `Alert`, `Message` | Inline feedback message; the same component is exported under two names. |
 | [Skeleton](/components/skeleton) | `Skeleton` | Pulsing placeholder block for loading layouts, with shape and size control. |
+| [Avatar](/components/avatar) | `Avatar` | Circular profile image that falls back to initials when no image is available. |
 | [ThemeToggle](/components/theme-toggle) | `ThemeToggle` | Button that flips the shared light/dark theme. |
 | [Icon](/components/icon) | `Icon` | Renders a Lucide icon by name. |
 

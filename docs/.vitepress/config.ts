@@ -54,6 +54,7 @@ export default defineConfig({
               { text: 'Alert / Message', link: '/components/alert' },
               { text: 'Spinner', link: '/components/spinner' },
               { text: 'Skeleton', link: '/components/skeleton' },
+              { text: 'Avatar', link: '/components/avatar' },
               { text: 'ThemeToggle', link: '/components/theme-toggle' },
               { text: 'Icon', link: '/components/icon' },
             ],

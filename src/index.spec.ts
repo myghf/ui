@@ -7,7 +7,7 @@ const EXPECTED = [
   'getFirstDayOfWeek', 'getWeekdayLabels', 'getMonthLabel', 'formatLocalizedDate', 'formatLocalizedTime',
   'Button', 'Input', 'InputNumber', 'Textarea', 'Password', 'Checkbox', 'Tag',
   'Label', 'FormField', 'FormDescription', 'FormMessage', 'useFormField',
-  'Alert', 'Message', 'Spinner', 'Skeleton',
+  'Alert', 'Message', 'Spinner', 'Skeleton', 'Avatar',
   'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent',
   'Select', 'SelectButton', 'DatePicker', 'Dialog',
   'Drawer',

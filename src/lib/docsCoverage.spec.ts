@@ -51,6 +51,7 @@ const MAP: Record<string, string> = {
   Message: 'components/alert.md',
   Spinner: 'components/spinner.md',
   Skeleton: 'components/skeleton.md',
+  Avatar: 'components/avatar.md',
   ThemeToggle: 'components/theme-toggle.md',
   Icon: 'components/icon.md',
   Input: 'components/input.md',
