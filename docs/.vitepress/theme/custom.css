@@ -1,0 +1,52 @@
+/* Library design tokens (`--myghf-*`) — must come before any other rules. */
+@import '../../../src/tokens.css';
+
+/* Tailwind, using the MYGHF preset from docs/tailwind.config.js. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Brand the VitePress UI from the library tokens.
+ * Light: primary-700 for links/text (AA on white), primary-600 for hovers.
+ * Dark: the lighter end of the scale for text on dark surfaces.
+ */
+:root {
+  --vp-c-brand-1: rgb(var(--myghf-primary-700));
+  --vp-c-brand-2: rgb(var(--myghf-primary-600));
+  --vp-c-brand-3: rgb(var(--myghf-primary-700));
+  --vp-c-brand-soft: rgb(var(--myghf-primary-500) / 0.14);
+}
+
+.dark {
+  --vp-c-brand-1: rgb(var(--myghf-primary-300));
+  --vp-c-brand-2: rgb(var(--myghf-primary-400));
+  --vp-c-brand-3: rgb(var(--myghf-primary-600));
+  --vp-c-brand-soft: rgb(var(--myghf-primary-400) / 0.16);
+}
+
+/* Shared <Demo> preview pane. */
+.myghf-demo {
+  margin: 16px 0;
+  padding: 24px;
+  border: 1px solid rgb(var(--myghf-border));
+  border-radius: 12px;
+  color: rgb(var(--myghf-foreground));
+  overflow-x: auto;
+}
+
+.myghf-demo--surface {
+  background-color: rgb(var(--myghf-surface));
+}
+
+.myghf-demo--muted {
+  background-color: rgb(var(--myghf-surface-muted));
+}
+
+.myghf-demo--grid {
+  background-color: rgb(var(--myghf-surface));
+  background-image:
+    linear-gradient(rgb(var(--myghf-border) / 0.6) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--myghf-border) / 0.6) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
