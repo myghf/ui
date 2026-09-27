@@ -38,18 +38,27 @@ describe('design tokens vs tailwind preset', () => {
     expect([...referenced].filter((v) => !defined.has(v))).toEqual([])
   })
 
-  it('defines the same variables in the dark block as in :root', () => {
+  it('overrides only the semantic layer in the dark block', () => {
     const css = readFileSync(`${root}/src/tokens.css`, 'utf8')
     const light = varsInBlock(css, ':root')
     const dark = varsInBlock(css, "[data-theme='dark']")
+    const required = [
+      '--myghf-background',
+      '--myghf-foreground',
+      '--myghf-surface',
+      '--myghf-surface-muted',
+      '--myghf-border',
+      '--myghf-muted',
+    ]
     expect(light.size).toBeGreaterThan(0)
-    expect([...dark].sort()).toEqual([...light].sort())
+    for (const name of required) expect(dark.has(name)).toBe(true)
+    // A strict subset: no variable is introduced, and brand scales are not re-declared.
+    expect([...dark].filter((name) => !light.has(name))).toEqual([])
+    expect(dark.size).toBeLessThan(light.size)
   })
 
-  it('enables the .dark class variant in the preset', async () => {
-    // tailwindPreset.js is a plain JS config with no type declarations.
-    // @ts-expect-error TS7016: untyped JS module import.
-    const preset = (await import('../tailwindPreset.js')).default
-    expect(JSON.stringify(preset.darkMode)).toContain('.dark')
+  it('enables the .dark class variant in the preset', () => {
+    const js = readFileSync(`${root}/src/tailwindPreset.js`, 'utf8')
+    expect(js).toMatch(/darkMode\s*:\s*\[\s*['"]class['"]\s*,\s*['"]\.dark['"]\s*\]/)
   })
 })
