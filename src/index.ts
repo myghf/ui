@@ -44,3 +44,14 @@ export { default as TreeTable } from './components/tree-table/TreeTable.vue'
 export type { TreeTableColumn } from './components/tree-table/TreeTable.vue'
 export type { TreeNode, FlatTreeRow, CheckedState } from './lib/tree'
 export { default as TreeSelect } from './components/tree-select/TreeSelect.vue'
+export { default as Toaster } from './components/toast/Toaster.vue'
+export { createToastStore, useToast, toastKey } from './components/toast/useToast'
+export type {
+  ToastSeverity,
+  ToastPosition,
+  ToastAction,
+  ToastOptions,
+  ToastItem,
+  ToastStore,
+  ToastStoreOptions,
+} from './components/toast/useToast'
