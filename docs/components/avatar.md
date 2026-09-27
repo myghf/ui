@@ -51,9 +51,9 @@ sample image.
 ## Events
 
 `Avatar` declares no custom events. The image handles its own native `error`
-event internally to switch to the initials fallback. Because the component has
-two root branches, listen on the rendered element directly if you need to observe
-native events.
+event internally to switch to the initials fallback. Because the component
+renders one of two branches, consumer attributes, classes, and native listeners
+fall through to whichever element is rendered (`<img>` or the fallback `<span>`).
 
 ## Slots
 
@@ -66,11 +66,13 @@ None. `Avatar` does not call `defineExpose`.
 
 ## Accessibility
 
-- The image branch renders a real `<img>` with an `alt` attribute, so pass `alt`
-  whenever the picture conveys identity. Set `alt=""` to mark a decorative image.
+- The image branch renders a real `<img>` with an `alt` attribute, defaulting to
+  `alt ?? name ?? ''`. Pass `alt` whenever the picture conveys identity; an
+  `alt=""` (the default when neither is set) marks a decorative image.
 - The initials fallback is a `<span role="img">` labelled with `aria-label`,
   resolving to `alt ?? name ?? initials`. Screen readers announce the label rather
-  than reading the raw letters as text.
+  than reading the raw letters as text. When that name is empty, `role` and
+  `aria-label` are omitted rather than emitting an empty `aria-label`.
 - Keep `alt`/`name` meaningful: avoid using the avatar alone as the only label for
   an interactive control — pair it with a visible name where possible.
 

@@ -3,6 +3,8 @@ import { computed, ref, watch } from 'vue'
 import { cn } from '../../lib/cn'
 import { toneClasses } from '../../lib/tones'
 
+defineOptions({ inheritAttrs: false })
+
 const props = withDefaults(
   defineProps<{
     src?: string
@@ -36,6 +38,13 @@ function deriveInitials(name?: string): string {
 const initials = computed(() => props.initials ?? deriveInitials(props.name))
 const sizeClass = computed(() => SIZE_CLASSES[props.size])
 
+// `role="img"` requires a non-empty accessible name, so only expose the
+// fallback as an image when one is available.
+const accessibleName = computed(() => {
+  const label = props.alt ?? props.name ?? initials.value
+  return label === '' ? undefined : label
+})
+
 const errored = ref(false)
 watch(
   () => props.src,
@@ -48,15 +57,17 @@ watch(
 <template>
   <img
     v-if="src && !errored"
+    v-bind="$attrs"
     :src="src"
-    :alt="alt"
+    :alt="alt ?? name ?? ''"
     :class="cn(sizeClass, 'shrink-0 rounded-full object-cover')"
     @error="errored = true"
   />
   <span
     v-else
-    role="img"
-    :aria-label="alt ?? name ?? initials"
+    v-bind="$attrs"
+    :role="accessibleName ? 'img' : undefined"
+    :aria-label="accessibleName"
     :class="
       cn(
         sizeClass,

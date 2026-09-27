@@ -14,6 +14,25 @@ describe('Avatar', () => {
     expect(img.classes()).toContain('object-cover')
   })
 
+  it('defaults the image alt to the name, or an empty string', () => {
+    expect(mount(Avatar, { props: { src: '/magdi.png', name: 'Magdi Yacoub' } }).find('img').attributes('alt')).toBe(
+      'Magdi Yacoub',
+    )
+    expect(mount(Avatar, { props: { src: '/magdi.png' } }).find('img').attributes('alt')).toBe('')
+  })
+
+  it('forwards consumer class and attributes to whichever branch renders', () => {
+    const attrs = { class: 'consumer-class', 'data-testid': 'avatar' }
+
+    const img = mount(Avatar, { props: { src: '/magdi.png' }, attrs })
+    expect(img.find('img').classes()).toContain('consumer-class')
+    expect(img.find('img').attributes('data-testid')).toBe('avatar')
+
+    const fallback = mount(Avatar, { props: { name: 'Magdi' }, attrs })
+    expect(fallback.find('span').classes()).toContain('consumer-class')
+    expect(fallback.find('span').attributes('data-testid')).toBe('avatar')
+  })
+
   it('falls back to initials when the image fails to load', async () => {
     const wrapper = mount(Avatar, { props: { src: '/broken.png', name: 'Magdi Yacoub' } })
     await wrapper.find('img').trigger('error')
@@ -21,7 +40,7 @@ describe('Avatar', () => {
     expect(wrapper.find('span').text()).toBe('MY')
   })
 
-  it('rasterizes the image again once src changes after an error', async () => {
+  it('renders the image again once src changes after an error', async () => {
     const wrapper = mount(Avatar, { props: { src: '/broken.png', name: 'Magdi Yacoub' } })
     await wrapper.find('img').trigger('error')
     expect(wrapper.find('img').exists()).toBe(false)
@@ -61,6 +80,13 @@ describe('Avatar', () => {
 
     const initial = mount(Avatar, { props: { initials: 'MY' } })
     expect(initial.find('span').attributes('aria-label')).toBe('MY')
+  })
+
+  it('omits role and aria-label when there is no accessible name', () => {
+    const span = mount(Avatar).find('span')
+    expect(span.attributes('role')).toBeUndefined()
+    expect(span.attributes('aria-label')).toBeUndefined()
+    expect(span.text()).toBe('')
   })
 
   it('maps each size to its utility classes', () => {
