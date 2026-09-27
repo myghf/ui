@@ -1,6 +1,8 @@
 export { cn } from './lib/cn'
 export * from './lib/date'
 export { toPascalCase, resolveIconName } from './lib/icons'
+export { toneClasses } from './lib/tones'
+export type { Tone, ToneClasses } from './lib/tones'
 export { default as Icon } from './components/icon/Icon.vue'
 export { default as Button } from './components/button/Button.vue'
 export { default as Input } from './components/input/Input.vue'
