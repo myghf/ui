@@ -34,8 +34,8 @@
 - Component pages use the fixed template: overview → live examples → props table → events table → slots table → exposed methods (if any) → accessibility notes → dark/RTL notes. Tables are hand-written and must match the component's `<script setup>` props/defaults and emitted events exactly.
 - Follow `DESIGN.md`: tokens-first (no raw hex), logical utilities (`ps/pe/ms/me/start/end`), `rtl:` variants, blue as primary.
 - Brand tokens are not re-declared in dark mode; document that consumer `:root` overrides survive.
-- Do not modify `src/**` runtime code. The only non-`docs/` changes are `package.json` (scripts + devDependencies), `package-lock.json`, and the empty changeset.
-- Final task adds an empty changeset (`npx changeset add --empty`) per `AGENTS.md`; never edit `version`/`CHANGELOG.md`.
+- Do not modify `src/**` runtime code, with one exception: the `<Toaster>` provider fix (Task 5) adds a default slot so `useToast()` works for descendants. That fix carries a `patch` changeset.
+- The `<Toaster>` fix ships a `patch` changeset; the docs-only work needs none. Never edit `version`/`CHANGELOG.md`.
 - Verification per task: `npm run docs:build` must pass (dead links fail the build). Run `npm run typecheck && npm test` after Task 1 and in the final task.
 
 ## Review Focus
@@ -419,7 +419,7 @@ git commit -m "docs: add reference and development pages"
 
 **Files:**
 - Create: `src/lib/docsCoverage.spec.ts`
-- Create: `.changeset/*.md` (empty changeset)
+- Verify: the `patch` changeset for the `<Toaster>` fix exists (added in Task 5)
 - Modify: `docs/.vitepress/config.ts` (complete sidebar / nav)
 
 **Interfaces:**
@@ -460,10 +460,10 @@ in `MAP`, and every mapped file exists under `docs/`. This makes "full public su
 Run: `npx vitest run src/lib/docsCoverage.spec.ts && npm test`
 Expected: PASS. If a name is missing, add its page (or correct the map) before continuing.
 
-- [ ] **Step 3: Add the empty changeset**
+- [ ] **Step 3: Verify the changeset**
 
-Run: `npx changeset add --empty`
-Expected: a new `.changeset/*.md` file with an empty summary (docs/infra-only change).
+Confirm a `patch` changeset for the `<Toaster>` fix exists (created in Task 5). The docs-only work
+needs no additional changeset.
 
 - [ ] **Step 4: Final verification**
 
@@ -476,7 +476,7 @@ category renders correctly.
 
 ```bash
 git add src/lib/docsCoverage.spec.ts .changeset docs/.vitepress/config.ts
-git commit -m "docs: add coverage guard, empty changeset and final polish"
+git commit -m "docs: add coverage guard and final polish"
 ```
 
 ---
