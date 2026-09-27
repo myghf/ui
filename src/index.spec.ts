@@ -12,6 +12,7 @@ const EXPECTED = [
   'Select', 'SelectButton', 'DatePicker', 'Dialog',
   'Drawer',
   'DropdownMenu', 'DropdownMenuTrigger', 'DropdownMenuContent', 'DropdownMenuItem',
+  'DropdownMenuSeparator', 'DropdownMenuLabel', 'DropdownMenuGroup',
   'TransferList',
   'Table', 'TableHeader', 'TableBody', 'TableRow', 'TableHead', 'TableCell',
   'TableEmpty', 'TablePagination', 'DataTable', 'TreeTable', 'TreeSelect',
