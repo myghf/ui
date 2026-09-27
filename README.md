@@ -125,8 +125,9 @@ persistent.
 ```
 
 Empty input emits `null`. Supports `min`/`max`/`step`/`stepSnapping`/`integer`, `locale`,
-`formatOptions`/`currency`, `prefix`/`suffix`, `showButtons`, and `size`; renders `role="spinbutton"`
-with formatted `aria-valuetext`.
+`formatOptions`/`currency`, `prefix`/`suffix`, `showButtons`, and `size`; reka's input renders
+`role="spinbutton"` with `aria-roledescription`, `aria-valuenow`, `aria-valuemin`, and `aria-valuemax`
+(via the underlying `NumberFieldInput`).
 
 **Drawer** — controlled via `v-model:open`:
 

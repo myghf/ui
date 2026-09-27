@@ -170,7 +170,7 @@ consumer's `:root` overrides whenever dark mode is active.
 Brand-tinted surfaces must not reuse light tints on dark. The rule: dark tints pair a **`*-900/40`
 background with `*-200` text** (and `*-700` borders for outlines), e.g.
 `dark:bg-primary-900/40 dark:text-primary-200`. This is codified in
-[`src/lib/tones.ts`](./src/lib/tones.ts) and consumed by `Tag`, `Alert`/`Message`, and `Toaster`.
+[`src/lib/tones.ts`](./src/lib/tones.ts) and consumed by `Tag`, `Alert`/`Message`, and `Toast`.
 
 Components that style with semantic utilities (`bg-surface`, `text-foreground`, `border-border`)
 adapt automatically; only tinted or edge-case components need explicit `dark:` variants.
@@ -213,9 +213,9 @@ adapt automatically; only tinted or edge-case components need explicit `dark:` v
 
 1. **Tokens first.** Use the `--myghf-*` custom properties or the Tailwind classes from the preset.
    Do not hard-code hex values in components. Add a new token only if no existing token fits.
-   `Alert`/`Message`, `Toaster`, `InputNumber`, and `Drawer` style from the shared semantic tokens
-   (and the `lib/tones.ts` map) rather than raw colors; use the `*-900/40` / `*-200` dark-tint rule
-   from §3 when a brand tint is needed.
+   `Alert`/`Message`, `Toast`, `InputNumber`, `Drawer`, and `ThemeToggle` (Button-style ghost styling
+   plus semantic tokens) style from the shared semantic tokens (and the `lib/tones.ts` map) rather than
+   raw colors; use the `*-900/40` / `*-200` dark-tint rule from §3 when a brand tint is needed.
 2. **Blue as primary.** Use `primary-500` for primary actions and brand surfaces; `warning-500` and
    `error-500` as accents only.
 3. **Logo handling.** The library ships no logo. Consumers must use an official asset, preserve
