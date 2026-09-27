@@ -207,9 +207,11 @@ git commit -m "docs: add guide pages"
 
 - [ ] **Step 1: Write the page template and index**
 
-`docs/components/index.md` lists every component grouped by category with links. Establish the fixed
-page template (overview → examples → props → events → slots → exposed → a11y → dark/RTL) by writing
-`button.md` fully first.
+`docs/components/index.md` lists the components that exist so far, grouped by category with links.
+It MUST only link to pages that already exist — later component tasks append their own group to it
+(so `docs:build` never sees a dead link). Establish the fixed page template
+(overview → examples → props → events → slots → exposed → a11y → dark/RTL) by writing `button.md`
+fully first.
 
 - [ ] **Step 2: Write the pages against source**
 
@@ -237,6 +239,7 @@ git commit -m "docs: add actions and display component pages"
 **Files:**
 - Create: `docs/components/{input,input-number,textarea,password,checkbox,select,select-button,date-picker,tree-select,transfer-list}.md`
 - Create: `docs/.vitepress/theme/demos/<component>/*.vue`
+- Modify: `docs/components/index.md` (append the form group)
 - Modify: `docs/.vitepress/config.ts` (sidebar)
 
 **Interfaces:**
@@ -249,7 +252,8 @@ Read each `src/components/<name>/<Name>.vue` and document exact props/defaults/e
 `InputNumber` include the `number | null` v-model, min/max/step/integer/locale/formatOptions/currency,
 and the `role="spinbutton"`/`aria-invalid`/`aria-valuetext` behavior. For `DatePicker` document
 `mode`, `hourFormat`, `minuteStep`, `locale`, `labels` (+ `label-*` slots), `weekStartsOn`, and
-`defaultOpen`. Include at least one live demo per page.
+`defaultOpen`. Include at least one live demo per page. Append the overlays group to `docs/components/index.md`. Append the form group to
+`docs/components/index.md`.
 
 - [ ] **Step 2: Wire the sidebar and build**
 
@@ -270,6 +274,7 @@ git commit -m "docs: add form component pages"
 **Files:**
 - Create: `docs/components/{dialog,drawer,dropdown-menu,toast}.md`
 - Create: `docs/.vitepress/theme/demos/<component>/*.vue`
+- Modify: `docs/components/index.md` (append the overlays group)
 - Modify: `docs/.vitepress/config.ts` (sidebar)
 
 **Interfaces:**
@@ -305,6 +310,7 @@ git commit -m "docs: add overlay component pages"
 **Files:**
 - Create: `docs/components/{tabs,table,data-table,tree-table}.md`
 - Create: `docs/.vitepress/theme/demos/<component>/*.vue`
+- Modify: `docs/components/index.md` (append the navigation and data groups)
 - Modify: `docs/.vitepress/config.ts` (sidebar)
 
 **Interfaces:**
@@ -317,7 +323,7 @@ Read the components and their sub-components. `tabs.md` documents `TabsList`, `T
 `TabsContent`; `table.md` documents `TableHeader`, `TableBody`, `TableRow`, `TableHead`,
 `TableCell`, `TableEmpty`, `TablePagination`; `data-table.md` and `tree-table.md` document their
 column/type props (`DataTableFeatures`, `TreeTableColumn`, `TreeNode`). Include at least one live
-demo per page; data demos may use small static datasets defined inline in the demo `.vue`.
+demo per page; data demos may use small static datasets defined inline in the demo `.vue`. Append the navigation and data groups to `docs/components/index.md`.
 
 - [ ] **Step 2: Wire the sidebar and build**
 
