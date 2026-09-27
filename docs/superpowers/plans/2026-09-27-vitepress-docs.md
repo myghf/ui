@@ -17,7 +17,7 @@
 - Local/dev only: scripts `docs:dev`, `docs:build`, `docs:preview`. No CI workflow.
 - Docs never ship: `package.json` `files`, `exports`, and runtime code are unchanged.
 - `@myghf/ui` is aliased to `src/index.ts` in `docs/.vitepress/config.ts`, so demos render current source.
-- Tailwind runs in the docs build via `docs/postcss.config.js` with an explicit config path to `docs/tailwind.config.js`; that config uses `../src/tailwindPreset.js` and content globs `./**/*.md`, `./.vitepress/**/*.{vue,ts}`, `../src/**/*.{vue,ts}`.
+- Tailwind runs in the docs build via `docs/postcss.config.js` with an explicit config path to `docs/tailwind.config.js`; that config uses `../src/tailwindPreset.js` and `content: { relative: true, files: ['./**/*.md', './.vitepress/**/*.{vue,ts}', '../src/**/*.{vue,ts}'] }`. The `relative: true` form is required because Tailwind resolves globs from the process cwd (the repo root), not the config file's directory.
 - `docs/.vitepress/theme/custom.css` imports `src/tokens.css` and overrides VitePress brand variables from `--myghf-primary-*`.
 - Demo pattern (every example):
   ```md
@@ -85,7 +85,10 @@ import preset from '../src/tailwindPreset.js'
 
 export default {
   presets: [preset],
-  content: ['./**/*.md', './.vitepress/**/*.{vue,ts}', '../src/**/*.{vue,ts}'],
+  content: {
+    relative: true,
+    files: ['./**/*.md', './.vitepress/**/*.{vue,ts}', '../src/**/*.{vue,ts}'],
+  },
 }
 ```
 
