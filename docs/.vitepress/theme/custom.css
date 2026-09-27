@@ -25,6 +25,32 @@
   --vp-c-brand-soft: rgb(var(--myghf-primary-400) / 0.16);
 }
 
+/*
+ * Map the rest of the VitePress chrome onto MYGHF tokens. Set once in `:root`;
+ * the library's dark token block (`.dark`) switches them automatically, so no
+ * `.dark` duplicate is needed. The brand steps above keep their own light/dark
+ * choices because they deliberately pick different scale steps per theme.
+ */
+:root {
+  /* surfaces */
+  --vp-c-bg: rgb(var(--myghf-background));
+  --vp-c-bg-alt: rgb(var(--myghf-surface-muted));
+  --vp-c-bg-soft: rgb(var(--myghf-surface-muted));
+  --vp-c-bg-elv: rgb(var(--myghf-surface));
+  /* text (site title uses --vp-c-neutral) */
+  --vp-c-neutral: rgb(var(--myghf-foreground));
+  --vp-c-neutral-inverse: rgb(var(--myghf-surface));
+  --vp-c-text-1: rgb(var(--myghf-foreground));
+  --vp-c-text-2: rgb(var(--myghf-muted));
+  --vp-c-text-3: rgb(var(--myghf-muted));
+  /* lines */
+  --vp-c-divider: rgb(var(--myghf-border));
+  --vp-c-border: rgb(var(--myghf-border));
+  --vp-c-gutter: rgb(var(--myghf-border));
+  /* type */
+  --vp-font-family-base: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
 /* Shared <Demo> preview pane. */
 .myghf-demo {
   margin: 16px 0;
