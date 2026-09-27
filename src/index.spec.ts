@@ -8,6 +8,7 @@ const EXPECTED = [
   'Alert', 'Message',
   'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent',
   'Select', 'SelectButton', 'DatePicker', 'Dialog',
+  'Drawer',
   'DropdownMenu', 'DropdownMenuTrigger', 'DropdownMenuContent', 'DropdownMenuItem',
   'TransferList',
   'Table', 'TableHeader', 'TableBody', 'TableRow', 'TableHead', 'TableCell',
