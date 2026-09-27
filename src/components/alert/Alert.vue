@@ -39,6 +39,8 @@ const defaultIcons: Record<Tone, string> = {
 }
 
 const dismissed = ref(false)
+const hovered = ref(false)
+const focused = ref(false)
 
 let timer: ReturnType<typeof setTimeout> | undefined
 /** Absolute ms timestamp when the active timer would fire. */
@@ -67,9 +69,38 @@ function pause() {
   remaining = Math.max(0, deadline - Date.now())
 }
 
-function resume() {
-  if (dismissed.value || timer !== undefined || remaining <= 0) return
+/**
+ * Re-arms the timer only once both pause sources are released. If the remaining
+ * time floored to zero while paused, dismiss immediately instead of stranding.
+ */
+function maybeResume() {
+  if (dismissed.value || hovered.value || focused.value || timer !== undefined) return
+  if (!props.duration || props.duration <= 0) return
+  if (remaining <= 0) {
+    dismiss()
+    return
+  }
   start(remaining)
+}
+
+function onEnter() {
+  hovered.value = true
+  pause()
+}
+
+function onLeave() {
+  hovered.value = false
+  maybeResume()
+}
+
+function onFocusIn() {
+  focused.value = true
+  pause()
+}
+
+function onFocusOut() {
+  focused.value = false
+  maybeResume()
 }
 
 function dismiss() {
@@ -94,10 +125,10 @@ onBeforeUnmount(clearTimer)
       'flex w-full items-start gap-3 rounded-lg p-4 text-sm',
       toneClasses[tone][variant],
     ]"
-    @mouseenter="pause"
-    @mouseleave="resume"
-    @focusin="pause"
-    @focusout="resume"
+    @mouseenter="onEnter"
+    @mouseleave="onLeave"
+    @focusin="onFocusIn"
+    @focusout="onFocusOut"
   >
     <slot name="icon">
       <Icon
