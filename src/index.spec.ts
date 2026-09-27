@@ -3,8 +3,8 @@ import * as ui from './index'
 
 // Every public export the app depends on. Guards the move against a dropped file.
 const EXPECTED = [
-  'cn', 'toPascalCase', 'resolveIconName', 'toneClasses', 'Icon',
-  'Button', 'Input', 'Textarea', 'Password', 'Checkbox', 'Tag',
+  'cn', 'toNumberOrNull', 'mergeFormatOptions', 'toPascalCase', 'resolveIconName', 'toneClasses', 'Icon',
+  'Button', 'Input', 'InputNumber', 'Textarea', 'Password', 'Checkbox', 'Tag',
   'Alert', 'Message',
   'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent',
   'Select', 'SelectButton', 'DatePicker', 'Dialog',
