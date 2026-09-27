@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, useAttrs } from 'vue'
 import { tv, type VariantProps } from 'tailwind-variants'
+import Icon from '../icon/Icon.vue'
 
 const buttonVariants = tv({
   base: 'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4 data-[loading=true]:cursor-not-allowed',
@@ -32,8 +33,21 @@ const props = withDefaults(
     loading?: boolean
     /** Text label; equivalent to slot content. PrimeVue parity for the app migration. */
     label?: string
+    /** Leading icon name (lucide). Ignored while `loading` shows the spinner. */
+    icon?: string
+    /** Trailing icon name (lucide); implies end placement. */
+    iconTrailing?: string
+    /** Side the `icon` renders on. Defaults to `start`. */
+    iconPos?: 'start' | 'end'
   }>(),
-  { variant: 'default', size: 'default', type: 'button', disabled: false, loading: false },
+  {
+    variant: 'default',
+    size: 'default',
+    type: 'button',
+    disabled: false,
+    loading: false,
+    iconPos: 'start',
+  },
 )
 
 const attrs = useAttrs()
@@ -45,10 +59,14 @@ const isDisabled = computed(() => props.disabled || props.loading || Boolean(att
     :type="type"
     :disabled="isDisabled"
     :data-loading="loading || undefined"
+    :aria-busy="loading || undefined"
     :class="buttonVariants({ variant, size })"
     v-bind="attrs"
   >
-    <span v-if="loading" class="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
-    <slot v-else>{{ label }}</slot>
+    <Icon v-if="loading" name="loader-circle" class="animate-spin" aria-hidden="true" />
+    <Icon v-else-if="iconPos === 'start' && icon" :name="icon" aria-hidden="true" />
+    <slot>{{ label }}</slot>
+    <Icon v-if="iconTrailing" :name="iconTrailing" aria-hidden="true" />
+    <Icon v-else-if="iconPos === 'end' && icon" :name="icon" aria-hidden="true" />
   </button>
 </template>
