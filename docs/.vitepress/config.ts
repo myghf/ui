@@ -53,6 +53,7 @@ export default defineConfig({
               { text: 'Tag', link: '/components/tag' },
               { text: 'Alert / Message', link: '/components/alert' },
               { text: 'Spinner', link: '/components/spinner' },
+              { text: 'Skeleton', link: '/components/skeleton' },
               { text: 'ThemeToggle', link: '/components/theme-toggle' },
               { text: 'Icon', link: '/components/icon' },
             ],
