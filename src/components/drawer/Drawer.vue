@@ -106,9 +106,11 @@ const sizeClass = computed(() => (isVertical.value ? verticalSizes[props.size] :
       Once mounted the portal stays put, so presence/animation still work on close.
     -->
     <DialogPortal :force-mount="open">
-      <DialogOverlay v-if="backdrop" class="fixed inset-0 z-50 bg-black/50 dark:bg-black/70" />
+      <DialogOverlay
+        v-if="backdrop || preventScroll"
+        :class="['fixed inset-0 z-50', backdrop ? 'bg-black/50 dark:bg-black/70' : 'bg-transparent']"
+      />
       <DialogContent
-        :prevent-scroll="preventScroll"
         :class="[
           'fixed z-50 flex flex-col overflow-hidden border-border bg-surface shadow-dialog transition-transform duration-200 focus-visible:outline-none',
           positionClasses[position],

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils'
-import { DialogContent, DialogRoot, DialogTitle } from 'reka-ui'
+import { DialogContent, DialogOverlay, DialogRoot, DialogTitle } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import Drawer from './Drawer.vue'
@@ -39,5 +39,22 @@ describe('Drawer', () => {
     wrapper.findComponent(DialogRoot).vm.$emit('update:open', false)
     await nextTick()
     expect(onUpdate).toHaveBeenCalledWith(false)
+  })
+
+  it('locks scroll via a transparent overlay when backdrop is off but preventScroll is on', () => {
+    const wrapper = mount(Drawer, { props: { open: true, backdrop: false, preventScroll: true } })
+    expect(wrapper.findComponent(DialogOverlay).exists()).toBe(true)
+    expect(wrapper.getComponent(DialogOverlay).classes()).toContain('bg-transparent')
+    expect(wrapper.getComponent(DialogContent).attributes('prevent-scroll')).toBeUndefined()
+  })
+
+  it('renders no overlay when both backdrop and preventScroll are off', () => {
+    const wrapper = mount(Drawer, { props: { open: true, backdrop: false, preventScroll: false } })
+    expect(wrapper.findComponent(DialogOverlay).exists()).toBe(false)
+  })
+
+  it('renders a dimming overlay when backdrop is on', () => {
+    const wrapper = mount(Drawer, { props: { open: true, backdrop: true } })
+    expect(wrapper.getComponent(DialogOverlay).classes()).toContain('bg-black/50')
   })
 })
