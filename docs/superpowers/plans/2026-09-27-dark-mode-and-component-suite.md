@@ -917,7 +917,8 @@ Props: `modelValue?: number | null`, `min?`, `max?`, `step?` (default 1), `stepS
 `placeholder?`, `disabled?`, `readonly?`, `invalid?`, `size?: 'sm' | 'default' | 'lg'`,
 `id?`, `name?`. Emits `update:modelValue: [number | null]`.
 
-Decisions: `safeStep = step && step > 0 ? step : 1`; pass `min`/`max` straight through (reka handles
+Decisions: `safeStep = Number.isFinite(step) && step > 0 ? step : 1` (normalizes `0`, negatives, `NaN`,
+and `±Infinity`); pass `min`/`max` straight through (reka handles
 `min > max` without looping). Compute `:format-options="mergeFormatOptions({ currency, formatOptions, integer })"`
 and `:locale`. Wrap `NumberFieldRoot` in a relative div with the same surface/border/size classes as
 `Input`; render `prefix`/`suffix` spans and the `NumberFieldInput` (add `role="spinbutton"` if reka
