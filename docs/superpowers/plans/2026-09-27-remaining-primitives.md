@@ -458,6 +458,7 @@ git commit -m "feat: add optional Nuxt module and multi-entry build"
 - `button.md`: add `icon`/`iconTrailing`/`iconPos` to the props table and a live example; document the loading behaviour (label stays, leading spinner, `aria-busy`).
 - `input.md`: add `type`/`id`/`name`/`autocomplete`/`required`; document form-field wiring.
 - `textarea.md`: add `autoResize`/`maxRows`; document the `rows` minimum and form-field wiring.
+- `select.md`: add the `id`/`required` props; correct the `invalid` wording (it now sets `aria-invalid` via the prop or context); document form-field wiring incl. `aria-required`.
 - `dropdown-menu.md`: document item `icon`/`disabled` and the new `DropdownMenuSeparator`/`DropdownMenuLabel`/`DropdownMenuGroup`.
 
 - [ ] **Step 2: Add the Nuxt guide**

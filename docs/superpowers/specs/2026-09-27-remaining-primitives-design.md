@@ -216,8 +216,9 @@ New VitePress pages: `components/spinner`, `components/skeleton`, `components/av
 `components/form-field` (covering `Label`/`FormDescription`/`FormMessage`/`useFormField`), and a
 Nuxt integration page (`guide/nuxt`). Updates: `components/button` (icons/loading),
 `components/input` (native attrs + form field), `components/textarea` (auto-grow),
-`components/dropdown-menu` (icon/disabled/Separator/Label/Group). Update `components/index.md` and
-the sidebar/nav. Each page follows the existing template (overview → examples → props → events →
+`components/select` (form-field wiring: `id`/`required` props, `aria-invalid`/`aria-required`, corrected
+"invalid is visual-only" wording), and `components/dropdown-menu` (icon/disabled/Separator/Label/Group).
+Update `components/index.md` and the sidebar/nav. Each page follows the existing template (overview → examples → props → events →
 slots → a11y → dark/RTL) with live `<Demo>` examples.
 
 ## 9. Release
