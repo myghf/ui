@@ -11,6 +11,7 @@ const EXPECTED = [
   'TransferList',
   'Table', 'TableHeader', 'TableBody', 'TableRow', 'TableHead', 'TableCell',
   'TableEmpty', 'TablePagination', 'DataTable', 'TreeTable', 'TreeSelect',
+  'useTheme', 'createTheme', 'ThemeToggle',
 ]
 
 describe('@myghf/ui barrel', () => {
