@@ -196,8 +196,8 @@ exposed methods (if any), accessibility notes, and dark/RTL notes.
 
 ### 6.5 Utilities
 
-`cn`, `date` (`toISODate`, `toTime`, `clampTime`, `sortRange`, `dateToValue`, `valueToDate`,
-`buildHourOptions`, `buildMinuteOptions`, `to12Hour`, `from12Hour`), `locale`
+`cn`, `date` (`toISODate`, `toTime`, `toMinutes`, `clampTime`, `sortRange`, `dateToValue`,
+`valueToDate`, `buildHourOptions`, `buildMinuteOptions`, `to12Hour`, `from12Hour`), `locale`
 (`getFirstDayOfWeek`, `getWeekdayLabels`, `getMonthLabel`, `formatLocalizedDate`,
 `formatLocalizedTime`), `number` (`toNumberOrNull`, `mergeFormatOptions`), `icons`
 (`toPascalCase`, `resolveIconName`), `tones` (`toneClasses`, `Tone`, `ToneClasses`).
