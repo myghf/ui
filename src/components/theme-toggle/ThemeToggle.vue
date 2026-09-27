@@ -23,7 +23,7 @@ const SIZE_CLASSES: Record<'sm' | 'default' | 'lg', string> = {
 const classes = computed(() => [
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors',
   'text-foreground hover:bg-surface-muted',
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2 dark:focus-visible:ring-offset-background',
   'disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4',
   SIZE_CLASSES[props.size],
 ])

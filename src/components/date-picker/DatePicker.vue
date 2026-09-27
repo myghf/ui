@@ -272,7 +272,9 @@ const parsedTime = computed(() => {
 })
 
 const hourOptions = computed(() => buildHourOptions(props.hourFormat))
-const minuteOptions = computed(() => buildMinuteOptions(props.minuteStep))
+const minuteOptions = computed(() =>
+  buildMinuteOptions(Math.min(30, Math.max(1, props.minuteStep ?? 1))),
+)
 
 const selectedHour = computed<number>({
   get: () =>

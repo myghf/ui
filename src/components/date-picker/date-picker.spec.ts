@@ -22,6 +22,12 @@ describe('DatePicker', () => {
     expect(open({ minuteStep: 15 }).get('[data-test="minutes"]').findAll('option')).toHaveLength(4)
   })
 
+  it('clamps minuteStep to 1..30', () => {
+    const options = open({ minuteStep: 45 }).get('[data-test="minutes"]').findAll('option')
+    expect(options).toHaveLength(2)
+    expect(options.map((o) => o.element.value)).toEqual(['0', '30'])
+  })
+
   it('localizes the month heading', () => {
     const en = open({ locale: 'en-US' })
     const fr = open({ locale: 'fr-FR' })

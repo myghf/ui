@@ -49,6 +49,16 @@ const resolvedFormatOptions = computed(() =>
     integer: props.integer,
   }),
 )
+
+/** Locale-formatted value for `aria-valuetext`; `undefined` when empty. */
+const valuetext = computed<string | undefined>(() => {
+  if (props.modelValue == null) return undefined
+  try {
+    return new Intl.NumberFormat(props.locale, resolvedFormatOptions.value).format(props.modelValue)
+  } catch {
+    return undefined
+  }
+})
 </script>
 
 <template>
@@ -80,6 +90,8 @@ const resolvedFormatOptions = computed(() =>
       <NumberFieldInput
         v-bind="attrs"
         :placeholder="placeholder"
+        :aria-invalid="invalid || undefined"
+        :aria-valuetext="valuetext"
         class="min-w-0 flex-1 border-0 bg-transparent p-0 text-inherit outline-none placeholder:text-muted focus-visible:outline-none disabled:cursor-not-allowed"
       />
 

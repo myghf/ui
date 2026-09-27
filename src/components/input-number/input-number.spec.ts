@@ -38,4 +38,19 @@ describe('InputNumber', () => {
     const wrapper = mount(InputNumber, { props: { modelValue: 0, step: 5 } })
     expect(wrapper.findComponent(NumberFieldRoot).props('step')).toBe(5)
   })
+
+  it('marks the input invalid when the invalid prop is set', () => {
+    const wrapper = mount(InputNumber, { props: { modelValue: 1, invalid: true } })
+    expect(wrapper.get('input').attributes('aria-invalid')).toBe('true')
+  })
+
+  it('exposes a locale-formatted aria-valuetext', () => {
+    const wrapper = mount(InputNumber, { props: { modelValue: 1234.5, locale: 'en-US' } })
+    expect(wrapper.get('input').attributes('aria-valuetext')).toContain('1,234.5')
+  })
+
+  it('omits aria-valuetext when there is no value', () => {
+    const wrapper = mount(InputNumber, { props: { modelValue: null } })
+    expect(wrapper.get('input').attributes('aria-valuetext')).toBeUndefined()
+  })
 })

@@ -10,4 +10,8 @@ describe('ThemeToggle', () => {
     expect(button.attributes('aria-label')).toBe('Toggle theme')
     expect(['true', 'false']).toContain(button.attributes('aria-pressed'))
   })
+
+  it('offsets the focus ring against the dark background', () => {
+    expect(mount(ThemeToggle).get('button').classes()).toContain('dark:focus-visible:ring-offset-background')
+  })
 })
