@@ -23,4 +23,19 @@ describe('InputNumber', () => {
     expect(wrapper.text()).toContain('$')
     expect(wrapper.text()).toContain('kg')
   })
+
+  it('normalizes a non-positive step to 1 before forwarding it', () => {
+    const wrapper = mount(InputNumber, { props: { modelValue: 0, step: 0 } })
+    expect(wrapper.findComponent(NumberFieldRoot).props('step')).toBe(1)
+  })
+
+  it('normalizes a non-finite step to 1 before forwarding it', () => {
+    const wrapper = mount(InputNumber, { props: { modelValue: 0, step: Number.POSITIVE_INFINITY } })
+    expect(wrapper.findComponent(NumberFieldRoot).props('step')).toBe(1)
+  })
+
+  it('forwards a valid positive step unchanged', () => {
+    const wrapper = mount(InputNumber, { props: { modelValue: 0, step: 5 } })
+    expect(wrapper.findComponent(NumberFieldRoot).props('step')).toBe(5)
+  })
 })

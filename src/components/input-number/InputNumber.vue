@@ -39,8 +39,8 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [value: number | null] }>()
 const attrs = useAttrs()
 
-/** Never hand reka a non-positive step; it would loop or divide by zero. */
-const safeStep = computed(() => (props.step && props.step > 0 ? props.step : 1))
+/** Never hand reka a non-positive or non-finite step; it would loop or divide by zero. */
+const safeStep = computed(() => (Number.isFinite(props.step) && props.step > 0 ? props.step : 1))
 
 const resolvedFormatOptions = computed(() =>
   mergeFormatOptions({
