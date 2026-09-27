@@ -214,10 +214,12 @@ New `src/components/toast/` directory.
 ### 7.1 `Toaster.vue`
 
 Provider + viewports, built on reka `ToastProvider`, `ToastRoot`, `ToastTitle`,
-`ToastDescription`, `ToastClose`, `ToastViewport`, `ToastAction`, `ToastPortal`.
+`ToastDescription`, `ToastClose`, `ToastViewport`, `ToastAction`. (No `ToastPortal`: viewports are
+`fixed`, and rendering in place keeps DOM assertions and stacking predictable.)
 
 - Props: `position` (default `'top-end'`), `max` (default `4`), `duration` (default `5000`), `gap`
-  (default `'0.5rem'`).
+  (default `'0.5rem'`), `label` (default `'Notifications'`), and an optional `store` (advanced:
+  supply a `createToastStore()` instance to share or pre-seed; defaults to a fresh store).
 - Creates the reactive queue and `provide()`s it; `useToast()` injects it.
 - Renders one `ToastViewport` per distinct position group so an individual toast's `position`
   overrides the provider default. Positions are logical:
@@ -356,6 +358,8 @@ Extend `src/components/date-picker/DatePicker.vue`; no breaking prop changes.
 - `labels?: Partial<DatePickerLabels>`:
   `{ placeholder, previousMonth, nextMonth, clear, apply, today, time, hour, minute, am, pm }`.
 - `weekStartsOn?: number` (`0`–`6`, Sunday=0) overriding locale detection.
+- `defaultOpen?: boolean` (default `false`) — initial popover state, useful for tests and
+  prepopulated forms.
 
 ### 11.2 Behavior
 
