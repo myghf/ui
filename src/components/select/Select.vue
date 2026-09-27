@@ -12,6 +12,7 @@ import {
 } from 'reka-ui'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import { cn } from '../../lib/cn'
+import { useFormField } from '../../lib/formField'
 
 const props = withDefaults(
   defineProps<{
@@ -25,11 +26,21 @@ const props = withDefaults(
     multiple?: boolean
     size?: 'sm' | 'default'
     invalid?: boolean
+    id?: string
+    required?: boolean
   }>(),
-  { optionLabel: 'label', optionValue: 'value', placeholder: '', size: 'default' },
+  // `invalid`/`required` default to `undefined` (not `false`) so Vue's Boolean
+  // casting does not swallow them and they can fall through to the form field.
+  { optionLabel: 'label', optionValue: 'value', placeholder: '', size: 'default', invalid: undefined, required: undefined },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [value: unknown] }>()
+
+const field = useFormField()
+const id = computed(() => props.id ?? field?.id.value)
+const invalid = computed(() => props.invalid ?? field?.invalid.value ?? false)
+const required = computed(() => props.required ?? field?.required.value ?? false)
+const describedBy = computed(() => field?.describedBy.value)
 
 const open = ref(false)
 
@@ -86,6 +97,10 @@ function onClear() {
         invalid ? 'border-error-500 focus-visible:ring-error-500' : '',
         $attrs.class as string || '',
       )"
+      :id="id"
+      :aria-invalid="invalid || undefined"
+      :aria-describedby="describedBy"
+      :required="required || undefined"
       v-bind="$attrs"
     >
       <SelectValue :placeholder="placeholder">
