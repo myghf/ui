@@ -113,8 +113,9 @@ toTime(545) // → '09:05'
 function toMinutes(time: string): number
 ```
 
-Parses an `HH:MM` string into minutes since midnight. A missing minute component is treated
-as `0`, and a non-numeric component becomes `NaN`.
+Parses an `HH:MM` string into minutes since midnight. A missing minute part (for example
+`'09'`) is treated as `0`, and a non-numeric minute part also becomes `0` (the `m || 0`
+fallback). A non-numeric **hour** makes the whole result `NaN`.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
@@ -263,13 +264,16 @@ function from12Hour(hour: number, meridiem: 'am' | 'pm'): number
 ```
 
 The inverse of `to12Hour`: converts a 12-hour hour plus meridiem back to the 24-hour clock.
+Unlike `to12Hour`, which uses a true modulo, this helper uses a **signed remainder**
+(`Math.trunc(hour) % 12`). Non-negative hours behave as expected; a negative hour keeps a
+negative remainder, so `from12Hour(-1, 'pm')` is `11`, not `13`.
 
 | Parameter | Type | Description |
 | --- | --- | --- |
-| `hour` | `number` | Hour on the 12-hour clock; reduced modulo 12. |
+| `hour` | `number` | Hour on the 12-hour clock; truncated, then taken as a signed remainder of 12. |
 | `meridiem` | `'am' \| 'pm'` | `'pm'` adds twelve hours. |
 
-**Returns:** `number` on the 24-hour clock (`0`–`23`).
+**Returns:** `number` on the 24-hour clock (`0`–`23`) for non-negative inputs.
 
 ```ts
 import { from12Hour } from '@myghf/ui'
@@ -277,4 +281,5 @@ import { from12Hour } from '@myghf/ui'
 from12Hour(12, 'am') // → 0
 from12Hour(12, 'pm') // → 12
 from12Hour(1, 'pm') // → 13
+from12Hour(-1, 'pm') // → 11 (signed remainder: -1 + 12)
 ```

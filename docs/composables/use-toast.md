@@ -107,7 +107,7 @@ provider) so it has a viewport to render into. Rendering the store's methods wit
 | Member | Type | Description |
 | --- | --- | --- |
 | `items` | `Ref<ToastItem[]>` | Every toast, including those queued past `max`. |
-| `visible` | `ComputedRef<ToastItem[]>` | The `max` most recent toasts, oldest first. |
+| `visible` | `ComputedRef<ToastItem[]>` | The first `max` toasts still in the queue — the **oldest** ones — oldest first. Newer extras stay queued in `items`. |
 | `add` | `(options: ToastOptions) => string` | Adds a toast and returns its generated id. |
 | `remove` | `(id: string) => void` | Removes the toast with that id; a queued toast moves up. |
 | `clear` | `() => void` | Removes all toasts, queued ones included. |
@@ -173,9 +173,9 @@ stay centred. Set a default on the store (`position`) and override it per toast
 - `duration` is the auto-dismiss delay in **milliseconds**; the default is `5000`.
 - `duration: 0` makes a toast **persistent** until the user dismisses it or code calls
   `remove()`/`clear()`. Prefer it for important or actionable messages.
-- `max` caps how many toasts are **visible** at once. Extra toasts stay in `items` (they are
-  **queued**), and the oldest visible ones make room as they dismiss. `visible` is the `max`
-  most recent toasts; `items` holds everything, queued toasts included.
+- `max` caps how many toasts are **visible** at once. `visible` is the first `max` toasts
+  still in the queue — the **oldest** ones — so newer extras stay in `items` as a **queue**
+  and appear as the visible toasts dismiss. `items` holds everything, queued toasts included.
 - Adding past `max` never drops a toast — it waits in the queue.
 
 ## `toastKey`

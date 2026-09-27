@@ -114,7 +114,10 @@ blocked cookies) the applied theme still works for the session, it just is not r
 `useTheme()` and `createTheme()` are safe to call during server rendering. Every DOM access
 (`document`, `window.localStorage`, `window.matchMedia`) is behind a guard, and:
 
-- Without a DOM, `resolved` is `'light'` and storage is not read.
+- Without a DOM, storage is not read and the initial mode is `defaultMode`. `resolved` is
+  `'light'` only when that mode is `'system'` or `'light'`: with `defaultMode: 'system'` it
+  falls back to `'light'`, but `createTheme({ defaultMode: 'dark' })` resolves to `'dark'`.
+  Either way no attribute is written, because `apply()` is a no-op without a DOM.
 - `apply()` and `persist()` become no-ops, so nothing throws and no attributes are written.
 - Writing attributes happens in the browser, so pair the controller with `<ClientOnly>` (or
   render theme-dependent UI only on the client) to avoid a hydration mismatch.
