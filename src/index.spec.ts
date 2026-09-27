@@ -5,6 +5,7 @@ import * as ui from './index'
 const EXPECTED = [
   'cn', 'toPascalCase', 'resolveIconName', 'toneClasses', 'Icon',
   'Button', 'Input', 'Textarea', 'Password', 'Checkbox', 'Tag',
+  'Alert', 'Message',
   'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent',
   'Select', 'SelectButton', 'DatePicker', 'Dialog',
   'DropdownMenu', 'DropdownMenuTrigger', 'DropdownMenuContent', 'DropdownMenuItem',
