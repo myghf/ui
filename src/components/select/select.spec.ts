@@ -32,6 +32,7 @@ describe('Select', () => {
     expect(trigger.attributes('aria-invalid')).toBeUndefined()
     expect(trigger.attributes('aria-describedby')).toBeUndefined()
     expect(trigger.attributes('required')).toBeUndefined()
+    expect(trigger.attributes('aria-required')).toBeUndefined()
   })
 
   it('wires id, describedby, invalid, and required from the FormField context', () => {
@@ -43,7 +44,8 @@ describe('Select', () => {
     expect(trigger.attributes('id')).toBe('country')
     expect(trigger.attributes('aria-describedby')).toBe('country-description country-error')
     expect(trigger.attributes('aria-invalid')).toBe('true')
-    expect(trigger.attributes('required')).toBeDefined()
+    expect(trigger.attributes('required')).not.toBe('false')
+    expect(trigger.attributes('aria-required')).toBe('true')
   })
 
   it('uses the context generated id when no explicit id is given', () => {
@@ -65,6 +67,16 @@ describe('Select', () => {
     const trigger = mountWithField({ invalid: false, required: false }).get('button')
     expect(trigger.attributes('aria-invalid')).toBeUndefined()
     expect(trigger.attributes('required')).toBeUndefined()
+    expect(trigger.attributes('aria-required')).toBeUndefined()
+  })
+
+  it('exposes aria-required to assistive tech when the field is required', () => {
+    const trigger = mountWithField().get('button')
+    expect(trigger.attributes('aria-required')).toBe('true')
+  })
+
+  it('omits aria-required when no field is provided', () => {
+    expect(mount(Select).get('button').attributes('aria-required')).toBeUndefined()
   })
 
   it('lets a consumer aria-describedby attr win over the context value', () => {

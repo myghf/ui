@@ -88,6 +88,7 @@ function onClear() {
     :model-value="modelValue"
     :multiple="multiple"
     :disabled="disabled"
+    :required="required || undefined"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <SelectTrigger
