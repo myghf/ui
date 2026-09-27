@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import ToastUseToast from '../.vitepress/theme/demos/toast/use-toast.vue'
 import ToastSeverities from '../.vitepress/theme/demos/toast/severities.vue'
 import ToastPositions from '../.vitepress/theme/demos/toast/positions.vue'
 </script>
@@ -6,8 +7,46 @@ import ToastPositions from '../.vitepress/theme/demos/toast/positions.vue'
 # Toast
 
 `Toaster` is the toast provider you mount once, near the root of your app. It renders the
-viewports that display toasts and owns a reactive store. `useToast()` resolves that store,
-and `createToastStore()` builds one directly when you need to share or pre-seed it.
+viewports that display toasts and owns a reactive store. Render `<Toaster>` so it wraps (or
+is an ancestor of) the components that call `useToast()`, and the injected store is
+available from any descendant. `createToastStore()` builds a store directly when you need
+to share or pre-seed one.
+
+The normal pattern is to call `useToast()` in a component that lives inside `<Toaster>`:
+
+```vue
+<!-- App.vue -->
+<script setup lang="ts">
+import { Toaster } from '@myghf/ui'
+import SaveButton from './SaveButton.vue'
+</script>
+
+<template>
+  <Toaster>
+    <SaveButton />
+  </Toaster>
+</template>
+```
+
+```vue
+<!-- SaveButton.vue -->
+<script setup lang="ts">
+import { Button, useToast } from '@myghf/ui'
+
+const toast = useToast() // resolves the store from the <Toaster> ancestor
+</script>
+
+<template>
+  <Button @click="toast.success('Saved', 'Your changes were saved.')">Save</Button>
+</template>
+```
+
+Toasts are added through the store, not a component prop. The store exposes
+`add` / `remove` / `clear` plus one convenience method per severity.
+
+When the calling components cannot be nested under `<Toaster>` — for example, a store
+that must outlive a single `<Toaster>` or be pre-seeded — create one with
+`createToastStore()` and pass it in:
 
 ```vue
 <script setup lang="ts">
@@ -22,10 +61,20 @@ const toast = createToastStore({ position: 'top-end', max: 4 })
 </template>
 ```
 
-Toasts are added through the store, not a component prop. `createToastStore()` returns
-`add` / `remove` / `clear` plus one convenience method per severity.
-
 ## Examples
+
+### Using `useToast()` in a descendant
+
+Wrap the component that calls `useToast()` in `<Toaster>`. The buttons below live inside
+the slot, so `useToast()` resolves the store that `<Toaster>` provides. (The slot content
+is rendered inside the provider, not as a sibling of it.)
+
+<Demo>
+  <ToastUseToast />
+</Demo>
+
+<<< ../.vitepress/theme/demos/toast/use-toast.vue
+<<< ../.vitepress/theme/demos/toast/use-toast-buttons.vue
 
 ### Severities
 
@@ -90,15 +139,17 @@ directly if you need to react to changes.
 
 ## Slots
 
-`Toaster` renders no slots. Mount it once next to your app content and drive it through a
-store — there is no default slot to nest the calling component in.
+`Toaster` has a default slot. Slot content renders inside the toast provider, so any
+descendant that calls `useToast()` resolves the store `<Toaster>` provides. Wrap your app
+(or the part of it that shows toasts) with `<Toaster>` and put the app content in the slot.
+The viewports are fixed-position overlays, so slot content does not affect their placement.
 
 ::: tip Sharing one queue across the app
-`<Toaster>` creates a store and provides it to its own subtree, but it renders only the
-toast viewports (no default slot). To share a queue with components elsewhere in your
-tree, create a single store with `createToastStore()` and render
+`<Toaster>` creates a store and provides it to its default slot's descendants. If the
+components that add toasts cannot be nested under a single `<Toaster>` — or the queue must
+outlive it — create one store with `createToastStore()` and render
 `<Toaster :store="store" />`, then call that store's methods. `useToast()` is the inject
-shortcut for a store that a `<Toaster>` ancestor has provided.
+shortcut for a store a `<Toaster>` ancestor has provided.
 :::
 
 ## Exposed methods
@@ -115,8 +166,9 @@ toast.success('Saved', 'Your changes were saved.')
 ```
 
 `useToast()` is **setup-only**: it calls `inject(toastKey)` and must run during a
-component's setup, not inside an event handler or after an `await`. Without an ancestor
-`<Toaster>` in the same subtree it throws
+component's setup, not inside an event handler or after an `await`. Call it from a
+component rendered inside `<Toaster>` (a descendant, such as default-slot content). Without
+a `<Toaster>` ancestor it throws
 `useToast() requires a <Toaster /> mounted above this component.`
 
 ### `createToastStore(options?)`

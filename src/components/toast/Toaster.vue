@@ -51,6 +51,7 @@ function itemsFor(position: ToastPosition) {
 
 <template>
   <ToastProvider :label="label" :duration="duration">
+    <slot />
     <template v-for="pos in POSITIONS" :key="pos">
       <ToastViewport
         v-if="itemsFor(pos).length > 0"

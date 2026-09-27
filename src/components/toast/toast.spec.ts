@@ -76,4 +76,17 @@ describe('Toaster', () => {
     await nextTick()
     expect(wrapper.find('[data-toast-root]').attributes('data-duration')).toBe('0')
   })
+
+  it('provides the store to a component rendered in its default slot', async () => {
+    const Child = defineComponent({
+      setup() {
+        // This inject must resolve through <Toaster>'s `provide()`.
+        useToast().success('Saved from descendant', 'The store reached the slot.')
+        return () => h('div')
+      },
+    })
+    const wrapper = mount(Toaster, { slots: { default: () => h(Child) } })
+    await nextTick()
+    expect(wrapper.text()).toContain('Saved from descendant')
+  })
 })
