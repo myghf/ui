@@ -55,14 +55,14 @@
 }
 
 /*
- * Home page only: use the brand primary (#00A2DD) for the hero title and the
- * primary action, instead of the AA-safe darker `brand-1` used for links.
+ * Home page only: use the brand primary-600 for the hero title and the primary
+ * action, instead of the AA-safe darker `brand-1` used for links.
  */
 .VPHome {
-  --vp-home-hero-name-color: rgb(var(--myghf-primary-500));
-  --vp-button-brand-bg: rgb(var(--myghf-primary-500));
-  --vp-button-brand-hover-bg: rgb(var(--myghf-primary-600));
-  --vp-button-brand-active-bg: rgb(var(--myghf-primary-700));
+  --vp-home-hero-name-color: rgb(var(--myghf-primary-600));
+  --vp-button-brand-bg: rgb(var(--myghf-primary-600));
+  --vp-button-brand-hover-bg: rgb(var(--myghf-primary-700));
+  --vp-button-brand-active-bg: rgb(var(--myghf-primary-800));
 }
 
 /* Shared <Demo> preview pane. */
