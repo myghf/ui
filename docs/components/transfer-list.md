@@ -70,8 +70,9 @@ None. `TransferList` does not call `defineExpose`.
 ## Accessibility
 
 - Move controls are real `<button>`s with explicit `aria-label`s ("Move selected to target",
-  "Move selected to source", "Move all to target", "Move all to source"), and each is
-  disabled when it would do nothing.
+  "Move selected to source", "Move all to target", "Move all to source"). The two
+  move-selected buttons are disabled when their selection is empty; the move-all buttons are
+  gated only by the `disabled` prop.
 - Each list item is a `<button>` containing a `Checkbox` (itself a `<button>`). **Nested
   buttons are invalid HTML** and can confuse assistive technology; this is a known gap. The
   inner checkbox stops click propagation so the item button does not double-toggle.

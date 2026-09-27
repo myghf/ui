@@ -112,8 +112,10 @@ Components that style with semantic utilities (`bg-surface`, `text-foreground`,
 ## `useTheme` and `createTheme`
 
 `useTheme(options?)` returns a shared singleton controller; `createTheme(options?)` returns
-an independent one. Both are safe to call during SSR — without a DOM they resolve to light
-and are no-ops.
+an independent one. Both are safe to call during SSR. Without a DOM the initial mode is
+`defaultMode` and `apply()`/`persist()` are no-ops; `resolved` is `'light'` only when that
+mode resolves light (`'light'` or `'system'`), so `createTheme({ defaultMode: 'dark' })`
+resolves to `'dark'`.
 
 ```ts
 import { useTheme } from '@myghf/ui'

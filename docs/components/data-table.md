@@ -79,7 +79,7 @@ selection, column filtering, column resizing, grouping — are **not** available
 `columns` has the type
 `ColumnDef<typeof dataTableFeatures, T>[]`, so author them with
 `createColumnHelper<DataTableFeatures, T>()` from `@tanstack/vue-table`. A column's numeric
-`size` is read structurally and used as the header/cell width.
+`size` is read structurally and used as the column (header) width.
 
 ## Props
 
@@ -142,5 +142,6 @@ and the events above.
   tokens (`bg-surface`, `border-border`, `bg-surface-muted`) and adapts to dark mode.
   Expansion rows use `bg-surface-muted/30`.
 - Sorting icons are Lucide chevrons, and the width is applied per column, so no physical
-  direction is baked in. The wrapper's `overflow-auto` scroll region and the underlying
-  table's logical `text-start`/`text-end` alignment mirror correctly under `dir="rtl"`.
+  direction is baked in. When `maxHeight` is set the wrapper adds an `overflow-auto` scroll
+  region; the underlying table's logical `text-start`/`text-end` alignment mirrors correctly
+  under `dir="rtl"`.

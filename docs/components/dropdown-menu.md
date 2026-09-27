@@ -18,6 +18,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@myghf/ui'
+
+function doEdit() {}
+function doDelete() {}
 </script>
 
 <template>

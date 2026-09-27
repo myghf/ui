@@ -61,7 +61,7 @@ commits it and closes the popover; a Clear action appears once a value exists.
 | `hourFormat` | `'12' \| '24'` | `'24'` | Time format in `datetime` mode. `'12'` also renders an AM/PM control. |
 | `minuteStep` | `number` | `1` | Minute interval in `datetime` mode; clamped to `1`–`30`. |
 | `locale` | `string` | runtime locale | BCP-47 locale for month, weekday, and time formatting. Resolved from `Intl.DateTimeFormat` at setup, falling back to `'en'`. |
-| `labels` | `Partial<DatePickerLabels>` | `{}` | Per-instance text overrides; merged over the locale defaults. |
+| `labels` | `Partial<DatePickerLabels>` | — | Per-instance text overrides; merged over the locale defaults. |
 | `weekStartsOn` | `number` | from locale | First day of the week (`0` = Sunday … `6` = Saturday). Defaults to the locale's week info, falling back to Monday. |
 | `defaultOpen` | `boolean` | `false` | Opens the popover on mount. Useful for demos and tests. |
 

@@ -105,4 +105,4 @@ None. `Select` does not call `defineExpose`.
   `surface-muted`, so both themes are covered.
 - Layout is logical: the value truncates, the trailing controls use `ms-auto`, the check
   indicator uses `end-2`, and option text reserves space with `pe-8`. Under RTL the chevron
-  and clear button move to the start edge and the popup content mirrors automatically.
+  and clear button stay at the inline-end edge and the popup content mirrors automatically.

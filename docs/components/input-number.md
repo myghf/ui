@@ -60,7 +60,7 @@ the full options object (here a percent style); `locale` selects the format loca
 | `stepSnapping` | `boolean` | `false` | Rounds typed values to the nearest multiple of `step`. |
 | `integer` | `boolean` | `false` | Forces zero fraction digits (`maximumFractionDigits: 0`). |
 | `locale` | `string` | — | BCP-47 locale for `Intl.NumberFormat`, and for the `aria-valuetext` readout. |
-| `formatOptions` | `Intl.NumberFormatOptions` | — | Full formatting options; later sources win over `currency` and `integer`. |
+| `formatOptions` | `Intl.NumberFormatOptions` | — | Full formatting options; merged over the `currency` shorthand, and `integer` is applied last. |
 | `currency` | `string` | — | Currency code (for example `'USD'`); applies `{ style: 'currency' }`. |
 | `prefix` | `string` | — | Decorative text rendered before the number (for example `'$'`). |
 | `suffix` | `string` | — | Decorative text rendered after the number (for example `'kg'`). |

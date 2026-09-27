@@ -20,11 +20,13 @@ Use `Alert` for a page-level notice and `Message` where the PrimeVue migration u
 ```vue
 <script setup lang="ts">
 import { Alert } from '@myghf/ui'
+
+const onClose = () => {}
 </script>
 
 <template>
   <Alert tone="success" title="Saved" description="Your changes were saved." show-icon />
-  <Alert tone="danger" variant="outline" closable @close="dismissed = true">
+  <Alert tone="danger" variant="outline" closable @close="onClose">
     Something went wrong.
   </Alert>
 </template>

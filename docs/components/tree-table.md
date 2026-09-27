@@ -74,8 +74,8 @@ interface TreeNode<T = unknown> {
 ```
 
 `TreeNode` is the shared tree shape (also used by [TreeSelect](/components/tree-select)).
-Related exported types are `FlatTreeRow<T>` (one flattened, visible row with `key`,
-`level`, `parentKey`, and `hasChildren`) and `CheckedState`
+Related exported types are `FlatTreeRow<T>` (one flattened, visible row with `node`,
+`key`, `level`, `parentKey`, and `hasChildren`) and `CheckedState`
 (`'checked' | 'indeterminate' | 'unchecked'`), which the library's tree helpers use.
 
 ## Props

@@ -186,7 +186,7 @@ store yourself (for tests or a custom shell) rather than through `<Toaster>`.
 | Member | Type | Description |
 | --- | --- | --- |
 | `items` | `Ref<ToastItem[]>` | Every toast, including those queued past `max`. |
-| `visible` | `ComputedRef<ToastItem[]>` | The `max` most recent toasts, oldest first. |
+| `visible` | `ComputedRef<ToastItem[]>` | The first `max` toasts still in the queue — the **oldest** ones — oldest first. Newer extras stay queued in `items`. |
 | `add` | `(options: ToastOptions) => string` | Adds a toast and returns its generated id. |
 | `remove` | `(id: string) => void` | Removes the toast with that id; a queued toast moves up. |
 | `clear` | `() => void` | Removes all toasts. |

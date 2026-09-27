@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import TableBasic from '../.vitepress/theme/demos/table/basic.vue'
-import TablePagination from '../.vitepress/theme/demos/table/pagination.vue'
+import PaginationDemo from '../.vitepress/theme/demos/table/pagination.vue'
 import TableEmpty from '../.vitepress/theme/demos/table/empty.vue'
 </script>
 
@@ -66,7 +66,7 @@ hover/pointer affordance to a row. Column alignment uses logical `start`/`end`.
 only needs the `total` count — slice your data yourself. `pageIndex` is **0-based**.
 
 <Demo>
-  <TablePagination />
+  <PaginationDemo />
 </Demo>
 
 <<< ../.vitepress/theme/demos/table/pagination.vue
