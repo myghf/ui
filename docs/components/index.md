@@ -50,4 +50,13 @@ Dialogs, drawers, menus, and toast notifications.
 | [DropdownMenu](/components/dropdown-menu) | `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` | Composable dropdown menu for actions and commands. |
 | [Toast](/components/toast) | `Toaster`, `useToast`, `createToastStore` | Provider plus store for transient notifications in six logical positions. |
 
-More component groups are documented as their pages ship.
+## Navigation & data
+
+Tabbed navigation and the table family, from unstyled primitives to a headless data grid.
+
+| Component | Exports | Summary |
+| --- | --- | --- |
+| [Tabs](/components/tabs) | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Composable tab strip and panels, controlled by `v-model`. |
+| [Table](/components/table) | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, `TableEmpty`, `TablePagination` | Unstyled table primitives plus a pagination control. |
+| [DataTable](/components/data-table) | `DataTable`, `DataTableFeatures` | Headless TanStack Table v9 grid with sorting and row expansion. |
+| [TreeTable](/components/tree-table) | `TreeTable`, `TreeTableColumn`, `TreeNode` | Expandable hierarchical grid with per-column cell slots. |
