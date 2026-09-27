@@ -347,6 +347,9 @@ swipeable bottom sheet).
   - `top`: `inset-x-0 top-0 w-full h-*` / `-translate-y-full`
   - `bottom`: `inset-x-0 bottom-0 w-full h-*` / `translate-y-full`
 - `size` maps to `max-w-*` for horizontal drawers and `max-h-*` for vertical drawers.
+- `preventScroll` is honored by rendering the overlay (which owns body scroll lock in reka) even
+  when `backdrop` is false; in that case the overlay is transparent. There is no `prevent-scroll`
+  prop on reka's `DialogContent`.
 - Reka requires a `DialogTitle`; when neither `title`, `header` slot, nor `$slots.header` is
   present, render a visually hidden title (`VisuallyHidden`) for screen readers.
 

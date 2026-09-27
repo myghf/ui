@@ -1017,7 +1017,10 @@ Decisions: `open` is a computed get/set emitting `update:open`; `onOpenChange(v)
 `open`/`close`. `DialogContent` is fixed with a position class map:
 `right`/`left`/`top`/`bottom` physical; `start`/`end` logical with `rtl:` transform flips.
 `size` maps to `max-w-sm|max-w-md|max-w-lg|max-w-full` for horizontal and the `max-h-*` equivalents
-for vertical. Render `DialogOverlay` only when `backdrop`. `DialogContent` handles
+for vertical. Render `DialogOverlay` when `backdrop || preventScroll`, with the dim classes
+(`bg-black/50 dark:bg-black/70`) when `backdrop` and `bg-transparent` otherwise — reka owns body
+scroll lock in `DialogOverlay`, so this is how `preventScroll` is honored; there is no
+`prevent-scroll` prop on reka's `DialogContent`. `DialogContent` handles
 `@escape-key-down` and `@pointer-down-outside`, calling `event.preventDefault()` when the matching
 option is false. Always render a `DialogTitle`: visible when `title`/`header` slot exist, otherwise
 `<VisuallyHidden><DialogTitle>Drawer</DialogTitle></VisuallyHidden>`.
