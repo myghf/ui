@@ -19,6 +19,7 @@ Components that trigger actions or present short, non-interactive information.
 | [Button](/components/button) | `Button` | Primary action control with five variants, five sizes, and loading/disabled states. |
 | [Tag](/components/tag) | `Tag` | Compact label or chip with tones, an optional icon, and an optional remove button. |
 | [Alert / Message](/components/alert) | `Alert`, `Message` | Inline feedback message; the same component is exported under two names. |
+| [Spinner](/components/spinner) | `Spinner` | Inline loading indicator with an accessible status label. |
 | [Skeleton](/components/skeleton) | `Skeleton` | Pulsing placeholder block for loading layouts, with shape and size control. |
 | [Avatar](/components/avatar) | `Avatar` | Circular profile image that falls back to initials when no image is available. |
 | [ThemeToggle](/components/theme-toggle) | `ThemeToggle` | Button that flips the shared light/dark theme. |
@@ -30,6 +31,7 @@ Inputs and controls for collecting and validating user data.
 
 | Component | Exports | Summary |
 | --- | --- | --- |
+| [Form field](/components/form-field) | `FormField`, `Label`, `FormDescription`, `FormMessage` | Groups a label, control, description, and error with shared id/`aria` wiring. |
 | [Input](/components/input) | `Input` | Single-line text field with optional leading/trailing icons and three sizes. |
 | [InputNumber](/components/input-number) | `InputNumber` | Numeric field with `min`/`max`/`step`, `Intl` formatting, and optional stepper buttons. |
 | [Textarea](/components/textarea) | `Textarea` | Multi-line text field with a configurable row count. |

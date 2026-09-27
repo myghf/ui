@@ -35,6 +35,7 @@ export default defineConfig({
           { text: 'Introduction', link: '/guide/introduction' },
           { text: 'Installation', link: '/guide/installation' },
           { text: 'Setup', link: '/guide/setup' },
+          { text: 'Nuxt', link: '/guide/nuxt' },
           { text: 'Theming', link: '/guide/theming' },
           { text: 'RTL & bilingual', link: '/guide/rtl' },
           { text: 'Accessibility', link: '/guide/accessibility' },
@@ -63,6 +64,7 @@ export default defineConfig({
             text: 'Form',
             collapsed: false,
             items: [
+              { text: 'Form field', link: '/components/form-field' },
               { text: 'Input', link: '/components/input' },
               { text: 'InputNumber', link: '/components/input-number' },
               { text: 'Textarea', link: '/components/textarea' },

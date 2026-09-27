@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import DropdownMenuBasic from '../.vitepress/theme/demos/dropdown-menu/basic.vue'
 import DropdownMenuAlignment from '../.vitepress/theme/demos/dropdown-menu/alignment.vue'
+import DropdownMenuGrouped from '../.vitepress/theme/demos/dropdown-menu/grouped.vue'
 </script>
 
 # DropdownMenu
 
-`DropdownMenu` is a set of four composable pieces — root, trigger, content, and item —
-built on reka-ui's menu primitive. The root coordinates open state; the trigger opens the
-menu; the content is portalled; and each item emits `select`.
+`DropdownMenu` is a set of composable pieces — root, trigger, content, item, separator,
+label, and group — built on reka-ui's menu primitive. The root coordinates open state; the
+trigger opens the menu; the content is portalled; each item emits `select`; and the
+separator, label, and group structure a longer menu.
 
 ```vue
 <script setup lang="ts">
@@ -15,7 +17,10 @@ import {
   Button,
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@myghf/ui'
 
@@ -29,8 +34,15 @@ function doDelete() {}
       <Button variant="outline">Actions</Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuItem @select="doEdit">Edit</DropdownMenuItem>
-      <DropdownMenuItem variant="destructive" @select="doDelete">Delete</DropdownMenuItem>
+      <DropdownMenuLabel>Edit</DropdownMenuLabel>
+      <DropdownMenuGroup>
+        <DropdownMenuItem icon="file-pen" @select="doEdit">Edit</DropdownMenuItem>
+        <DropdownMenuItem icon="copy">Duplicate</DropdownMenuItem>
+      </DropdownMenuGroup>
+      <DropdownMenuSeparator />
+      <DropdownMenuItem icon="trash-2" variant="destructive" @select="doDelete">
+        Delete
+      </DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 </template>
@@ -59,6 +71,19 @@ and `sideOffset` sets the gap in pixels.
 </Demo>
 
 <<< ../.vitepress/theme/demos/dropdown-menu/alignment.vue
+
+### Groups, labels, and icons
+
+Use `DropdownMenuLabel` for a section caption, `DropdownMenuGroup` to group related items
+(announced as a `role="group"`), and `DropdownMenuSeparator` for a divider between
+sections. Items take an optional leading `icon` and a `disabled` flag; a disabled item is
+dimmed, skipped by keyboard navigation, and does not emit `select`.
+
+<Demo>
+  <DropdownMenuGrouped />
+</Demo>
+
+<<< ../.vitepress/theme/demos/dropdown-menu/grouped.vue
 
 ## Props
 
@@ -90,13 +115,28 @@ component's place in the DOM.
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `variant` | `'default' \| 'destructive'` | `'default'` | `destructive` colours the label with the error token to signal a risky action. |
+| `icon` | `string` | — | Optional leading lucide icon name. Rendered `aria-hidden` and decorative. |
+| `disabled` | `boolean` | `false` | Dims the item, skips it in keyboard navigation, and suppresses its `select` event. |
+
+### `DropdownMenuSeparator`
+
+No props. Renders a divider (`role="separator"`) between groups of items.
+
+### `DropdownMenuLabel`
+
+No props. Renders a muted section caption. It is a reka menu label, so it is not focusable
+and cannot be selected.
+
+### `DropdownMenuGroup`
+
+No props. Renders a `role="group"` wrapper for related items; it is itself not focusable.
 
 ## Events
 
 | Event | On | Payload | Description |
 | --- | --- | --- | --- |
 | `update:open` | `DropdownMenu` | `boolean` | Emitted when the menu opens or closes. |
-| `select` | `DropdownMenuItem` | — | Emitted when the item is chosen (pointer or keyboard). |
+| `select` | `DropdownMenuItem` | — | Emitted when the item is chosen (pointer or keyboard). Not emitted while the item is `disabled`. |
 
 ## Slots
 
@@ -105,7 +145,10 @@ component's place in the DOM.
 | `DropdownMenu` | `default` | The trigger and content. |
 | `DropdownMenuTrigger` | `default` | The single trigger element. |
 | `DropdownMenuContent` | `default` | The menu items. |
-| `DropdownMenuItem` | `default` | The item's content (text, icon, shortcut hint). |
+| `DropdownMenuItem` | `default` | The item's content (text, shortcut hint). Use the `icon` prop, not a slotted icon, when you want the leading-icon spacing. |
+| `DropdownMenuLabel` | `default` | The section caption text. |
+| `DropdownMenuGroup` | `default` | The group's items. |
+| `DropdownMenuSeparator` | — | No slot; it renders a fixed divider. |
 
 There are no named slots.
 
@@ -131,6 +174,12 @@ react to `select` on the items.
   ```
 - `variant="destructive"` only changes the colour. Reinforce the meaning in the label
   ("Delete") and add a confirmation step for irreversible actions.
+- `DropdownMenuLabel` captions a section and is not focusable; `DropdownMenuGroup` adds
+  `role="group"`, so assistive technology can treat related items as a unit.
+  `DropdownMenuSeparator` exposes `role="separator"` as a structural divider.
+- `disabled` uses reka's disabled semantics: the item is dimmed, skipped when arrowing
+  through the menu, and its `select` is suppressed — do not rely on it to hide a
+  destructive action the user should not see.
 - Items are menu items, not links. For navigation, handle `select` and route manually (or
   render your own anchor inside the item and keep the menu open semantics in mind).
 
