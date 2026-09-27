@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clampTime, dateToValue, sortRange, toISODate, toMinutes, toTime, valueToDate } from './date'
+import { buildHourOptions, buildMinuteOptions, clampTime, dateToValue, from12Hour, sortRange, to12Hour, toISODate, toMinutes, toTime, valueToDate } from './date'
 
 describe('date helpers', () => {
   it('dateToValue → CalendarDate and valueToDate roundtrip', () => {
@@ -35,5 +35,23 @@ describe('date helpers', () => {
 
   it('toISODate is zero-padded YYYY-MM-DD', () => {
     expect(toISODate(new Date(2026, 2, 5))).toBe('2026-03-05')
+  })
+
+  it('builds 24- and 12-hour option lists', () => {
+    expect(buildHourOptions('24')).toHaveLength(24)
+    expect(buildHourOptions('12')).toHaveLength(12)
+  })
+
+  it('builds minute options from the step and never returns an empty list', () => {
+    expect(buildMinuteOptions(15)).toEqual([0, 15, 30, 45])
+    expect(buildMinuteOptions(7)).toHaveLength(9)
+    expect(buildMinuteOptions(0).length).toBeGreaterThan(0)
+  })
+
+  it('converts between 12- and 24-hour representations', () => {
+    expect(to12Hour(0)).toEqual({ hour: 12, meridiem: 'am' })
+    expect(to12Hour(13)).toEqual({ hour: 1, meridiem: 'pm' })
+    expect(from12Hour(12, 'am')).toBe(0)
+    expect(from12Hour(1, 'pm')).toBe(13)
   })
 })

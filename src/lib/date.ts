@@ -38,3 +38,27 @@ export function toISODate(d: Date): string {
   const day = d.getDate()
   return `${d.getFullYear()}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`
 }
+
+export function buildHourOptions(hourFormat: '12' | '24'): number[] {
+  if (hourFormat === '12') return Array.from({ length: 12 }, (_, i) => i + 1)
+  return Array.from({ length: 24 }, (_, i) => i)
+}
+
+export function buildMinuteOptions(minuteStep: number): number[] {
+  const step = Number.isFinite(minuteStep) && minuteStep > 0 ? minuteStep : 1
+  const out: number[] = []
+  for (let m = 0; m < 60; m += step) out.push(m)
+  return out
+}
+
+export function to12Hour(hour24: number): { hour: number; meridiem: 'am' | 'pm' } {
+  const normalized = ((Math.trunc(hour24) % 24) + 24) % 24
+  const meridiem: 'am' | 'pm' = normalized < 12 ? 'am' : 'pm'
+  const hour = normalized % 12 === 0 ? 12 : normalized % 12
+  return { hour, meridiem }
+}
+
+export function from12Hour(hour: number, meridiem: 'am' | 'pm'): number {
+  const base = Math.trunc(hour) % 12
+  return meridiem === 'pm' ? base + 12 : base
+}

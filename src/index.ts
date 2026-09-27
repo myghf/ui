@@ -1,5 +1,6 @@
 export { cn } from './lib/cn'
 export * from './lib/date'
+export * from './lib/locale'
 export { toNumberOrNull, mergeFormatOptions } from './lib/number'
 export { toPascalCase, resolveIconName } from './lib/icons'
 export { toneClasses } from './lib/tones'
