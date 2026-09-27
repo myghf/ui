@@ -1,5 +1,17 @@
 # @myghf/ui
 
+## 0.3.0
+
+### Minor Changes
+
+- 4c5b2e4: feat: dark mode, Toaster/useToast, Alert/Message, InputNumber, Drawer, DatePicker i18n
+  
+  The Tailwind preset now sets `darkMode: ['class', '.dark']`. Consumers who relied on Tailwind's default `media` strategy must add the `.dark` class (for example on `<html>`) for `dark:` utilities to take effect.
+
+### Patch Changes
+
+- 019abad: fix: render Toaster default slot so useToast() works for descendants
+
 ## 0.2.0
 
 ### Minor Changes
