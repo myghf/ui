@@ -54,7 +54,7 @@ export default defineNuxtConfig({
 | Option | Type | Default | Description |
 | --- | --- | --- | --- |
 | `autoImports` | `boolean` | `true` | Register the component exports for Nuxt auto-imports. Set to `false` to import them explicitly from `@myghf/ui` instead. |
-| `prefix` | `string` | `''` | Optional prefix added to every auto-imported component name, so `prefix: 'My'` registers `<MyButton>` alongside (or instead of) `<Button>`. |
+| `prefix` | `string` | `''` | Optional prefix added to every auto-imported component name. With `prefix: 'My'`, the button is registered as `<MyButton>` — the unprefixed `<Button>` is no longer auto-registered (import it explicitly if you still need it). |
 
 ## What the module wires
 

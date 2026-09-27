@@ -76,7 +76,7 @@ opt out per field.
 | `modelValue` | `string \| number \| null` | — | Bound value, used as the input's `value`. |
 | `placeholder` | `string` | — | Placeholder text shown while empty. |
 | `disabled` | `boolean` | `false` | Disables the input and blocks interaction. |
-| `invalid` | `boolean` | `false` \| FormField | Applies the error border and focus ring and sets `aria-invalid`. Falls back to the enclosing `FormField`. |
+| `invalid` | `boolean` | `undefined` (→ FormField, else `false`) | Applies the error border and focus ring and sets `aria-invalid`. Falls back to the enclosing `FormField`. |
 | `leadingIcon` | `string` | — | Lucide icon name rendered before the text (decorative). |
 | `trailingIcon` | `string` | — | Lucide icon name rendered after the text (decorative). |
 | `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Control height (`h-8` / `h-9` / `h-10`). |
@@ -84,7 +84,7 @@ opt out per field.
 | `id` | `string` | FormField id | Control id. Falls back to the enclosing `FormField` id; an explicit value wins. |
 | `name` | `string` | — | Native `name`, submitted with the form. |
 | `autocomplete` | `string` | — | Native `autocomplete` hint (for example `email`, `current-password`). |
-| `required` | `boolean` | `false` \| FormField | Marks the field required. Falls back to the enclosing `FormField`; an explicit value wins. |
+| `required` | `boolean` | `undefined` (→ FormField, else `false`) | Marks the field required. Falls back to the enclosing `FormField`; an explicit value wins. |
 
 ## Events
 

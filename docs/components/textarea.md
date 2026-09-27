@@ -57,11 +57,11 @@ internally.
 | `placeholder` | `string` | — | Placeholder text shown while empty. |
 | `disabled` | `boolean` | `false` | Disables the textarea and blocks interaction. |
 | `rows` | `number` | `3` | Initial visible row count. With `autoResize`, it acts as the starting/minimum height. |
-| `invalid` | `boolean` | `false` \| FormField | Applies the error border and focus ring and sets `aria-invalid`. Falls back to the enclosing `FormField`. |
+| `invalid` | `boolean` | `undefined` (→ FormField, else `false`) | Applies the error border and focus ring and sets `aria-invalid`. Falls back to the enclosing `FormField`. |
 | `autoResize` | `boolean` | `false` | Grows the field to fit its content on input and on `modelValue` changes; disables the native resize handle. |
 | `maxRows` | `number` | — | Caps the auto-grown height at this many rows and switches to internal scrolling. Only applies with `autoResize`. |
 | `id` | `string` | FormField id | Control id. Falls back to the enclosing `FormField` id; an explicit value wins. |
-| `required` | `boolean` | `false` \| FormField | Marks the field required. Falls back to the enclosing `FormField`; an explicit value wins. |
+| `required` | `boolean` | `undefined` (→ FormField, else `false`) | Marks the field required. Falls back to the enclosing `FormField`; an explicit value wins. |
 
 ## Events
 

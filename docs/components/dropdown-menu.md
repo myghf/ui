@@ -34,7 +34,7 @@ function doDelete() {}
       <Button variant="outline">Actions</Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent>
-      <DropdownMenuLabel>Edit</DropdownMenuLabel>
+      <DropdownMenuLabel>File</DropdownMenuLabel>
       <DropdownMenuGroup>
         <DropdownMenuItem icon="file-pen" @select="doEdit">Edit</DropdownMenuItem>
         <DropdownMenuItem icon="copy">Duplicate</DropdownMenuItem>
