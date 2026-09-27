@@ -39,4 +39,15 @@ Inputs and controls for collecting and validating user data.
 | [TreeSelect](/components/tree-select) | `TreeSelect` | Tree dropdown that emits the selected leaf keys. |
 | [TransferList](/components/transfer-list) | `TransferList` | Moves items between available and selected lists. |
 
+## Overlays
+
+Dialogs, drawers, menus, and toast notifications.
+
+| Component | Exports | Summary |
+| --- | --- | --- |
+| [Dialog](/components/dialog) | `Dialog` | Modal window with header, body, and footer regions. |
+| [Drawer](/components/drawer) | `Drawer` | Edge-anchored panel with logical `start`/`end` positions and configurable dismissal. |
+| [DropdownMenu](/components/dropdown-menu) | `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem` | Composable dropdown menu for actions and commands. |
+| [Toast](/components/toast) | `Toaster`, `useToast`, `createToastStore` | Provider plus store for transient notifications in six logical positions. |
+
 More component groups are documented as their pages ship.
