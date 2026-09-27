@@ -7,3 +7,6 @@ dist/
 
 # Local git worktrees
 .worktrees/
+
+# VitePress build cache
+docs/.vitepress/cache/

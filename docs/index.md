@@ -5,6 +5,9 @@ hero:
   name: MYGHF UI
   text: Vue 3 + Tailwind design system
   tagline: Accessible, brand-aligned components for the Magdi Yacoub Global Heart Foundation and Aswan Heart Centre.
+  image:
+    src: /logo.png
+    alt: MYGHF heart logo
   actions:
     - theme: brand
       text: Get started
