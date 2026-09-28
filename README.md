@@ -73,7 +73,12 @@ composables, and utilities. When
 [`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) is installed (an optional peer) it
 also appends the `@myghf/ui/tailwind-preset` and the library content glob to your Tailwind
 config; without it the module logs a warning and you add those two entries yourself, or set
-`myghfUi: { tailwind: false }` to opt out.
+`myghfUi: { tailwind: false }` to opt out. Install the Tailwind module explicitly if your app
+does not already have it:
+
+```bash
+npm install -D @nuxtjs/tailwindcss
+```
 
 | Option | Type | Default |
 | --- | --- | --- |

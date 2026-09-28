@@ -103,6 +103,7 @@ export const AUTO_IMPORT_COMPOSABLES = [
   'useToast',
   'createToastStore',
   'toastKey',
+  'useFormField',
 ]
 
 /**
@@ -118,7 +119,6 @@ export const AUTO_IMPORT_UTILITIES = [
   'resolveIconName',
   'toNumberOrNull',
   'mergeFormatOptions',
-  'useFormField',
   'dateToValue',
   'valueToDate',
   'toMinutes',
@@ -152,27 +152,42 @@ interface TailwindContentObject {
 }
 
 /**
- * Resolves the mutable list of Tailwind content entries for either the array
- * form (a plain list of globs) or the object form (`{ files: [...] }`),
- * returning `null` when the value is missing or unrecognised.
+ * Returns the Tailwind `content` value with the library glob appended, without
+ * clobbering whatever shape the consumer already uses. Tailwind accepts a bare
+ * string glob, an array of globs, or `{ files: [...] }`; an unrecognised value
+ * falls back to a fresh array. Idempotent — a value already containing the glob
+ * is returned unchanged.
  */
-function contentEntries(content: unknown): unknown[] | null {
-  if (Array.isArray(content)) return content
+function appendContentGlob(content: unknown): unknown {
+  if (typeof content === 'string') {
+    return content === TAILWIND_CONTENT_GLOB
+      ? [content]
+      : [content, TAILWIND_CONTENT_GLOB]
+  }
+  if (Array.isArray(content)) {
+    return content.includes(TAILWIND_CONTENT_GLOB)
+      ? content
+      : [...content, TAILWIND_CONTENT_GLOB]
+  }
   if (
     content &&
     typeof content === 'object' &&
     Array.isArray((content as TailwindContentObject).files)
   ) {
-    return (content as TailwindContentObject).files as unknown[]
+    const object = content as TailwindContentObject
+    const files = object.files as unknown[]
+    return files.includes(TAILWIND_CONTENT_GLOB)
+      ? object
+      : { ...object, files: [...files, TAILWIND_CONTENT_GLOB] }
   }
-  return null
+  return [TAILWIND_CONTENT_GLOB]
 }
 
 /**
  * Adds the library's Tailwind content glob and preset to a
  * `@nuxtjs/tailwindcss` config. Idempotent: calling it repeatedly (e.g. a
- * module loaded more than once) never adds a duplicate entry. Both the array
- * and `{ files: [...] }` forms of `content` are preserved.
+ * module loaded more than once) never adds a duplicate entry. The string,
+ * array, and `{ files: [...] }` forms of `content` are all preserved.
  */
 export function wireTailwindConfig<T extends TailwindLikeOptions>(
   tailwind: T,
@@ -181,14 +196,7 @@ export function wireTailwindConfig<T extends TailwindLikeOptions>(
   tailwind.config ??= {}
   const config = tailwind.config
 
-  const existingContent = contentEntries(config.content)
-  const content = existingContent ?? []
-  if (!content.includes(TAILWIND_CONTENT_GLOB)) {
-    content.push(TAILWIND_CONTENT_GLOB)
-  }
-  if (!existingContent) {
-    config.content = content
-  }
+  config.content = appendContentGlob(config.content)
 
   const presets = Array.isArray(config.presets) ? (config.presets as unknown[]) : []
   if (!presets.includes(preset)) {
@@ -221,7 +229,7 @@ export default defineNuxtModule<ModuleOptions>({
         wireTailwindConfig(tailwind, preset)
       } else {
         logger.warn(
-          "@nuxtjs/tailwindcss was not detected, so the @myghf/ui Tailwind preset and content glob were NOT added automatically. Add './node_modules/@myghf/ui/dist/**/*.js' to your Tailwind `content` and '@myghf/ui/tailwind-preset' to your `presets`, or set `myghfUi: { tailwind: false }` to silence this.",
+          "@nuxtjs/tailwindcss was not detected, so the @myghf/ui Tailwind preset and content glob were NOT added automatically. Add './node_modules/@myghf/ui/dist/**/*.js' to your Tailwind `content`, and import '@myghf/ui/tailwind-preset' and add the imported preset object to your `presets`, or set `myghfUi: { tailwind: false }` to silence this.",
         )
       }
     }

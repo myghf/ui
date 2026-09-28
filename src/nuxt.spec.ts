@@ -51,7 +51,13 @@ describe('@myghf/ui Nuxt module', () => {
       'useToast',
       'createToastStore',
       'toastKey',
+      'useFormField',
     ])
+  })
+
+  it('classifies useFormField as a composable, not a utility', () => {
+    expect(AUTO_IMPORT_COMPOSABLES).toContain('useFormField')
+    expect(AUTO_IMPORT_UTILITIES).not.toContain('useFormField')
   })
 
   it('lists the utilities that are auto-imported', () => {
@@ -152,6 +158,33 @@ describe('@myghf/ui Nuxt module', () => {
       wireTailwindConfig(tailwind, preset)
 
       expect(tailwind.config.content).toEqual({
+        relative: true,
+        files: ['./app/**/*.vue', TAILWIND_CONTENT_GLOB],
+      })
+    })
+
+    it('preserves a single-string Tailwind content glob instead of dropping it', () => {
+      const preset = { theme: {} }
+      const tailwind = { config: { content: './app/**/*.vue' } }
+
+      wireTailwindConfig(tailwind, preset)
+
+      expect(tailwind.config.content).toEqual(['./app/**/*.vue', TAILWIND_CONTENT_GLOB])
+    })
+
+    it('stays idempotent for the string and object content forms', () => {
+      const preset = { theme: {} }
+      const stringForm = { config: { content: './app/**/*.vue' } }
+      wireTailwindConfig(stringForm, preset)
+      wireTailwindConfig(stringForm, preset)
+      expect(stringForm.config.content).toEqual(['./app/**/*.vue', TAILWIND_CONTENT_GLOB])
+
+      const objectForm = {
+        config: { content: { relative: true, files: ['./app/**/*.vue'] } },
+      }
+      wireTailwindConfig(objectForm, preset)
+      wireTailwindConfig(objectForm, preset)
+      expect(objectForm.config.content).toEqual({
         relative: true,
         files: ['./app/**/*.vue', TAILWIND_CONTENT_GLOB],
       })

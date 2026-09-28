@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { mount, type VueWrapper } from '@vue/test-utils'
 import { createColumnHelper, type ColumnDef } from '@tanstack/vue-table'
-import type { DefineComponent } from 'vue'
+import { h, type DefineComponent } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 import type { DataTableFeatures } from '../../lib/table'
 import Skeleton from '../skeleton/Skeleton.vue'
@@ -21,6 +21,7 @@ interface DataTableProps {
   loadingRows?: number
   loadingLabel?: string
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
+  'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
 }
 
 /**
@@ -66,7 +67,29 @@ describe('DataTable loading state', () => {
     })
 
     expect(wrapper.attributes('aria-busy')).toBe('true')
-    expect(wrapper.get('span.sr-only').text()).toBe('Loading…')
+    const status = wrapper.get('span.sr-only')
+    expect(status.text()).toBe('Loading…')
+    expect(status.attributes('role')).toBe('status')
+    expect(status.attributes('aria-live')).toBe('polite')
+  })
+
+  it('keeps rendering the real header while loading', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data: [], columns, loading: true, loadingRows: 2 },
+    })
+
+    expect(wrapper.findAll('thead th')).toHaveLength(2)
+    expect(wrapper.get('thead').text()).toContain('Patient')
+    expect(wrapper.findAll('thead button').length).toBeGreaterThan(0)
+  })
+
+  it('clamps loadingRows to at least one placeholder row', () => {
+    for (const loadingRows of [0, -3, 2.7]) {
+      const wrapper = mount(TestDataTable, {
+        props: { data: [], columns, loading: true, loadingRows },
+      })
+      expect(bodyRows(wrapper)).toHaveLength(Math.max(1, Math.floor(loadingRows)))
+    }
   })
 
   it('respects a custom loading label', () => {
@@ -108,6 +131,35 @@ describe('DataTable loading state', () => {
 
     await row.trigger('click')
     expect(onUpdateExpanded).toHaveBeenCalledWith({ r1: true })
+  })
+
+  it('renders a cell-<columnId> slot on the real (non-loading) path', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId },
+      slots: {
+        'cell-patient': (params: { value: unknown }) =>
+          h('span', { class: 'cell-slot' }, String(params.value)),
+      },
+    })
+
+    expect(wrapper.findAll('.cell-slot')).toHaveLength(2)
+    expect(wrapper.get('.cell-slot').text()).toBe('Amina Farouk')
+  })
+
+  it('toggles sorting when a header is clicked while not loading', async () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId },
+    })
+
+    const button = wrapper.get('thead button')
+    await button.trigger('click')
+
+    const events = wrapper.emitted('update:sorting')
+    expect(events).toHaveLength(1)
+    expect(events![0][0]).toEqual([{ id: 'patient', desc: false }])
+
+    await button.trigger('click')
+    expect(wrapper.emitted('update:sorting')![1][0]).toEqual([{ id: 'patient', desc: true }])
   })
 
   it('does not emit update:expanded when a placeholder row is clicked', async () => {

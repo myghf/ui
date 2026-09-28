@@ -26,7 +26,11 @@ npm install -D @nuxt/kit @nuxt/schema
 [`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) is also an **optional** peer. The
 automatic Tailwind wiring below only happens when that module is installed. If it is
 missing, `@myghf/ui/nuxt` logs a warning and leaves your Tailwind config untouched — follow
-the [manual setup](#manual-tailwind-setup) instead.
+the [manual setup](#manual-tailwind-setup) instead. Install it explicitly with:
+
+```bash
+npm install -D @nuxtjs/tailwindcss
+```
 
 ## Register the module
 
@@ -137,8 +141,8 @@ composables and utilities are never prefixed, and the exports themselves keep th
 names either way.
 
 With `autoImports` enabled, the registered composables are `useTheme`, `createTheme`,
-`useToast`, `createToastStore`, and `toastKey`. The registered utilities include `cn`,
-`toneClasses`, the form-field helper `useFormField`, and the date, locale, number, and icon
+`useToast`, `createToastStore`, `toastKey`, and the form-field helper `useFormField`. The
+registered utilities include `cn`, `toneClasses`, and the date, locale, number, and icon
 helpers (`dateToValue`, `toISODate`, `formatLocalizedDate`, `toNumberOrNull`,
 `resolveIconName`, and the rest of the public runtime API).
 

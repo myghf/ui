@@ -88,6 +88,8 @@ const table = useTable({
 
 const rows = computed(() => table.getRowModel().rows)
 const columnCount = computed(() => table.getAllLeafColumns().length)
+/** Clamp to at least one placeholder row so 0/negative/fractional values still render. */
+const placeholderRowCount = computed(() => Math.max(1, Math.floor(props.loadingRows)))
 
 function sortDirection(columnId: string): 'ascending' | 'descending' | 'none' {
   const column = table.getColumn(columnId)
@@ -117,7 +119,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
     :style="maxHeight ? { maxHeight } : undefined"
     :aria-busy="loading || undefined"
   >
-    <span v-if="loading" class="sr-only">{{ loadingLabel }}</span>
+    <span v-if="loading" class="sr-only" role="status" aria-live="polite">{{ loadingLabel }}</span>
     <Table :striped="striped" :size="size">
       <TableHeader>
         <TableRow>
@@ -147,7 +149,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
           <slot name="empty">{{ emptyLabel }}</slot>
         </TableEmpty>
         <template v-if="loading">
-          <TableRow v-for="n in loadingRows" :key="'loading-' + n">
+          <TableRow v-for="n in placeholderRowCount" :key="'loading-' + n">
             <TableCell v-for="c in columnCount" :key="c">
               <Skeleton height="1rem" rounded="sm" />
             </TableCell>
