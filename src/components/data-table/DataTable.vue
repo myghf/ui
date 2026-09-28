@@ -4,6 +4,7 @@ import { FlexRender, useTable, type ColumnDef, type RowData, type SortingState }
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
+import Skeleton from '../skeleton/Skeleton.vue'
 import Table from '../table/Table.vue'
 import TableBody from '../table/TableBody.vue'
 import TableCell from '../table/TableCell.vue'
@@ -25,6 +26,9 @@ const props = withDefaults(
     expanded?: Record<string, boolean>
     stopRowToggleOnInteractiveCells?: boolean
     maxHeight?: string
+    loading?: boolean
+    loadingRows?: number
+    loadingLabel?: string
   }>(),
   {
     size: 'default',
@@ -34,6 +38,9 @@ const props = withDefaults(
     expandable: false,
     expanded: () => ({}),
     stopRowToggleOnInteractiveCells: true,
+    loading: false,
+    loadingRows: 5,
+    loadingLabel: 'Loading…',
   },
 )
 
@@ -105,7 +112,12 @@ function onRowClick(event: MouseEvent, rowId: string) {
 </script>
 
 <template>
-  <div :class="maxHeight ? 'overflow-auto' : undefined" :style="maxHeight ? { maxHeight } : undefined">
+  <div
+    :class="maxHeight ? 'overflow-auto' : undefined"
+    :style="maxHeight ? { maxHeight } : undefined"
+    :aria-busy="loading || undefined"
+  >
+    <span v-if="loading" class="sr-only">{{ loadingLabel }}</span>
     <Table :striped="striped" :size="size">
       <TableHeader>
         <TableRow>
@@ -131,32 +143,41 @@ function onRowClick(event: MouseEvent, rowId: string) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableEmpty v-if="rows.length === 0" :columns="columnCount">
+        <TableEmpty v-if="!loading && rows.length === 0" :columns="columnCount">
           <slot name="empty">{{ emptyLabel }}</slot>
         </TableEmpty>
-        <template v-for="row in rows" :key="row.id">
-          <TableRow
-            :clickable="expandable"
-            :data-row-id="row.id"
-            :data-state="row.getIsExpanded() ? 'expanded' : undefined"
-            @click="onRowClick($event, row.id)"
-          >
-            <TableCell v-for="cell in row.getAllCells()" :key="cell.id">
-              <slot
-                v-if="hasCellSlot(cell.column.id)"
-                :name="`cell-${cell.column.id}`"
-                :row="row"
-                :cell="cell"
-                :value="cell.getValue()"
-              />
-              <FlexRender v-else :cell="cell" />
+        <template v-if="loading">
+          <TableRow v-for="n in loadingRows" :key="'loading-' + n">
+            <TableCell v-for="c in columnCount" :key="c">
+              <Skeleton height="1rem" rounded="sm" />
             </TableCell>
           </TableRow>
-          <TableRow v-if="row.getIsExpanded()" class="bg-surface-muted/30">
-            <TableCell :colspan="columnCount">
-              <slot name="expansion" :row="row" />
-            </TableCell>
-          </TableRow>
+        </template>
+        <template v-else>
+          <template v-for="row in rows" :key="row.id">
+            <TableRow
+              :clickable="expandable"
+              :data-row-id="row.id"
+              :data-state="row.getIsExpanded() ? 'expanded' : undefined"
+              @click="onRowClick($event, row.id)"
+            >
+              <TableCell v-for="cell in row.getAllCells()" :key="cell.id">
+                <slot
+                  v-if="hasCellSlot(cell.column.id)"
+                  :name="`cell-${cell.column.id}`"
+                  :row="row"
+                  :cell="cell"
+                  :value="cell.getValue()"
+                />
+                <FlexRender v-else :cell="cell" />
+              </TableCell>
+            </TableRow>
+            <TableRow v-if="row.getIsExpanded()" class="bg-surface-muted/30">
+              <TableCell :colspan="columnCount">
+                <slot name="expansion" :row="row" />
+              </TableCell>
+            </TableRow>
+          </template>
         </template>
       </TableBody>
     </Table>
