@@ -2,4 +2,4 @@
 '@myghf/ui': minor
 ---
 
-feat(nuxt): explicit, idempotent Tailwind wiring and composable/utility auto-imports
+fix: explicit/optional/idempotent Nuxt Tailwind wiring, DataTable loading state, and composable/utility auto-imports
