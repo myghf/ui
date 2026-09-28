@@ -1,5 +1,11 @@
 # @myghf/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- 5115cb6: fix: explicit/optional/idempotent Nuxt Tailwind wiring, DataTable loading state, and composable/utility auto-imports
+
 ## 0.4.0
 
 ### Minor Changes
