@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import DataTableSorting from '../.vitepress/theme/demos/data-table/sorting.vue'
 import DataTableExpanding from '../.vitepress/theme/demos/data-table/expanding.vue'
+import DataTableLoading from '../.vitepress/theme/demos/data-table/loading.vue'
 </script>
 
 # DataTable
 
 `DataTable` is a headless, generic table built on `@tanstack/vue-table` v9, styled with the
 same primitives as [Table](/components/table). You describe your rows with column
-definitions, and it renders sortable headers, an optional expansion row, and an empty
-state.
+definitions, and it renders sortable headers, an optional expansion row, a loading state,
+and an empty state.
 
 ```vue
 <script setup lang="ts">
@@ -57,6 +58,20 @@ to override a column's cell — here the `status` column renders a [Tag](/compon
 
 <<< ../.vitepress/theme/demos/data-table/expanding.vue
 
+### Loading
+
+Set `loading` while data is in flight and `DataTable` replaces the body with `loadingRows`
+placeholder rows (default `5`), each a [`Skeleton`](/components/skeleton) per column, while
+keeping the real header. The wrapper gets `aria-busy="true"` and a screen-reader-only
+`loadingLabel` (default `Loading…`) announces the status. The empty state is suppressed
+while loading, so an empty `data` array does not flash "No results" before the rows arrive.
+
+<Demo>
+  <DataTableLoading />
+</Demo>
+
+<<< ../.vitepress/theme/demos/data-table/loading.vue
+
 ## Types
 
 ### DataTableFeatures
@@ -96,6 +111,9 @@ selection, column filtering, column resizing, grouping — are **not** available
 | `expanded` | `Record<string, boolean>` | `{}` | Expansion map keyed by row id. Bind with `v-model:expanded`. |
 | `stopRowToggleOnInteractiveCells` | `boolean` | `true` | Keeps clicks on buttons/links/inputs from also toggling the row. |
 | `maxHeight` | `string` | — | When set, makes the wrapper scroll vertically at this height. |
+| `loading` | `boolean` | `false` | Renders placeholder skeleton rows instead of the data rows. Sets `aria-busy="true"` on the wrapper and suppresses the empty state. |
+| `loadingRows` | `number` | `5` | Number of placeholder rows shown while `loading`. |
+| `loadingLabel` | `string` | `'Loading…'` | Screen-reader-only text announced as the loading status. |
 
 ## Events
 
@@ -133,14 +151,20 @@ and the events above.
   open rows.
 - With `expandable`, the expansion row spans all columns and is revealed inline after the
   row it belongs to.
+- While `loading`, the wrapper carries `aria-busy="true"` and a `sr-only` element holds
+  `loadingLabel`, so assistive technology hears a status without seeing the placeholder
+  rows. Placeholder rows are inert — they carry no click handler and cannot expand.
 - The empty state renders a full-width `TableEmpty` row, so the table keeps its structure
-  when there is no data.
+  when there is no data. It is suppressed while `loading`, so an empty `data` array does
+  not flash "No results" before the first rows arrive.
 
 ## Dark mode & RTL
 
 - `DataTable` renders through [Table](/components/table), so it inherits the same semantic
   tokens (`bg-surface`, `border-border`, `bg-surface-muted`) and adapts to dark mode.
   Expansion rows use `bg-surface-muted/30`.
+- Loading placeholders use [Skeleton](/components/skeleton), whose `bg-surface-muted` fill
+  is defined for both themes, so the loading state needs no extra dark-mode styles.
 - Sorting icons are Lucide chevrons, and the width is applied per column, so no physical
   direction is baked in. When `maxHeight` is set the wrapper adds an `overflow-auto` scroll
   region; the underlying table's logical `text-start`/`text-end` alignment mirrors correctly

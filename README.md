@@ -15,6 +15,7 @@
 | --- | --- |
 | [`vue`](https://vuejs.org) | `^3.5.0` (peer) |
 | [`tailwindcss`](https://tailwindcss.com) | `^3.4.0` (peer) |
+| [`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) | `^6.0.0` (optional peer, Nuxt only) |
 
 ## Installation
 
@@ -55,6 +56,32 @@ import { Button, Input } from '@myghf/ui'
   </form>
 </template>
 ```
+
+## Nuxt
+
+An optional module ships at `@myghf/ui/nuxt`:
+
+```ts
+// nuxt.config.ts
+export default defineNuxtConfig({
+  modules: ['@nuxtjs/tailwindcss', '@myghf/ui/nuxt'],
+})
+```
+
+It transpiles the library, loads the design tokens, and auto-imports the components,
+composables, and utilities. When
+[`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) is installed (an optional peer) it
+also appends the `@myghf/ui/tailwind-preset` and the library content glob to your Tailwind
+config; without it the module logs a warning and you add those two entries yourself, or set
+`myghfUi: { tailwind: false }` to opt out.
+
+| Option | Type | Default |
+| --- | --- | --- |
+| `autoImports` | `boolean \| { components?: boolean; composables?: boolean }` | `true` |
+| `prefix` | `string` (components only) | `''` |
+| `tailwind` | `boolean` | `true` |
+
+See the [Nuxt guide](https://ui.myfegypt.org/guide/nuxt) for details.
 
 ## Documentation
 

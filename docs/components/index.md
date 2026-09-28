@@ -62,5 +62,5 @@ Tabbed navigation and the table family, from unstyled primitives to a headless d
 | --- | --- | --- |
 | [Tabs](/components/tabs) | `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` | Composable tab strip and panels, controlled by `v-model`. |
 | [Table](/components/table) | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, `TableEmpty`, `TablePagination` | Unstyled table primitives plus a pagination control. |
-| [DataTable](/components/data-table) | `DataTable`, `DataTableFeatures` | Headless TanStack Table v9 grid with sorting and row expansion. |
+| [DataTable](/components/data-table) | `DataTable`, `DataTableFeatures` | Headless TanStack Table v9 grid with sorting, row expansion, and a loading state. |
 | [TreeTable](/components/tree-table) | `TreeTable`, `TreeTableColumn`, `TreeNode` | Expandable hierarchical grid with per-column cell slots. |
