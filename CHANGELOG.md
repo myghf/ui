@@ -1,5 +1,11 @@
 # @myghf/ui
 
+## 0.4.0
+
+### Minor Changes
+
+- 6f7ce97: feat: add Spinner, Skeleton, Avatar, form-field family, Button icons, DropdownMenu completion, Input/Textarea enhancements, and an optional Nuxt module
+
 ## 0.3.0
 
 ### Minor Changes
