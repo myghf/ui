@@ -1,5 +1,12 @@
 # @myghf/ui
 
+## 0.5.1
+
+### Patch Changes
+
+- 8bfcb0d: fix: portal the DatePicker and Select popups so an ancestor with overflow (such as Dialog) no longer clips them
+- 4096b53: fix: constrain the Dialog body so tall content scrolls instead of being clipped and unreachable
+
 ## 0.5.0
 
 ### Minor Changes
