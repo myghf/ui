@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -42,6 +42,17 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ 'update:open': [value: boolean]; open: []; close: [] }>()
+
+const slots = useSlots()
+
+/**
+ * reka-ui generates a description id for every drawer and always points
+ * `aria-describedby` at it, but the id only exists when a `DialogDescription`
+ * actually renders. Dropping the attribute when there is no description keeps
+ * it from referring to an element that was never rendered — which screen
+ * readers cannot follow, and which reka warns about in development.
+ */
+const hasDescription = computed(() => Boolean(props.description) || Boolean(slots.description))
 
 const open = computed({
   get: () => props.open,
@@ -118,6 +129,7 @@ const sizeClass = computed(() => (isVertical.value ? verticalSizes[props.size] :
         ]"
         @escape-key-down="onEscapeKeyDown"
         @pointer-down-outside="onPointerDownOutside"
+        v-bind="hasDescription ? {} : { 'aria-describedby': undefined }"
       >
         <VisuallyHidden v-if="!title && !$slots.header">
           <DialogTitle>Drawer</DialogTitle>

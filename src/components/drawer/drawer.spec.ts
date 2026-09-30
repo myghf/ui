@@ -1,9 +1,29 @@
 // @vitest-environment jsdom
-import { mount } from '@vue/test-utils'
+import { enableAutoUnmount, mount } from '@vue/test-utils'
 import { DialogContent, DialogOverlay, DialogRoot, DialogTitle } from 'reka-ui'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import { nextTick } from 'vue'
 import Drawer from './Drawer.vue'
+
+// The panel is portalled into `document.body`, so unmounting after each test is
+// what keeps one test's panel out of the next test's DOM queries.
+enableAutoUnmount(afterEach)
+
+/** Captures `console.warn` output — reka-ui's a11y warnings go through it. */
+function captureWarnings() {
+  const seen: string[] = []
+  const spy = vi.spyOn(console, 'warn').mockImplementation((...args: unknown[]) => {
+    seen.push(args.map(String).join(' '))
+  })
+  return { seen, restore: () => spy.mockRestore() }
+}
+
+/** The panel is portalled into `document.body`. */
+function content(): HTMLElement {
+  const el = document.body.querySelector('[role="dialog"]')
+  if (!el) throw new Error('drawer content not found')
+  return el as HTMLElement
+}
 
 describe('Drawer', () => {
   it('reflects the controlled open prop', async () => {
@@ -16,6 +36,41 @@ describe('Drawer', () => {
   it('renders a DialogTitle even when no title or header is given', () => {
     const wrapper = mount(Drawer, { props: { open: true } })
     expect(wrapper.findComponent(DialogTitle).exists()).toBe(true)
+  })
+
+  // reka-ui points `aria-describedby` at a generated id that only resolves when
+  // a DialogDescription renders, so an optional description must not leave a
+  // dangling reference — reka warns about it and screen readers cannot follow it.
+  it('drops aria-describedby when no description is given', async () => {
+    const warn = captureWarnings()
+    mount(Drawer, { props: { open: true, title: 'Filters' } })
+    await nextTick()
+
+    expect(warn.seen.filter((w) => w.includes('Missing `Description`'))).toEqual([])
+    expect(content().getAttribute('aria-describedby')).toBeNull()
+    warn.restore()
+  })
+
+  it('resolves aria-describedby from the description prop', async () => {
+    const warn = captureWarnings()
+    mount(Drawer, { props: { open: true, title: 'Filters', description: 'Help' } })
+    await nextTick()
+
+    expect(warn.seen).toEqual([])
+    expect(document.getElementById(content().getAttribute('aria-describedby') ?? '')).not.toBeNull()
+    warn.restore()
+  })
+
+  it('resolves aria-describedby from the description slot', async () => {
+    mount(Drawer, {
+      props: { open: true, title: 'Filters' },
+      slots: { description: () => 'Slotted help' },
+    })
+    await nextTick()
+
+    const describedBy = content().getAttribute('aria-describedby')
+    expect(describedBy).not.toBeNull()
+    expect(document.getElementById(describedBy ?? '')?.textContent).toBe('Slotted help')
   })
 
   it.each(['left', 'right', 'top', 'bottom', 'start', 'end'] as const)('places the panel for %s', (position) => {
