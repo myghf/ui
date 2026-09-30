@@ -5,6 +5,7 @@ import {
   SelectItem,
   SelectItemIndicator,
   SelectItemText,
+  SelectPortal,
   SelectRoot,
   SelectTrigger,
   SelectValue,
@@ -123,23 +124,25 @@ function onClear() {
          closed. In any `gap-*` flex container that extra zero-size item adds a
          gap, which vanishes when the popper opens — shifting sibling labels and
          controls. Rendering the content only while open drops the placeholder. -->
-    <SelectContent
-      v-if="open"
-      position="popper"
-      :side-offset="4"
-      class="z-50 min-w-[--reka-select-trigger-width] rounded-md border border-border bg-surface p-1 shadow-popover"
-    >
-      <SelectItem
-        v-for="opt in options"
-        :key="String(valueOf(opt))"
-        :value="valueOf(opt)"
-        class="relative flex cursor-pointer select-none items-center rounded px-2 py-1.5 pe-8 text-sm text-foreground outline-none transition-colors focus:bg-surface-muted data-[highlighted]:bg-surface-muted data-[disabled]:opacity-50"
+    <SelectPortal>
+      <SelectContent
+        v-if="open"
+        position="popper"
+        :side-offset="4"
+        class="z-50 min-w-[--reka-select-trigger-width] rounded-md border border-border bg-surface p-1 shadow-popover"
       >
-        <SelectItemText>{{ labelOf(opt) }}</SelectItemText>
-        <SelectItemIndicator class="absolute end-2 flex items-center justify-center text-primary-600">
-          <Check class="size-4" />
-        </SelectItemIndicator>
-      </SelectItem>
-    </SelectContent>
+        <SelectItem
+          v-for="opt in options"
+          :key="String(valueOf(opt))"
+          :value="valueOf(opt)"
+          class="relative flex cursor-pointer select-none items-center rounded px-2 py-1.5 pe-8 text-sm text-foreground outline-none transition-colors focus:bg-surface-muted data-[highlighted]:bg-surface-muted data-[disabled]:opacity-50"
+        >
+          <SelectItemText>{{ labelOf(opt) }}</SelectItemText>
+          <SelectItemIndicator class="absolute end-2 flex items-center justify-center text-primary-600">
+            <Check class="size-4" />
+          </SelectItemIndicator>
+        </SelectItem>
+      </SelectContent>
+    </SelectPortal>
   </SelectRoot>
 </template>
