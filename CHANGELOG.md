@@ -1,5 +1,11 @@
 # @myghf/ui
 
+## 0.5.2
+
+### Patch Changes
+
+- 7932b4e: fix: stop Dialog and Drawer pointing aria-describedby at a description that was never rendered
+
 ## 0.5.1
 
 ### Patch Changes
