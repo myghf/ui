@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, useSlots, watch, type VNode } from 'vue'
-import { PopoverContent, PopoverRoot, PopoverTrigger } from 'reka-ui'
+import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from 'lucide-vue-next'
 import {
   buildHourOptions,
@@ -338,86 +338,106 @@ const display = computed(() => {
         <CalendarIcon class="size-4 shrink-0 text-muted" />
       </button>
     </PopoverTrigger>
-    <PopoverContent
-      :side-offset="4"
-      class="z-50 rounded-md border border-border bg-surface p-3 shadow-popover"
-    >
-      <div class="flex items-center justify-between">
-        <button
-          type="button"
-          :aria-label="labelFor('previousMonth')"
-          class="rounded p-1 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          @click="shiftMonth(-1)"
-        >
-          <ChevronLeft class="size-4 rtl:rotate-180" />
-        </button>
-        <span data-test="month-label" class="text-sm font-medium">{{ monthLabel }}</span>
-        <button
-          type="button"
-          :aria-label="labelFor('nextMonth')"
-          class="rounded p-1 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          @click="shiftMonth(1)"
-        >
-          <ChevronRight class="size-4 rtl:rotate-180" />
-        </button>
-      </div>
-
-      <div data-test="weekdays" class="mt-2 grid grid-cols-7 gap-0.5 text-center text-xs">
-        <span v-for="(d, i) in weekdayLabels" :key="i" class="py-1 font-medium text-muted">
-          {{ d }}
-        </span>
-        <template v-for="(cell, i) in grid" :key="i">
-          <span v-if="!cell" />
+    <PopoverPortal>
+      <PopoverContent
+        :side-offset="4"
+        class="z-50 rounded-md border border-border bg-surface p-3 shadow-popover"
+      >
+        <div class="flex items-center justify-between">
           <button
-            v-else
             type="button"
-            :class="[
-              'flex h-8 items-center justify-center rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-              inRange(cell) ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-200' : 'hover:bg-surface-muted',
-              start && start.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
-              end && end.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
-            ]"
-            @click="pick(cell)"
+            :aria-label="labelFor('previousMonth')"
+            class="rounded p-1 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            @click="shiftMonth(-1)"
           >
-            {{ cell.getDate() }}
+            <ChevronLeft class="size-4 rtl:rotate-180" />
           </button>
-        </template>
-      </div>
-
-      <div v-if="mode === 'datetime'" class="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
-        <div role="group" :aria-label="labelFor('time')" class="flex items-center gap-1.5 text-xs text-muted">
-          <Clock class="size-3.5" />
-          <select
-            v-model.number="selectedHour"
-            data-test="hours"
-            :aria-label="labelFor('hour')"
-            class="rounded border border-border bg-surface px-1.5 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+          <span data-test="month-label" class="text-sm font-medium">{{ monthLabel }}</span>
+          <button
+            type="button"
+            :aria-label="labelFor('nextMonth')"
+            class="rounded p-1 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            @click="shiftMonth(1)"
           >
-            <option v-for="h in hourOptions" :key="h" :value="h">
-              {{ hourFormat === '12' ? h : pad(h) }}
-            </option>
-          </select>
-          <span aria-hidden="true">:</span>
-          <select
-            v-model.number="selectedMinute"
-            data-test="minutes"
-            :aria-label="labelFor('minute')"
-            class="rounded border border-border bg-surface px-1.5 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          >
-            <option v-for="m in minuteOptions" :key="m" :value="m">{{ pad(m) }}</option>
-          </select>
-          <select
-            v-if="hourFormat === '12'"
-            v-model="selectedMeridiem"
-            data-test="meridiem"
-            :aria-label="labelFor('time')"
-            class="rounded border border-border bg-surface px-1.5 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          >
-            <option value="am">{{ labelFor('am') }}</option>
-            <option value="pm">{{ labelFor('pm') }}</option>
-          </select>
+            <ChevronRight class="size-4 rtl:rotate-180" />
+          </button>
         </div>
-        <div class="flex items-center gap-2">
+
+        <div data-test="weekdays" class="mt-2 grid grid-cols-7 gap-0.5 text-center text-xs">
+          <span v-for="(d, i) in weekdayLabels" :key="i" class="py-1 font-medium text-muted">
+            {{ d }}
+          </span>
+          <template v-for="(cell, i) in grid" :key="i">
+            <span v-if="!cell" />
+            <button
+              v-else
+              type="button"
+              :class="[
+                'flex h-8 items-center justify-center rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
+                inRange(cell) ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-200' : 'hover:bg-surface-muted',
+                start && start.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
+                end && end.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
+              ]"
+              @click="pick(cell)"
+            >
+              {{ cell.getDate() }}
+            </button>
+          </template>
+        </div>
+
+        <div v-if="mode === 'datetime'" class="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
+          <div role="group" :aria-label="labelFor('time')" class="flex items-center gap-1.5 text-xs text-muted">
+            <Clock class="size-3.5" />
+            <select
+              v-model.number="selectedHour"
+              data-test="hours"
+              :aria-label="labelFor('hour')"
+              class="rounded border border-border bg-surface px-1.5 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            >
+              <option v-for="h in hourOptions" :key="h" :value="h">
+                {{ hourFormat === '12' ? h : pad(h) }}
+              </option>
+            </select>
+            <span aria-hidden="true">:</span>
+            <select
+              v-model.number="selectedMinute"
+              data-test="minutes"
+              :aria-label="labelFor('minute')"
+              class="rounded border border-border bg-surface px-1.5 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            >
+              <option v-for="m in minuteOptions" :key="m" :value="m">{{ pad(m) }}</option>
+            </select>
+            <select
+              v-if="hourFormat === '12'"
+              v-model="selectedMeridiem"
+              data-test="meridiem"
+              :aria-label="labelFor('time')"
+              class="rounded border border-border bg-surface px-1.5 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            >
+              <option value="am">{{ labelFor('am') }}</option>
+              <option value="pm">{{ labelFor('pm') }}</option>
+            </select>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="rounded px-3 py-1 text-sm text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              @click="clear"
+            >
+              {{ labelFor('clear') }}
+            </button>
+            <button
+              type="button"
+              :disabled="!start"
+              class="rounded bg-primary-500 px-3 py-1 text-sm text-white transition-colors hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              @click="commit(); open = false"
+            >
+              {{ labelFor('apply') }}
+            </button>
+          </div>
+        </div>
+
+        <div v-else-if="hasValue()" class="mt-3 flex justify-end border-t border-border pt-3">
           <button
             type="button"
             class="rounded px-3 py-1 text-sm text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
@@ -425,26 +445,8 @@ const display = computed(() => {
           >
             {{ labelFor('clear') }}
           </button>
-          <button
-            type="button"
-            :disabled="!start"
-            class="rounded bg-primary-500 px-3 py-1 text-sm text-white transition-colors hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-            @click="commit(); open = false"
-          >
-            {{ labelFor('apply') }}
-          </button>
         </div>
-      </div>
-
-      <div v-else-if="hasValue()" class="mt-3 flex justify-end border-t border-border pt-3">
-        <button
-          type="button"
-          class="rounded px-3 py-1 text-sm text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          @click="clear"
-        >
-          {{ labelFor('clear') }}
-        </button>
-      </div>
-    </PopoverContent>
+      </PopoverContent>
+    </PopoverPortal>
   </PopoverRoot>
 </template>
