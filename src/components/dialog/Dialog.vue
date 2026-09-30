@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, useSlots } from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -9,6 +9,7 @@ import {
   DialogRoot,
   DialogTitle,
   DialogTrigger,
+  VisuallyHidden,
 } from 'reka-ui'
 import { X } from 'lucide-vue-next'
 
@@ -23,6 +24,17 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ 'update:visible': [value: boolean]; close: [] }>()
+
+const slots = useSlots()
+
+/**
+ * reka-ui generates a description id for every dialog and always points
+ * `aria-describedby` at it, but the id only exists when a `DialogDescription`
+ * actually renders. Dropping the attribute when there is no description keeps
+ * it from referring to an element that was never rendered — which screen
+ * readers cannot follow, and which reka warns about in development.
+ */
+const hasDescription = computed(() => Boolean(props.description) || Boolean(slots.description))
 
 const open = computed({
   get: () => props.visible ?? false,
@@ -54,7 +66,13 @@ function onOpenChange(v: boolean) {
           'fixed left-1/2 top-1/2 z-50 flex flex-col w-full max-h-[85vh] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-lg border border-border bg-surface shadow-dialog focus-visible:outline-none',
           widths[size],
         ]"
+        v-bind="hasDescription ? {} : { 'aria-describedby': undefined }"
       >
+        <!-- A dialog must have an accessible name, so keep one even when the
+             caller supplies neither a title nor a header slot. -->
+        <VisuallyHidden v-if="!title && !$slots.header">
+          <DialogTitle>Dialog</DialogTitle>
+        </VisuallyHidden>
         <div class="flex shrink-0 items-start justify-between gap-4 border-b border-border p-5 pb-4">
           <div class="min-w-0">
             <DialogTitle v-if="title || $slots.header" class="text-lg font-semibold text-foreground">
