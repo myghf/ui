@@ -10,3 +10,5 @@ DataTable: pagination and server-side mode
   pagination; `rowCount` supplies the server total, and the component emits `update:pageIndex` /
   `update:pageSize` (alongside the existing `update:sorting` / `update:filters`) for you to refetch.
 - A `pagination` slot can replace the default footer.
+- Fix: `DataTable` no longer caps the body at the default page size (10) — TanStack's paginated
+  row model is now handed `pageSize: Infinity` unless `paginate`/`manual` is set.
