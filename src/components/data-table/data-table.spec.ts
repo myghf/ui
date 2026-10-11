@@ -1,9 +1,10 @@
 // @vitest-environment jsdom
 import { mount, type VueWrapper } from '@vue/test-utils'
 import { createColumnHelper, type ColumnDef } from '@tanstack/vue-table'
-import { h, type DefineComponent } from 'vue'
+import { h, nextTick, type DefineComponent } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 import type { DataTableFeatures } from '../../lib/table'
+import Checkbox from '../checkbox/Checkbox.vue'
 import Skeleton from '../skeleton/Skeleton.vue'
 import DataTable from './DataTable.vue'
 
@@ -20,8 +21,15 @@ interface DataTableProps {
   loading?: boolean
   loadingRows?: number
   loadingLabel?: string
+  selectable?: boolean
+  selection?: Record<string, boolean>
+  selectAllLabel?: string
+  selectRowLabel?: string
+  selectedLabel?: string
+  error?: string
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
   'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
+  'onUpdate:selection'?: (value: Record<string, boolean>) => void
 }
 
 /**
@@ -179,5 +187,83 @@ describe('DataTable loading state', () => {
     await bodyRows(wrapper)[0].trigger('click')
 
     expect(onUpdateExpanded).not.toHaveBeenCalled()
+  })
+})
+
+describe('DataTable selection', () => {
+  it('renders a header checkbox plus one per row when selectable', () => {
+    const wrapper = mount(TestDataTable, { props: { data, columns, getRowId, selectable: true } })
+    expect(wrapper.findAll('[role="checkbox"]')).toHaveLength(data.length + 1)
+  })
+
+  it('emits update:selection when a row checkbox changes', async () => {
+    const onUpdate = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, selectable: true, 'onUpdate:selection': onUpdate },
+    })
+    wrapper.get('[data-row-id="r1"]').findComponent(Checkbox).vm.$emit('update:modelValue', true)
+    await nextTick()
+    expect(onUpdate).toHaveBeenCalledWith({ r1: true })
+  })
+
+  it('selects every row from the header checkbox', async () => {
+    const onUpdate = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, selectable: true, 'onUpdate:selection': onUpdate },
+    })
+    wrapper.get('thead').findComponent(Checkbox).vm.$emit('update:modelValue', true)
+    await nextTick()
+    expect(onUpdate).toHaveBeenCalledWith({ r1: true, r2: true })
+  })
+
+  it('shows the bulk-actions bar with the selected count only when rows are selected', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, selectable: true, selection: { r1: true } },
+      slots: { 'bulk-actions': () => h('button', { class: 'bulk' }, 'Archive') },
+    })
+    expect(wrapper.text()).toContain('selected')
+    expect(wrapper.find('.bulk').exists()).toBe(true)
+
+    const none = mount(TestDataTable, { props: { data, columns, getRowId, selectable: true } })
+    expect(none.text()).not.toContain('selected')
+    expect(none.find('.bulk').exists()).toBe(false)
+  })
+
+  it('marks selected rows with data-selected', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, selectable: true, selection: { r1: true } },
+    })
+    expect(wrapper.get('[data-row-id="r1"]').attributes('data-selected')).toBe('true')
+    expect(wrapper.get('[data-row-id="r2"]').attributes('data-selected')).toBeUndefined()
+  })
+
+  it('counts the selection column in the empty-state colspan', () => {
+    const wrapper = mount(TestDataTable, { props: { data: [], columns, selectable: true } })
+    expect(wrapper.get('tbody td').attributes('colspan')).toBe('3')
+  })
+})
+
+describe('DataTable error state', () => {
+  it('replaces the body with the error message', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, error: 'Could not load referrals' },
+    })
+    expect(wrapper.text()).toContain('Could not load referrals')
+    expect(wrapper.text()).not.toContain('Amina Farouk')
+  })
+
+  it('renders an error slot when provided', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, error: 'x' },
+      slots: { error: () => h('span', { class: 'err' }, 'Try again') },
+    })
+    expect(wrapper.get('.err').text()).toBe('Try again')
+  })
+
+  it('shows the loading placeholders instead of the error while loading', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data: [], columns, loading: true, error: 'nope' },
+    })
+    expect(wrapper.text()).not.toContain('nope')
   })
 })

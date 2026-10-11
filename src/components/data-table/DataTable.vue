@@ -1,9 +1,17 @@
 <script setup lang="ts" generic="T extends RowData">
 import { computed, ref, useSlots } from 'vue'
-import { FlexRender, useTable, type ColumnDef, type RowData, type SortingState } from '@tanstack/vue-table'
+import {
+  FlexRender,
+  useTable,
+  type ColumnDef,
+  type RowData,
+  type RowSelectionState,
+  type SortingState,
+} from '@tanstack/vue-table'
 import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
+import Checkbox from '../checkbox/Checkbox.vue'
 import Skeleton from '../skeleton/Skeleton.vue'
 import Table from '../table/Table.vue'
 import TableBody from '../table/TableBody.vue'
@@ -29,6 +37,16 @@ const props = withDefaults(
     loading?: boolean
     loadingRows?: number
     loadingLabel?: string
+    /** Render a leading checkbox column and a bulk-actions bar. */
+    selectable?: boolean
+    /** Selected-row map, keyed by row id. Bind with `v-model:selection`. */
+    selection?: Record<string, boolean>
+    selectAllLabel?: string
+    selectRowLabel?: string
+    /** Word after the selected count in the bulk-actions bar. */
+    selectedLabel?: string
+    /** Error message. Replaces the body when set (and not `loading`). */
+    error?: string
   }>(),
   {
     size: 'default',
@@ -41,12 +59,19 @@ const props = withDefaults(
     loading: false,
     loadingRows: 5,
     loadingLabel: 'Loading…',
+    selectable: false,
+    selection: () => ({}),
+    selectAllLabel: 'Select all rows',
+    selectRowLabel: 'Select row',
+    selectedLabel: 'selected',
+    error: undefined,
   },
 )
 
 const emit = defineEmits<{
   'update:sorting': [value: { id: string; desc: boolean }[]]
   'update:expanded': [value: Record<string, boolean>]
+  'update:selection': [value: RowSelectionState]
   'row-click': [row: unknown]
 }>()
 const slots = useSlots()
@@ -64,12 +89,17 @@ const table = useTable({
   },
   getRowId,
   getRowCanExpand: () => props.expandable,
+  enableRowSelection: () => props.selectable,
   state: {
     get sorting() {
       return sorting.value
     },
     get expanded() {
       return props.expanded
+    },
+    get rowSelection() {
+      // Public type is a plain `Record<string, boolean>`; TanStack narrows it to `true` values.
+      return props.selection as RowSelectionState
     },
   },
   onSortingChange: (updater) => {
@@ -84,10 +114,19 @@ const table = useTable({
     // ExpandedState may be `true` (expand all); the suite only models per-row ids.
     emit('update:expanded', next === true ? {} : next)
   },
+  onRowSelectionChange: (updater) => {
+    const next =
+      typeof updater === 'function' ? updater(props.selection as RowSelectionState) : updater
+    emit('update:selection', next)
+  },
 })
 
 const rows = computed(() => table.getRowModel().rows)
-const columnCount = computed(() => table.getAllLeafColumns().length)
+const selectedRows = computed(() => table.getSelectedRowModel().rows)
+/** Includes the leading selection column when `selectable`. */
+const columnCount = computed(
+  () => table.getAllLeafColumns().length + (props.selectable ? 1 : 0),
+)
 /** Clamp to at least one placeholder row so 0/negative/fractional values still render. */
 const placeholderRowCount = computed(() => Math.max(1, Math.floor(props.loadingRows)))
 
@@ -105,6 +144,10 @@ const widthOf = (columnDef: unknown) => {
   return size ? `${size}px` : undefined
 }
 
+function clearSelection() {
+  table.toggleAllRowsSelected(false)
+}
+
 function onRowClick(event: MouseEvent, rowId: string) {
   emit('row-click', rows.value.find((row) => row.id === rowId)?.original)
   if (!props.expandable) return
@@ -120,9 +163,28 @@ function onRowClick(event: MouseEvent, rowId: string) {
     :aria-busy="loading || undefined"
   >
     <span v-if="loading" class="sr-only" role="status" aria-live="polite">{{ loadingLabel }}</span>
+
+    <div
+      v-if="selectable && selectedRows.length > 0"
+      class="flex flex-wrap items-center gap-2 border-b border-border bg-surface-muted/50 px-3 py-2 text-sm"
+    >
+      <span class="font-medium text-foreground">{{ selectedRows.length }}</span>
+      <span class="text-muted">{{ selectedLabel }}</span>
+      <div class="ms-auto flex items-center gap-2">
+        <slot name="bulk-actions" :rows="selectedRows" :clear="clearSelection" />
+      </div>
+    </div>
+
     <Table :striped="striped" :size="size">
       <TableHeader>
         <TableRow>
+          <TableHead v-if="selectable" class="w-10">
+            <Checkbox
+              :model-value="table.getIsAllRowsSelected()"
+              :aria-label="selectAllLabel"
+              @update:model-value="table.toggleAllRowsSelected($event)"
+            />
+          </TableHead>
           <TableHead
             v-for="header in table.getHeaderGroups()[0]?.headers ?? []"
             :key="header.id"
@@ -145,7 +207,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
         </TableRow>
       </TableHeader>
       <TableBody>
-        <TableEmpty v-if="!loading && rows.length === 0" :columns="columnCount">
+        <TableEmpty v-if="!loading && !error && rows.length === 0" :columns="columnCount">
           <slot name="empty">{{ emptyLabel }}</slot>
         </TableEmpty>
         <template v-if="loading">
@@ -155,14 +217,27 @@ function onRowClick(event: MouseEvent, rowId: string) {
             </TableCell>
           </TableRow>
         </template>
+        <TableRow v-else-if="error">
+          <TableCell :colspan="columnCount" class="text-center text-error-600">
+            <slot name="error">{{ error }}</slot>
+          </TableCell>
+        </TableRow>
         <template v-else>
           <template v-for="row in rows" :key="row.id">
             <TableRow
               :clickable="expandable"
               :data-row-id="row.id"
+              :data-selected="row.getIsSelected() || undefined"
               :data-state="row.getIsExpanded() ? 'expanded' : undefined"
               @click="onRowClick($event, row.id)"
             >
+              <TableCell v-if="selectable" class="w-10">
+                <Checkbox
+                  :model-value="row.getIsSelected()"
+                  :aria-label="`${selectRowLabel} ${row.index + 1}`"
+                  @update:model-value="row.toggleSelected($event)"
+                />
+              </TableCell>
               <TableCell v-for="cell in row.getAllCells()" :key="cell.id">
                 <slot
                   v-if="hasCellSlot(cell.column.id)"

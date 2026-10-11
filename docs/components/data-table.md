@@ -2,6 +2,7 @@
 import DataTableSorting from '../.vitepress/theme/demos/data-table/sorting.vue'
 import DataTableExpanding from '../.vitepress/theme/demos/data-table/expanding.vue'
 import DataTableLoading from '../.vitepress/theme/demos/data-table/loading.vue'
+import DataTableSelection from '../.vitepress/theme/demos/data-table/selection.vue'
 </script>
 
 # DataTable
@@ -74,6 +75,24 @@ while loading, so an empty `data` array does not flash "No results" before the r
 
 ## Types
 
+### Row selection and bulk actions
+
+Set `selectable` and bind `v-model:selection` to a map keyed by row id (provide `getRowId` so the
+keys are stable). A leading checkbox column appears; the header checkbox selects every row, and a
+bulk-actions bar is shown while rows are selected. Fill it through the `bulk-actions` slot, which
+receives the selected `rows` and a `clear` function.
+
+<Demo>
+  <DataTableSelection />
+</Demo>
+
+<<< ../.vitepress/theme/demos/data-table/selection.vue
+
+### Error state
+
+Set `error` to a message and `DataTable` replaces the body with it (use the `error` slot for
+custom content). The loading state still wins while `loading` is `true`.
+
 ### DataTableFeatures
 
 `columns` is typed against `DataTableFeatures`, the feature set registered in
@@ -85,9 +104,10 @@ features:
 | `rowSortingFeature` (+ `sortedRowModel`, `sortFns`) | Sortable columns and the `update:sorting` state. |
 | `rowPaginationFeature` (+ `paginatedRowModel`) | Registers the paginated row model. `DataTable` itself renders no pagination controls and does not expose the table instance, so reach this model by composing TanStack directly with `DataTableFeatures`. |
 | `rowExpandingFeature` (+ `expandedRowModel`) | Per-row expansion driven by the `expanded` map. |
+| `rowSelectionFeature` | Per-row selection, select-all, and the bulk-actions bar. |
 
-TanStack v9 tree-shakes anything not registered, so features outside this list — row
-selection, column filtering, column resizing, grouping — are **not** available through
+TanStack v9 tree-shakes anything not registered, so features outside this list — column
+filtering, column resizing, grouping — are **not** available through
 `DataTable`. Use it when you need exactly this set; otherwise compose
 [Table](/components/table) yourself.
 
@@ -114,6 +134,12 @@ selection, column filtering, column resizing, grouping — are **not** available
 | `loading` | `boolean` | `false` | Renders placeholder skeleton rows instead of the data rows. Sets `aria-busy="true"` on the wrapper and suppresses the empty state. |
 | `loadingRows` | `number` | `5` | Number of placeholder rows shown while `loading`. |
 | `loadingLabel` | `string` | `'Loading…'` | Screen-reader-only text announced as the loading status. |
+| `selectable` | `boolean` | `false` | Renders a leading checkbox column and the bulk-actions bar. |
+| `selection` | `Record<string, boolean>` | `{}` | Selected-row map keyed by row id. Bind with `v-model:selection`. |
+| `selectAllLabel` | `string` | `'Select all rows'` | Accessible name for the header checkbox. |
+| `selectRowLabel` | `string` | `'Select row'` | Accessible-name prefix for each row checkbox (the row number is appended). |
+| `selectedLabel` | `string` | `'selected'` | Word following the count in the bulk-actions bar. |
+| `error` | `string` | — | Error message. Replaces the body unless `loading` is set. |
 
 ## Events
 
@@ -121,6 +147,7 @@ selection, column filtering, column resizing, grouping — are **not** available
 | --- | --- | --- |
 | `update:sorting` | `{ id: string; desc: boolean }[]` | Emitted whenever the sort state changes. |
 | `update:expanded` | `Record<string, boolean>` | Emitted with the new expansion map. |
+| `update:selection` | `Record<string, boolean>` | Emitted with the new selection map. |
 | `row-click` | `unknown` | Emitted with the clicked row's original data. Fires even when `expandable` is `false`. |
 
 ## Slots
@@ -130,6 +157,8 @@ selection, column filtering, column resizing, grouping — are **not** available
 | `empty` | — | Replaces `emptyLabel` when there are no rows. |
 | `cell-<columnId>` | `{ row, cell, value }` | Overrides that column's cell. The column id is its accessor key (or `id`). |
 | `expansion` | `{ row }` | Content of the expansion row, shown for expanded rows only. |
+| `bulk-actions` | `{ rows, clear }` | Content of the bulk-actions bar, shown while rows are selected. |
+| `error` | — | Replaces the error text when `error` is set. |
 
 `DataTable` renders no default slot — all cells come from `FlexRender` or a `cell-*` slot.
 
@@ -157,6 +186,9 @@ and the events above.
 - The empty state renders a full-width `TableEmpty` row, so the table keeps its structure
   when there is no data. It is suppressed while `loading`, so an empty `data` array does
   not flash "No results" before the first rows arrive.
+- With `selectable`, the header and row checkboxes are real [Checkbox](/components/checkbox)
+  controls with `aria-label`s (`selectAllLabel`, and `selectRowLabel` plus the row number), and
+  `aria-checked` reflects the selection. Clicking them never toggles row expansion.
 
 ## Dark mode & RTL
 
