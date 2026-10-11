@@ -112,6 +112,20 @@ describe('a11y: form controls', () => {
     await expectClean(mount(UI.Switch, { attrs: { 'aria-label': 'Enable alerts' } }))
   })
 
+  it('RadioGroup', async () => {
+    await expectClean(
+      mount(UI.RadioGroup, {
+        props: {
+          modelValue: 'a',
+          options: [
+            { label: 'Alpha', value: 'a' },
+            { label: 'Beta', value: 'b' },
+          ],
+        },
+      }),
+    )
+  })
+
   it('InputNumber', async () => {
     await expectClean(
       mount(UI.InputNumber, { props: { modelValue: 5 }, attrs: { 'aria-label': 'Amount' } }),
@@ -250,6 +264,20 @@ describe('a11y: controls inside FormField', () => {
 
   it('Switch', async () => {
     await expectClean(mountInField(field, () => h(UI.Switch)))
+  })
+
+  it('RadioGroup', async () => {
+    await expectClean(
+      mountInField(field, () =>
+        h(UI.RadioGroup, {
+          modelValue: 'a',
+          options: [
+            { label: 'Alpha', value: 'a' },
+            { label: 'Beta', value: 'b' },
+          ],
+        }),
+      ),
+    )
   })
 
   it('InputNumber', async () => {

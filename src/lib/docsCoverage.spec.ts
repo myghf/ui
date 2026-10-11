@@ -66,6 +66,7 @@ const MAP: Record<string, string> = {
   useFieldControl: 'components/form-field.md',
   Checkbox: 'components/checkbox.md',
   Switch: 'components/switch.md',
+  RadioGroup: 'components/radio-group.md',
   Tabs: 'components/tabs.md',
   TabsList: 'components/tabs.md',
   TabsTrigger: 'components/tabs.md',

@@ -28,6 +28,7 @@ known gaps.
 | `Password` | The visibility toggle is `aria-label="Toggle password visibility"`. Strength bars are decorative (`aria-hidden`). Inside a `FormField` it wires `id`/`aria-invalid`/`aria-describedby`/`required` like the other text controls. |
 | `InputNumber` | Reka's number field renders `role="spinbutton"` with `aria-roledescription`, `aria-valuenow`, `aria-valuemin`, and `aria-valuemax`; the component adds a locale-formatted `aria-valuetext` and `aria-invalid` when `invalid`. |
 | `Switch` | Reka renders a `<button role="switch">` with `aria-checked`; the component adds `aria-invalid` and `aria-required` when set. |
+| `RadioGroup` | Reka renders `role="radiogroup"` with a `role="radio"` item per option; each option is named by its own `<label for>`, and the group adds `aria-invalid`/`aria-required` when set. |
 | `TableHead` | Sets `scope="col"` and `aria-sort` when `sortDirection` is `ascending`/`descending`. |
 | `TablePagination` | The current page button gets `aria-current="page"`; previous/next buttons have labels. |
 | `Toaster` | Reka's `ToastProvider`/`ToastViewport` announce toasts; the viewport is labelled (`label`, default `'Notifications'`). |

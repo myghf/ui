@@ -57,6 +57,7 @@ export const AUTO_IMPORT_COMPONENTS = [
   'FormMessage',
   'Checkbox',
   'Switch',
+  'RadioGroup',
   'Tag',
   'Alert',
   'Message',
