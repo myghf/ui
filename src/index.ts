@@ -23,6 +23,7 @@ export type { FormFieldContext, FieldControl, FieldControlSources } from './lib/
 export { default as Checkbox } from './components/checkbox/Checkbox.vue'
 export { default as Switch } from './components/switch/Switch.vue'
 export { default as RadioGroup } from './components/radio-group/RadioGroup.vue'
+export { default as Combobox } from './components/combobox/Combobox.vue'
 export { default as Tag } from './components/tag/Tag.vue'
 export type { TagTone } from './components/tag/Tag.vue'
 export { default as Alert } from './components/alert/Alert.vue'

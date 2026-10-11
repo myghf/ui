@@ -74,6 +74,7 @@ export default defineConfig({
               { text: 'RadioGroup', link: '/components/radio-group' },
               { text: 'Select', link: '/components/select' },
               { text: 'SelectButton', link: '/components/select-button' },
+              { text: 'Combobox', link: '/components/combobox' },
               { text: 'DatePicker', link: '/components/date-picker' },
               { text: 'TreeSelect', link: '/components/tree-select' },
               { text: 'TransferList', link: '/components/transfer-list' },

@@ -8,7 +8,7 @@ import FormFieldSlots from '../.vitepress/theme/demos/form-field/slots.vue'
 `FormField` groups a label, a control, and its description and error text, and shares
 that wiring with its children through a Vue injection context. `Label` reads the
 context automatically, so it gets the right `for` without you repeating an id. Every form
-control — `Input`, `Textarea`, `Password`, `Select`, `Checkbox`, `Switch`, `RadioGroup`, `InputNumber`,
+control — `Input`, `Textarea`, `Password`, `Select`, `Combobox`, `Checkbox`, `Switch`, `RadioGroup`, `InputNumber`,
 `SelectButton`, `DatePicker`, `TreeSelect`, and `TransferList` — consumes the same context
 through the shared `useFieldControl` composable, so `id`, `aria-describedby`, and (where the
 element supports them) `aria-invalid` and `required` are wired the same way everywhere.

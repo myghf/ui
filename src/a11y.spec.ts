@@ -151,6 +151,12 @@ describe('a11y: form controls', () => {
     await expectClean(mount(UI.DatePicker, { props: { placeholder: 'Select date' } }))
   })
 
+  it('Combobox', async () => {
+    await expectClean(
+      mountWithLabel(() => h(UI.Combobox, { options: [{ label: 'Alpha', value: 'a' }] })),
+    )
+  })
+
   it('TreeSelect', async () => {
     await expectClean(
       mountAny(UI.TreeSelect, {
@@ -300,6 +306,12 @@ describe('a11y: controls inside FormField', () => {
 
   it('DatePicker', async () => {
     await expectClean(mountInField(field, () => h(UI.DatePicker)))
+  })
+
+  it('Combobox', async () => {
+    await expectClean(
+      mountInField(field, () => h(UI.Combobox, { options: [{ label: 'Alpha', value: 'a' }] })),
+    )
   })
 
   it('TreeSelect', async () => {

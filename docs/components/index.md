@@ -41,6 +41,7 @@ Inputs and controls for collecting and validating user data.
 | [RadioGroup](/components/radio-group) | `RadioGroup` | Single-choice group for a small, always-visible set of options. |
 | [Select](/components/select) | `Select` | Dropdown listbox for single or multiple selection, with optional clear. |
 | [SelectButton](/components/select-button) | `SelectButton` | Segmented control for a mutually exclusive set of options. |
+| [Combobox](/components/combobox) | `Combobox` | Searchable single/multi select with filtering and removable tags. |
 | [DatePicker](/components/date-picker) | `DatePicker` | Calendar field for a single date, a range, or a date and time. |
 | [TreeSelect](/components/tree-select) | `TreeSelect` | Tree dropdown that emits the selected leaf keys. |
 | [TransferList](/components/transfer-list) | `TransferList` | Moves items between available and selected lists. |
