@@ -248,6 +248,11 @@ manual:
   `255 255 255` for strict brand-white.
 - **Destructive button contrast.** White text on `error-500` (`#E9322B`) is ≈4.2:1 — just under
   AA for small text. For small destructive labels prefer `error-600` (≈5.3:1) or larger text.
+- **Primary button contrast.** White text on `primary-500` (MYGHF Blue `#00A2DD`) is ≈2.9:1 —
+  below AA and the 3:1 large-text threshold. The primary solid button should move to a darker
+  blue (e.g. `primary-700`, ≈6.6:1) or black text; until then it is pinned as a known exception in
+  `src/lib/contrast.spec.ts` and tracked in
+  [issue #12](https://github.com/myghf/ui/issues/12).
 - **Typography.** The library previously shipped `DM Sans`; it is not a brand font and has been
   replaced by the Helvetica Neue stack. Helvetica Neue / Trajan Pro / GE SS Two / Adobe Arabic are
   not webfonts bundled here — consumers must supply them or rely on the fallbacks.
@@ -256,14 +261,16 @@ manual:
   `[data-theme="dark"]` selector drives the token block only, so applying `data-theme="dark"` by
   hand without `.dark` yields dark tokens but keeps `dark:` variants inactive. `useTheme` (default
   `attribute: 'both'`) sets both so the two agree.
-- **Dark tint contrast.** Dark brand tints use `*-900/40` backgrounds with `*-200` text; contrast is
-  verified per component rather than by an automated palette guard.
+- **Dark tint contrast.** Dark brand tints use `*-900/40` backgrounds with `*-200` text. WCAG AA
+  for these pairs — and for the light `*-800` on `*-100` tint pair — is asserted by
+  `src/lib/contrast.spec.ts`, which parses these tokens.
 - **Drawer scroll lock.** `preventScroll: false` is only effective with `backdrop: false`, because
   reka's dialog overlay owns the body scroll lock whenever a backdrop is rendered.
 - **RTL coverage.** Directional icon flips and logical-property fixes are in place — including
-  `Drawer`'s `start`/`end` positions, `Toaster`'s logical viewports, and `DatePicker`'s
-  `rtl:rotate-180` chevrons. New components must be checked against rule 5 above. There is still no
-  automated RTL visual test.
+  `Drawer`'s `start`/`end` positions, `Toaster`'s logical viewports, `DatePicker`'s
+  `rtl:rotate-180` chevrons, and `TransferList`'s logical `text-start` row labels. New components
+  must be checked against rule 5 above. A source-level guard against physical utilities is planned;
+  there is still no automated RTL visual test.
 - **Fonts.** No `@font-face` declarations are shipped.
 
 ---

@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, onMounted, ref, useAttrs, watch } from 'vue'
-import { useFormField } from '../../lib/formField'
+import { onMounted, ref, useAttrs, watch } from 'vue'
+import { useFieldControl } from '../../lib/formField'
 
 const props = withDefaults(
   defineProps<{
@@ -22,13 +22,13 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const attrs = useAttrs()
 const el = ref<HTMLTextAreaElement>()
-const field = useFormField()
 const capped = ref(false)
 
-const id = computed(() => props.id ?? field?.id.value)
-const invalid = computed(() => props.invalid ?? field?.invalid.value ?? false)
-const required = computed(() => props.required ?? field?.required.value ?? false)
-const describedBy = computed(() => field?.describedBy.value)
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
 
 /**
  * Grows the textarea to fit its content. Guarded so jsdom (where `scrollHeight`

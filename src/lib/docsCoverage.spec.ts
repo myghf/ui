@@ -63,6 +63,7 @@ const MAP: Record<string, string> = {
   FormDescription: 'components/form-field.md',
   FormMessage: 'components/form-field.md',
   useFormField: 'components/form-field.md',
+  useFieldControl: 'components/form-field.md',
   Checkbox: 'components/checkbox.md',
   Tabs: 'components/tabs.md',
   TabsList: 'components/tabs.md',

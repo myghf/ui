@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, ref, useAttrs } from 'vue'
-import { useFormField } from '../../lib/formField'
+import { ref, useAttrs } from 'vue'
+import { useFieldControl } from '../../lib/formField'
 import Icon from '../icon/Icon.vue'
 
 const props = withDefaults(
@@ -26,12 +26,12 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const attrs = useAttrs()
 const inputRef = ref<HTMLInputElement>()
-const field = useFormField()
 
-const id = computed(() => props.id ?? field?.id.value)
-const invalid = computed(() => props.invalid ?? field?.invalid.value ?? false)
-const required = computed(() => props.required ?? field?.required.value ?? false)
-const describedBy = computed(() => field?.describedBy.value)
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
 
 defineExpose({ focus: () => inputRef.value?.focus() })
 </script>

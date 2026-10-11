@@ -8,6 +8,7 @@ import {
 import { computed, useAttrs } from 'vue'
 import Icon from '../icon/Icon.vue'
 import { mergeFormatOptions, toNumberOrNull } from '../../lib/number'
+import { useFieldControl } from '../../lib/formField'
 
 defineOptions({ inheritAttrs: false })
 
@@ -29,15 +30,24 @@ const props = withDefaults(
     disabled?: boolean
     readonly?: boolean
     invalid?: boolean
+    required?: boolean
     size?: 'sm' | 'default' | 'lg'
     id?: string
     name?: string
   }>(),
-  { step: 1, size: 'default' },
+  // `invalid`/`required` default to `undefined` so Boolean casting does not
+  // swallow them and they can fall through to the form field context.
+  { step: 1, size: 'default', invalid: undefined, required: undefined },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [value: number | null] }>()
 const attrs = useAttrs()
+
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
 
 /** Never hand reka a non-positive or non-finite step; it would loop or divide by zero. */
 const safeStep = computed(() => (Number.isFinite(props.step) && props.step > 0 ? props.step : 1))
@@ -91,6 +101,8 @@ const valuetext = computed<string | undefined>(() => {
         v-bind="attrs"
         :placeholder="placeholder"
         :aria-invalid="invalid || undefined"
+        :aria-required="required || undefined"
+        :aria-describedby="describedBy"
         :aria-valuetext="valuetext"
         class="min-w-0 flex-1 border-0 bg-transparent p-0 text-inherit outline-none placeholder:text-muted focus-visible:outline-none disabled:cursor-not-allowed"
       />

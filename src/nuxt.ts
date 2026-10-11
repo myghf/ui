@@ -104,6 +104,7 @@ export const AUTO_IMPORT_COMPOSABLES = [
   'createToastStore',
   'toastKey',
   'useFormField',
+  'useFieldControl',
 ]
 
 /**

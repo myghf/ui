@@ -89,12 +89,10 @@ These components already handle direction:
   so their spacing is direction-safe; the stepper-buttons container adds `ms-1`.
 - **`TablePagination`** — previous/next chevrons use `rtl:rotate-180`.
 - **`Tag`** — the remove button uses `ms-0.5`/`-me-0.5`.
+- **`TransferList`** — row labels use logical `text-start`, so they follow the direction.
 - **`DropdownMenu`** and **`Select`** — overlay positioning comes from Reka UI's popper
   primitives, which resolve the document direction and pass it to the positioner.
 
-> **Known gap:** `TransferList` uses a physical `text-left` on its row buttons, so labels
-> stay left-aligned under RTL instead of following the direction. Direction-aware fixes are
-> otherwise in place.
->
 > There is **no automated RTL visual test**. Correctness is reviewed against the
-> logical-utility rule above and verified by inspection, not by CI.
+> logical-utility rule above and verified by inspection, not by CI. A source-level guard that
+> fails on physical utilities in components is planned.

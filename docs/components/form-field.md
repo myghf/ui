@@ -7,9 +7,11 @@ import FormFieldSlots from '../.vitepress/theme/demos/form-field/slots.vue'
 
 `FormField` groups a label, a control, and its description and error text, and shares
 that wiring with its children through a Vue injection context. `Label` reads the
-context automatically, so it gets the right `for` without you repeating an id. The
-`Input`, `Textarea`, and `Select` components consume the same context to pick up
-`id`, `aria-describedby`, `aria-invalid`, and `required`.
+context automatically, so it gets the right `for` without you repeating an id. Every form
+control — `Input`, `Textarea`, `Password`, `Select`, `Checkbox`, `InputNumber`,
+`SelectButton`, `DatePicker`, `TreeSelect`, and `TransferList` — consumes the same context
+through the shared `useFieldControl` composable, so `id`, `aria-describedby`, and (where the
+element supports them) `aria-invalid` and `required` are wired the same way everywhere.
 
 ```vue
 <script setup lang="ts">
@@ -130,6 +132,31 @@ interface FormFieldContext {
 Because the context is built from computed refs, it stays reactive when the
 `FormField` props change after mount.
 
+## useFieldControl
+
+`useFieldControl` is the shared resolver every form control uses to wire itself to the
+nearest `FormField`. Pass reactive readers for the control's own props; each reader falls
+back to the context (then a default) when it returns `undefined`, so an explicit prop always
+wins:
+
+```ts
+import { useFieldControl } from '@myghf/ui'
+
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
+```
+
+Build a custom control with the same contract: bind `id`, `:aria-invalid="invalid || undefined"`,
+`:aria-describedby="describedBy"`, and `:required`/`:aria-required` onto its focusable element.
+Pass readers (not plain values) so reactivity is kept, and so a prop named differently still works —
+`DatePicker` passes `id: () => props.inputId`.
+
+`id` and `describedBy` are `ComputedRef<string | undefined>`; `invalid` and `required` are
+`ComputedRef<boolean>`.
+
 ## Accessibility
 
 - `Label` is a real `<label>`; its `for` points at the control id from the field
@@ -141,6 +168,10 @@ Because the context is built from computed refs, it stays reactive when the
   announced without moving focus.
 - The required marker is `aria-hidden="true"` — assistive technology hears the
   control's own `required` state, not a stray asterisk.
+- Controls whose focusable element is a `<button>` (`DatePicker`, `TreeSelect`) expose
+  `id` and `aria-describedby` but not `aria-invalid`/`aria-required`, which are not valid
+  on a button; they surface the error through the description association and the error
+  border. `TransferList` exposes the same pair on a `role="group"` wrapper.
 
 ## Dark mode & RTL
 

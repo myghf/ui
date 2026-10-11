@@ -6,7 +6,7 @@ const EXPECTED = [
   'cn', 'toNumberOrNull', 'mergeFormatOptions', 'toPascalCase', 'resolveIconName', 'toneClasses', 'Icon',
   'getFirstDayOfWeek', 'getWeekdayLabels', 'getMonthLabel', 'formatLocalizedDate', 'formatLocalizedTime',
   'Button', 'Input', 'InputNumber', 'Textarea', 'Password', 'Checkbox', 'Tag',
-  'Label', 'FormField', 'FormDescription', 'FormMessage', 'useFormField',
+  'Label', 'FormField', 'FormDescription', 'FormMessage', 'useFormField', 'useFieldControl',
   'Alert', 'Message', 'Spinner', 'Skeleton', 'Avatar',
   'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent',
   'Select', 'SelectButton', 'DatePicker', 'Dialog',

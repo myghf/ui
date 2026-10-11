@@ -52,6 +52,7 @@ describe('@myghf/ui Nuxt module', () => {
       'createToastStore',
       'toastKey',
       'useFormField',
+      'useFieldControl',
     ])
   })
 

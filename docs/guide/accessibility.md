@@ -25,7 +25,7 @@ known gaps.
 | `ThemeToggle` | `aria-label` (default `'Toggle theme'`) and `aria-pressed` reflecting dark mode. |
 | `Alert` / `Message` | `role` from the tone: `status` for `info`/`success`/`secondary`, `alert` for `warning`/`danger`. The close button has an `aria-label`. |
 | `Tag` | Removable tags give the remove button an `aria-label` (`removeLabel`, default `'Remove'`). |
-| `Password` | The visibility toggle is `aria-label="Toggle password visibility"`. Strength bars are decorative (`aria-hidden`). |
+| `Password` | The visibility toggle is `aria-label="Toggle password visibility"`. Strength bars are decorative (`aria-hidden`). Inside a `FormField` it wires `id`/`aria-invalid`/`aria-describedby`/`required` like the other text controls. |
 | `InputNumber` | Reka's number field renders `role="spinbutton"` with `aria-roledescription`, `aria-valuenow`, `aria-valuemin`, and `aria-valuemax`; the component adds a locale-formatted `aria-valuetext` and `aria-invalid` when `invalid`. |
 | `TableHead` | Sets `scope="col"` and `aria-sort` when `sortDirection` is `ascending`/`descending`. |
 | `TablePagination` | The current page button gets `aria-current="page"`; previous/next buttons have labels. |
@@ -37,6 +37,15 @@ known gaps.
 Provide an accessible name for every control: a `<label for>` for text inputs, or an
 `aria-label` on icon-only buttons. `Icon` renders decorative SVGs, so a nearby accessible
 name is always required.
+
+Form controls share one error-wiring contract. Inside a `FormField`, every control resolves
+`id`, `aria-describedby`, and — where its element supports them — `aria-invalid` and
+`required` through the shared `useFieldControl` composable, so an explicit prop always wins
+and the context fills the rest. Controls whose trigger is a `<button>` (`DatePicker`,
+`TreeSelect`) associate the description but omit `aria-invalid`/`aria-required`, which are not
+valid on a button; `TransferList` exposes the pair on a `role="group"` wrapper. Custom
+controls can opt in with the same composable — see
+[Form field](/components/form-field#usefieldcontrol).
 
 ## Keyboard support
 
@@ -71,14 +80,18 @@ Follow the palette rules in [`DESIGN.md`](https://github.com/myghf/ui/blob/main/
 
 ## Known gaps
 
-- **No automated contrast check.** Contrast is verified by inspection against `DESIGN.md`;
-  there is no luminance/axe test in CI.
-- **No automated RTL visual test.** Direction is reviewed by inspection — see
-  [RTL & bilingual](/guide/rtl) for the `TransferList` exception.
-- **`invalid` is styling-only on some fields.** `Input`, `Textarea`, `Password`, and
-  `Select` accept an `invalid` prop that changes the border colour but does **not** set
-  `aria-invalid` or `aria-describedby`. Add those attributes yourself when wiring validation
-  messages. (`InputNumber` does set them.)
+- **Rendered contrast is verified by inspection.** The token palette is now guarded by
+  `src/lib/contrast.spec.ts` (WCAG AA for body text and brand tints, with documented
+  exceptions — see below), but axe cannot compute contrast inside jsdom and there is no
+  browser runner in CI, so *rendered* contrast on real pages is still checked against
+  `DESIGN.md`.
+- **The primary solid button falls short of AA.** White text on `primary-500` (MYGHF Blue
+  `#00A2DD`) is ≈2.9:1 — below AA (4.5:1) and even the 3:1 large-text threshold. It is pinned
+  as a known exception in the contrast guard and in `DESIGN.md` §6; changing it is a brand
+  decision (a darker blue or black text), not a code fix.
+- **No automated RTL visual test.** Direction is reviewed by inspection against the
+  logical-utility rule — see [RTL & bilingual](/guide/rtl). A source-level guard that fails on
+  physical utilities in components is planned.
 - **Password strength feedback is visual.** The strength bars are `aria-hidden="true"`, so
   they are not announced; surface strength in text if it matters.
 - **Fonts are not bundled.** Helvetica Neue, Trajan Pro, GE SS Two, and Adobe Arabic fall
@@ -87,7 +100,14 @@ Follow the palette rules in [`DESIGN.md`](https://github.com/myghf/ui/blob/main/
 
 ## Related automated safeguards
 
-Some correctness is enforced by tests even though contrast and RTL are not: `tokens.spec.ts`
-checks that the token set matches the preset and that the dark block only overrides semantic
-tokens, and `darkCoverage.spec.ts` asserts every light brand tint in a component has a
-`dark:` variant in the same file.
+- **`src/a11y.spec.ts`** mounts every public component and asserts there are no
+  [`axe-core`](https://github.com/dequelabs/axe-core) violations — missing accessible names,
+  unlabelled controls, nested interactive elements, and broken ARIA structure. The helper
+  lives in `src/test-utils/a11y.ts`; `color-contrast` is disabled there because jsdom has no
+  layout engine.
+- **`src/lib/contrast.spec.ts`** parses the `--myghf-*` tokens and asserts WCAG AA for body
+  text on both surfaces and for brand-tint text, and pins the documented brand exceptions so
+  they cannot regress.
+- **`src/lib/tokens.spec.ts`** checks that the token set matches the preset and that the dark
+  block only overrides semantic tokens, and **`src/lib/darkCoverage.spec.ts`** asserts every
+  light brand tint in a component has a `dark:` variant in the same file.

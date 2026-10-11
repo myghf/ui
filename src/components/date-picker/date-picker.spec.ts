@@ -1,6 +1,8 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
+import { h } from 'vue'
+import FormField from '../form-field/FormField.vue'
 import DatePicker from './DatePicker.vue'
 
 function open(props: Record<string, unknown> = {}) {
@@ -67,5 +69,33 @@ describe('DatePicker', () => {
       slots: { 'label-clear': 'Nuke' },
     })
     expect(wrapper.text()).toContain('Nuke')
+  })
+})
+
+describe('DatePicker form-field wiring', () => {
+  it('takes its id and describedby from a FormField', () => {
+    const wrapper = mount(FormField, {
+      props: { id: 'dob', description: 'Help', error: 'Required' },
+      slots: { default: () => h(DatePicker) },
+    })
+    const trigger = wrapper.get('[aria-haspopup="dialog"]')
+    expect(trigger.attributes('id')).toBe('dob')
+    expect(trigger.attributes('aria-describedby')).toBe('dob-description dob-error')
+  })
+
+  it('lets an explicit inputId beat the context id', () => {
+    const wrapper = mount(FormField, {
+      props: { id: 'context-id' },
+      slots: { default: () => h(DatePicker, { inputId: 'explicit-id' }) },
+    })
+    expect(wrapper.get('[aria-haspopup="dialog"]').attributes('id')).toBe('explicit-id')
+  })
+
+  it('renders the field error styling when the FormField is invalid', () => {
+    const wrapper = mount(FormField, {
+      props: { error: 'Required' },
+      slots: { default: () => h(DatePicker) },
+    })
+    expect(wrapper.get('[aria-haspopup="dialog"]').classes().join(' ')).toContain('border-error-500')
   })
 })

@@ -41,6 +41,11 @@ Before committing any code change, run at minimum:
 npm run typecheck && npm test
 ```
 
+`npm test` includes the accessibility catalog (`src/a11y.spec.ts`, axe-core via
+`src/test-utils/a11y.ts`) and the token contrast guard (`src/lib/contrast.spec.ts`). A new
+component must be added to the a11y catalog. Pull requests run these checks through
+`.github/workflows/ci.yml`.
+
 ## Ground rules
 
 1. **`dist/` is generated.** Never edit it or commit it (it is gitignored).

@@ -141,7 +141,8 @@ composables and utilities are never prefixed, and the exports themselves keep th
 names either way.
 
 With `autoImports` enabled, the registered composables are `useTheme`, `createTheme`,
-`useToast`, `createToastStore`, `toastKey`, and the form-field helper `useFormField`. The
+`useToast`, `createToastStore`, `toastKey`, and the form-field helpers `useFormField` and
+`useFieldControl`. The
 registered utilities include `cn`, `toneClasses`, and the date, locale, number, and icon
 helpers (`dateToValue`, `toISODate`, `formatLocalizedDate`, `toNumberOrNull`,
 `resolveIconName`, and the rest of the public runtime API).

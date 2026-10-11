@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot, type AcceptableValue } from 'reka-ui'
+import { useFieldControl } from '../../lib/formField'
 
 const props = withDefaults(
   defineProps<{
@@ -9,11 +10,22 @@ const props = withDefaults(
     optionLabel?: string
     optionValue?: string
     disabled?: boolean
+    invalid?: boolean
+    required?: boolean
+    id?: string
   }>(),
-  { optionLabel: 'label', optionValue: 'value' },
+  // `invalid`/`required` default to `undefined` so Boolean casting does not
+  // swallow them and they can fall through to the form field context.
+  { optionLabel: 'label', optionValue: 'value', invalid: undefined, required: undefined },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [value: unknown] }>()
+
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
 
 const rootEl = ref<InstanceType<typeof RadioGroupRoot> | null>(null)
 const indicator = ref({ left: 0, top: 0, width: 0, height: 0, ready: false })
@@ -71,9 +83,16 @@ watch(() => props.options, scheduleMeasure, { deep: true })
 <template>
   <RadioGroupRoot
     ref="rootEl"
+    :id="id"
     :model-value="modelValue"
     :disabled="disabled"
-    class="relative inline-flex flex-wrap items-center gap-1 rounded-md border border-border bg-surface p-1"
+    :required="required || undefined"
+    :aria-invalid="invalid || undefined"
+    :aria-describedby="describedBy"
+    :class="[
+      'relative inline-flex flex-wrap items-center gap-1 rounded-md border border-border bg-surface p-1',
+      invalid ? 'border-error-500' : '',
+    ]"
     @update:model-value="emit('update:modelValue', $event)"
   >
     <span

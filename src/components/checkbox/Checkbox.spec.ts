@@ -2,7 +2,8 @@
 import { mount } from '@vue/test-utils'
 import { CheckboxRoot } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
+import FormField from '../form-field/FormField.vue'
 import Checkbox from './Checkbox.vue'
 
 /**
@@ -56,5 +57,25 @@ describe('Checkbox', () => {
     })
 
     expect(wrapper.get('button').attributes('aria-label')).toBe('Email')
+  })
+})
+
+describe('Checkbox form-field wiring', () => {
+  it('wires id, describedby, invalid and required from a FormField', () => {
+    const wrapper = mount(FormField, {
+      props: { id: 'terms', description: 'Help', error: 'Required', required: true },
+      slots: { default: () => h(Checkbox) },
+    })
+    const button = wrapper.get('button')
+    expect(button.attributes('id')).toBe('terms')
+    expect(button.attributes('aria-describedby')).toBe('terms-description terms-error')
+    expect(button.attributes('aria-invalid')).toBe('true')
+    expect(button.attributes('aria-required')).toBe('true')
+  })
+
+  it('renders without aria wiring when there is no FormField', () => {
+    const button = mount(Checkbox).get('button')
+    expect(button.attributes('aria-invalid')).toBeUndefined()
+    expect(button.attributes('aria-describedby')).toBeUndefined()
   })
 })

@@ -2,6 +2,7 @@
 import { computed, ref, useSlots, watch, type VNode } from 'vue'
 import { PopoverContent, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from 'lucide-vue-next'
+import { useFieldControl } from '../../lib/formField'
 import {
   buildHourOptions,
   buildMinuteOptions,
@@ -129,6 +130,9 @@ const props = withDefaults(
     size: 'default',
     hourFormat: '24',
     minuteStep: 1,
+    // `invalid` defaults to `undefined` so Boolean casting does not swallow it
+    // and it can fall through to the form field context.
+    invalid: undefined,
     // Runtime locale, best-effort, falling back to English. Inlined because
     // `withDefaults` is hoisted and cannot reference local declarations.
     locale: () => {
@@ -145,6 +149,11 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:modelValue': [value: Date | [Date, Date] | null] }>()
 
 const slots = useSlots()
+
+const { id, invalid, describedBy } = useFieldControl({
+  id: () => props.inputId,
+  invalid: () => props.invalid,
+})
 
 const open = ref(props.defaultOpen ?? false)
 const viewDate = ref(new Date())
@@ -326,8 +335,9 @@ const display = computed(() => {
     <PopoverTrigger as-child>
       <button
         type="button"
-        :id="inputId"
+        :id="id"
         :disabled="disabled"
+        :aria-describedby="describedBy"
         :class="[
           'flex w-full items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 text-sm text-foreground shadow-sm transition-colors hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50 data-[state=open]:border-primary-500',
           size === 'sm' ? 'h-8 text-xs' : 'h-9',

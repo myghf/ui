@@ -6,7 +6,12 @@ import { resolve } from 'node:path'
 export default defineConfig({
   plugins: [
     vue(),
-    dts({ include: ['src'], outDir: 'dist', tsconfigPath: './tsconfig.build.json' }),
+    dts({
+      include: ['src'],
+      exclude: ['src/test-utils'],
+      outDir: 'dist',
+      tsconfigPath: './tsconfig.build.json',
+    }),
   ],
   build: {
     lib: {

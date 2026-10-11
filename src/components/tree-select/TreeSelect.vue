@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { PopoverContent, PopoverRoot, PopoverTrigger, TreeItem, TreeRoot } from 'reka-ui'
 import { Check, ChevronDown, Search, X } from 'lucide-vue-next'
 import Tag from '../tag/Tag.vue'
+import { useFieldControl } from '../../lib/formField'
 import {
   checkedStateOf,
   filterTree,
@@ -23,6 +24,8 @@ const props = withDefaults(
     /** Only leaf nodes are selectable (the classification case: parents are groups). */
     leafOnly?: boolean
     size?: 'sm' | 'default'
+    invalid?: boolean
+    id?: string
   }>(),
   {
     modelValue: () => [],
@@ -31,10 +34,18 @@ const props = withDefaults(
     filterPlaceholder: 'Search',
     leafOnly: true,
     size: 'default',
+    // `invalid` defaults to `undefined` so Boolean casting does not swallow it
+    // and it can fall through to the form field context.
+    invalid: undefined,
   },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [value: string[]] }>()
+
+const { id, invalid, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+})
 
 const open = ref(false)
 const query = ref('')
@@ -66,10 +77,13 @@ function onUpdateItems(value: unknown) {
     <PopoverTrigger as-child :disabled="disabled">
       <button
         type="button"
+        :id="id"
         :disabled="disabled"
+        :aria-describedby="describedBy"
         :class="[
           'flex w-full items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 text-start text-sm text-foreground shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50',
           size === 'sm' ? 'min-h-8 py-1 text-xs' : 'min-h-9 py-1.5',
+          invalid ? 'border-error-500' : '',
         ]"
       >
         <span v-if="selectedItems.length === 0" class="truncate text-muted">{{ placeholder }}</span>

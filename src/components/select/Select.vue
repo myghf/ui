@@ -12,7 +12,7 @@ import {
 } from 'reka-ui'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import { cn } from '../../lib/cn'
-import { useFormField } from '../../lib/formField'
+import { useFieldControl } from '../../lib/formField'
 
 const props = withDefaults(
   defineProps<{
@@ -36,11 +36,11 @@ const props = withDefaults(
 
 const emit = defineEmits<{ 'update:modelValue': [value: unknown] }>()
 
-const field = useFormField()
-const id = computed(() => props.id ?? field?.id.value)
-const invalid = computed(() => props.invalid ?? field?.invalid.value ?? false)
-const required = computed(() => props.required ?? field?.required.value ?? false)
-const describedBy = computed(() => field?.describedBy.value)
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
 
 const open = ref(false)
 

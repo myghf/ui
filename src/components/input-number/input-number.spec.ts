@@ -2,7 +2,8 @@
 import { mount } from '@vue/test-utils'
 import { NumberFieldRoot } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
-import { nextTick } from 'vue'
+import { h, nextTick } from 'vue'
+import FormField from '../form-field/FormField.vue'
 import InputNumber from './InputNumber.vue'
 
 describe('InputNumber', () => {
@@ -52,5 +53,29 @@ describe('InputNumber', () => {
   it('omits aria-valuetext when there is no value', () => {
     const wrapper = mount(InputNumber, { props: { modelValue: null } })
     expect(wrapper.get('input').attributes('aria-valuetext')).toBeUndefined()
+  })
+})
+
+describe('InputNumber form-field wiring', () => {
+  it('wires id, describedby, invalid and required from a FormField', () => {
+    const wrapper = mount(FormField, {
+      props: { id: 'amount', description: 'Help', error: 'Required', required: true },
+      slots: { default: () => h(InputNumber) },
+    })
+    const input = wrapper.get('input')
+    expect(input.attributes('id')).toBe('amount')
+    expect(input.attributes('aria-describedby')).toBe('amount-description amount-error')
+    expect(input.attributes('aria-invalid')).toBe('true')
+    expect(input.attributes('aria-required')).toBe('true')
+  })
+
+  it('lets explicit invalid and required props beat the context', () => {
+    const wrapper = mount(FormField, {
+      props: { error: 'Required', required: true },
+      slots: { default: () => h(InputNumber, { invalid: false, required: false }) },
+    })
+    const input = wrapper.get('input')
+    expect(input.attributes('aria-invalid')).toBeUndefined()
+    expect(input.attributes('aria-required')).toBeUndefined()
   })
 })

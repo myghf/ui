@@ -44,6 +44,7 @@ function goTo(index: number) {
       <span>{{ rowsPerPageLabel }}</span>
       <select
         :value="pageSize"
+        :aria-label="rowsPerPageLabel"
         class="rounded-md border border-border bg-surface px-2 py-1 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         @change="emit('update:pageSize', Number(($event.target as HTMLSelectElement).value))"
       >

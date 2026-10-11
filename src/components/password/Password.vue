@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useAttrs } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
+import { useFieldControl } from '../../lib/formField'
 
 const props = withDefaults(
   defineProps<{
@@ -9,16 +10,25 @@ const props = withDefaults(
     disabled?: boolean
     invalid?: boolean
     feedback?: boolean
+    required?: boolean
     /** Applied to the inner input so an external <label for> still matches. */
     id?: string
   }>(),
-  { feedback: false },
+  // `invalid`/`required` default to `undefined` so Boolean casting does not
+  // swallow them and they can fall through to the form field context.
+  { feedback: false, invalid: undefined, required: undefined },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 const attrs = useAttrs()
 const visible = ref(false)
 const inputType = computed(() => (visible.value ? 'text' : 'password'))
+
+const { id, invalid, required, describedBy } = useFieldControl({
+  id: () => props.id,
+  invalid: () => props.invalid,
+  required: () => props.required,
+})
 
 const strength = computed(() => {
   const v = props.modelValue ?? ''
@@ -42,6 +52,9 @@ const strength = computed(() => {
         :value="modelValue"
         :placeholder="placeholder"
         :disabled="disabled"
+        :required="required"
+        :aria-invalid="invalid || undefined"
+        :aria-describedby="describedBy"
         :class="[
           'flex h-9 w-full rounded-md border border-border bg-surface px-3 py-1 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50',
           invalid ? 'border-error-500 focus-visible:ring-error-500' : '',
