@@ -23,6 +23,7 @@ const EXPECTED = [
   'Toaster', 'useToast', 'createToastStore',
   'Container', 'Stack', 'Inline', 'Grid', 'Breadcrumbs', 'PageHeader', 'PageContent',
   'AppShell', 'Sidebar', 'Topbar', 'Sparkline', 'BarChart',
+  'StatCard', 'StatusBadge', 'Timeline', 'TimelineItem', 'Stepper',
 ]
 
 describe('@myghf/ui barrel', () => {

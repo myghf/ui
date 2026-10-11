@@ -132,6 +132,11 @@ const MAP: Record<string, string> = {
   Topbar: 'components/app-shell.md',
   Sparkline: 'components/charts.md',
   BarChart: 'components/charts.md',
+  StatCard: 'components/dashboard.md',
+  StatusBadge: 'components/dashboard.md',
+  Timeline: 'components/dashboard.md',
+  TimelineItem: 'components/dashboard.md',
+  Stepper: 'components/dashboard.md',
 }
 
 const docsDir = fileURLToPath(new URL('../../docs', import.meta.url))

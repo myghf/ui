@@ -556,6 +556,39 @@ describe('a11y: tooltip & accordion', () => {
   })
 })
 
+describe('a11y: dashboard', () => {
+  it('StatCard', async () => {
+    await expectClean(
+      mount(UI.StatCard, { props: { label: 'Admissions', value: 128, hint: 'This month', trend: 12 } }),
+    )
+  })
+
+  it('StatusBadge', async () => {
+    await expectClean(mount(UI.StatusBadge, { props: { label: 'Active' } }))
+  })
+
+  it('Timeline', async () => {
+    const wrapper = mount(UI.Timeline, {
+      props: { label: 'Admission' },
+      slots: {
+        default: () => [
+          h(UI.TimelineItem, { title: 'Admitted', time: '09:15' }, { default: () => 'Triage complete' }),
+          h(UI.TimelineItem, { title: 'Discharged' }),
+        ],
+      },
+    })
+    await expectClean(wrapper)
+  })
+
+  it('Stepper', async () => {
+    await expectClean(
+      mount(UI.Stepper, {
+        props: { modelValue: 1, steps: [{ label: 'Details' }, { label: 'Payment' }, { label: 'Review' }] },
+      }),
+    )
+  })
+})
+
 describe('a11y: overlays (teleported, asserted on document.body)', () => {
   async function expectBodyClean(): Promise<void> {
     await nextTick()

@@ -121,6 +121,11 @@ export default defineConfig({
             collapsed: false,
             items: [{ text: 'Charts', link: '/components/charts' }],
           },
+          {
+            text: 'Dashboard',
+            collapsed: false,
+            items: [{ text: 'Dashboard', link: '/components/dashboard' }],
+          },
         ],
       },
       {

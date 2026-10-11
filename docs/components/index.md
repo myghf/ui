@@ -92,3 +92,11 @@ used.
 | Component | Exports | Summary |
 | --- | --- | --- |
 | [Charts](/components/charts) | `Sparkline`, `BarChart` | Line/area sparkline and a categorical bar chart, both accessible. |
+
+## Dashboard
+
+Operational and clinical building blocks.
+
+| Component | Exports | Summary |
+| --- | --- | --- |
+| [Dashboard](/components/dashboard) | `StatCard`, `StatusBadge`, `Timeline`, `TimelineItem`, `Stepper` | Metric card, status badge, activity timeline, and progress stepper. |

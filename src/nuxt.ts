@@ -113,6 +113,11 @@ export const AUTO_IMPORT_COMPONENTS = [
   'Topbar',
   'Sparkline',
   'BarChart',
+  'StatCard',
+  'StatusBadge',
+  'Timeline',
+  'TimelineItem',
+  'Stepper',
 ]
 
 /**
