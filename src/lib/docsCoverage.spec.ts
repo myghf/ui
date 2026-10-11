@@ -126,6 +126,8 @@ const MAP: Record<string, string> = {
   AppShell: 'components/app-shell.md',
   Sidebar: 'components/app-shell.md',
   Topbar: 'components/app-shell.md',
+  Sparkline: 'components/charts.md',
+  BarChart: 'components/charts.md',
 }
 
 const docsDir = fileURLToPath(new URL('../../docs', import.meta.url))

@@ -508,6 +508,30 @@ describe('a11y: layout', () => {
   })
 })
 
+describe('a11y: charts', () => {
+  it('Sparkline (labelled)', async () => {
+    await expectClean(mount(UI.Sparkline, { props: { data: [1, 3, 2, 5], label: 'Wait times' } }))
+  })
+
+  it('Sparkline (decorative)', async () => {
+    await expectClean(mount(UI.Sparkline, { props: { data: [1, 3, 2] } }))
+  })
+
+  it('BarChart', async () => {
+    await expectClean(
+      mount(UI.BarChart, {
+        props: {
+          data: [
+            { label: 'Cardiology', value: 12 },
+            { label: 'Neurology', value: 7 },
+          ],
+          label: 'Referrals by unit',
+        },
+      }),
+    )
+  })
+})
+
 describe('a11y: overlays (teleported, asserted on document.body)', () => {
   async function expectBodyClean(): Promise<void> {
     await nextTick()

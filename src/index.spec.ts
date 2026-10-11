@@ -21,7 +21,7 @@ const EXPECTED = [
   'createConfig', 'provideMyGhfConfig', 'useMyGhfConfig', 'myghfConfigKey', 'defaultConfig',
   'Toaster', 'useToast', 'createToastStore',
   'Container', 'Stack', 'Inline', 'Grid', 'Breadcrumbs', 'PageHeader', 'PageContent',
-  'AppShell', 'Sidebar', 'Topbar',
+  'AppShell', 'Sidebar', 'Topbar', 'Sparkline', 'BarChart',
 ]
 
 describe('@myghf/ui barrel', () => {

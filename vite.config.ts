@@ -32,6 +32,7 @@ export default defineConfig({
         'tailwind-merge',
         'tailwind-variants',
         /^@tanstack\//,
+        /^d3-/,
         '@nuxt/kit',
         '@myghf/ui/tailwind-preset',
       ],

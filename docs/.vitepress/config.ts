@@ -113,6 +113,11 @@ export default defineConfig({
               { text: 'App shell', link: '/components/app-shell' },
             ],
           },
+          {
+            text: 'Charts',
+            collapsed: false,
+            items: [{ text: 'Charts', link: '/components/charts' }],
+          },
         ],
       },
       {

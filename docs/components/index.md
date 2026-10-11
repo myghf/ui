@@ -80,3 +80,12 @@ Structural wrappers for page and panel composition — no styling beyond layout 
 | [Layout primitives](/components/layout) | `Container`, `Stack`, `Inline`, `Grid` | Centred page column, vertical stack, wrapping row, and grid. |
 | [Page](/components/page) | `Breadcrumbs`, `PageHeader`, `PageContent` | Breadcrumb trail, page heading with actions, and the padded page body. |
 | [App shell](/components/app-shell) | `AppShell`, `Sidebar`, `Topbar` | Responsive application frame with a docked or off-canvas sidebar. |
+
+## Charts
+
+Compact SVG charts built on the external `d3-scale` + `d3-shape` primitives, pulled in only where
+used.
+
+| Component | Exports | Summary |
+| --- | --- | --- |
+| [Charts](/components/charts) | `Sparkline`, `BarChart` | Line/area sparkline and a categorical bar chart, both accessible. |

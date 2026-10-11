@@ -109,6 +109,8 @@ export { default as Breadcrumbs } from './components/breadcrumbs/Breadcrumbs.vue
 export type { BreadcrumbItem } from './components/breadcrumbs/Breadcrumbs.vue'
 export { default as PageHeader } from './components/page-header/PageHeader.vue'
 export { default as PageContent } from './components/page-content/PageContent.vue'
+export { default as Sparkline } from './components/sparkline/Sparkline.vue'
+export { default as BarChart } from './components/bar-chart/BarChart.vue'
 export { default as AppShell } from './components/app-shell/AppShell.vue'
 export { default as Sidebar } from './components/sidebar/Sidebar.vue'
 export { default as Topbar } from './components/topbar/Topbar.vue'

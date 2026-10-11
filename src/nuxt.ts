@@ -107,6 +107,8 @@ export const AUTO_IMPORT_COMPONENTS = [
   'AppShell',
   'Sidebar',
   'Topbar',
+  'Sparkline',
+  'BarChart',
 ]
 
 /**
