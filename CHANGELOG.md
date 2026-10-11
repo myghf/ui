@@ -1,5 +1,214 @@
 # @myghf/ui
 
+## 0.6.0
+
+### Minor Changes
+
+- d42da81: Add the app shell: `AppShell`, `Sidebar`, `Topbar`
+  
+  `AppShell` arranges a topbar, sidebar, and main content. On large screens the sidebar is
+  docked; below the `lg` breakpoint `collapsible` (default) turns it into an off-canvas panel
+  that `Topbar` opens with a menu button. The three share an injection context, so the button
+  carries `aria-expanded`/`aria-controls` targeting the sidebar's id, the backdrop and <kbd>Esc</kbd>
+  close it, and the off-canvas offset mirrors under RTL. Exported from `@myghf/ui` and
+  auto-imported by the Nuxt module.
+- 9d6de12: Add chart components: `Sparkline` and `BarChart`
+  
+  - `Sparkline` draws a compact line or area trend; `BarChart` draws categorical bars and exposes
+    the same values through a visually-hidden table. Both are accessible by default (`Sparkline` is
+    `role="img"` with a `label`, or decorative without one).
+  - Built on the new external dependencies `d3-scale` and `d3-shape` (externalised in the build, so
+    a bundler only includes them for the pages that import a chart). Exported from `@myghf/ui` and
+    auto-imported by the Nuxt module.
+- 23643ae: Add the `Combobox` component
+  
+  A searchable select built on reka-ui's combobox: type to filter, pick one or several. Supports
+  `multiple` (selections render as removable `Tag`s), `clearable`, size variants, and an
+  `emptyLabel` for no-match states. The input is `role="combobox"` and wires `id`,
+  `aria-describedby`, `aria-invalid`, and `aria-required` through the shared `useFieldControl`
+  contract. Exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- 138529c: Add the CommandPalette component
+  
+  A keyboard-first command launcher built on the Dialog: type to filter a flat list of commands,
+  move with the arrow keys, run with Enter, and close with Escape. Items carry an optional
+  description, group label, keywords, and icon, and the palette matches against all of them.
+  Exports the `CommandItem` type, is exported from `@myghf/ui`, and is auto-imported by the Nuxt
+  module.
+- 1723e2f: Add dashboard primitives: StatCard, StatusBadge, Timeline, Stepper
+  
+  - `StatCard`: a metric card with a label, headline value, optional hint, and a signed `trend`
+    (announced to screen readers as "up/down N percent").
+  - `StatusBadge`: a toned pill with a decorative dot and an optional `pulse`.
+  - `Timeline` + `TimelineItem`: a labelled activity list with `<time>` stamps.
+  - `Stepper`: a step indicator that marks the current step with `aria-current="step"` and shows a
+    check for completed steps, plus a `Step` type.
+  
+  All are exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- 9eb1946: Add the `FileUpload` component
+  
+  A drop zone over a native `<input type="file">`: the input stays focusable and is the actual
+  control, so click, drag-and-drop, and keyboard all work without scripting. Selected files are
+  listed with name, size, a remove button, and an optional per-file `Progress` bar via a
+  `progressFor` callback. Supports `multiple`, `accept`, `disabled`, and the field contract
+  (`id`, `aria-describedby`, `aria-invalid`, `required`) through the shared `useFieldControl`
+  composable. Exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- dfe1094: Add the `FormErrors` component
+  
+  A form-level validation summary: a `role="alert"` box that lists each error, where every entry
+  is a button that focuses the field it refers to. `focusFirst` moves focus to the first invalid
+  field on submit. Exports the `FormError` type, is exported from `@myghf/ui`, and is
+  auto-imported by the Nuxt module.
+- a1d263c: Add layout primitives: `Container`, `Stack`, `Inline`, `Grid`
+  
+  Four small structural wrappers: a centred page column (`Container`, with size/padding), a
+  vertical stack and a wrapping row with a shared spacing scale and optional alignment
+  (`Stack`, `Inline`), and a grid with fixed `cols` or responsive auto-fit `minItemWidth`
+  (`Grid`). Each takes an `as` prop to choose the element and passes attributes through. Exported
+  from `@myghf/ui` and auto-imported by the Nuxt module.
+- 806b27f: Add Tooltip, Popover, and Accordion
+  
+  - `Tooltip`: a short hover/focus label for a single trigger, built on reka-ui, with `text`/`side`/
+    `align`/`sideOffset`/`delayDuration` and a `content` slot.
+  - `Popover`: a floating panel anchored to a trigger, with `v-model:open` and positioning props.
+  - `Accordion` + `AccordionItem`: collapsible sections with `single`/`multiple` types and
+    `v-model` over the open value(s).
+  
+  All are exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- 986af2d: Add page chrome: `Breadcrumbs`, `PageHeader`, `PageContent`
+  
+  - `Breadcrumbs`: a labelled `nav` trail with `aria-current` on the last item, an `aria-hidden`
+    RTL-aware separator, and an `item` slot for router links. Exports the `BreadcrumbItem` type.
+  - `PageHeader`: an `<h1>` title with optional description, plus `breadcrumbs` and `actions`
+    slots.
+  - `PageContent`: the padded, width-capped page body (wraps `Container`).
+  
+  Exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- a69fa8c: Add the `Progress` component
+  
+  A horizontal progress bar built on reka-ui's progress primitive: determinate with
+  `modelValue`/`max`, or indeterminate when the value is omitted. Supports `sm`/`default`/`lg`
+  sizes, tones, and an accessible `label`. The fill is width-based so it mirrors correctly under
+  RTL. Exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- bc37380: Add the `RadioGroup` component
+  
+  A single-choice control for a small, always-visible set of options, built on reka-ui's
+  radio group. Options render a labelled `role="radio"` each (named via `<label for>`), with
+  `vertical`/`horizontal` orientations, per-option `disabled`, and an optional `option` slot for
+  custom label content. It wires `id`, `aria-describedby`, `aria-invalid`, and `aria-required`
+  through the shared `useFieldControl` contract, and is exported from `@myghf/ui` (and
+  auto-imported by the Nuxt module).
+- c63df0f: Add the `Switch` component
+  
+  A boolean on/off toggle built on reka-ui with `sm`/`default` sizes, `disabled`, and
+  `invalid`/`required` props. It wires `id`, `aria-describedby`, `aria-invalid`, and
+  `aria-required` through the shared `useFieldControl` contract, animates its thumb with logical
+  translation for RTL, and is exported from `@myghf/ui` (and auto-imported by the Nuxt module).
+  Also corrects the stale `Checkbox` docs now that it consumes the form-field context.
+- 4d70147: DataTable: column visibility, order, pinning, and resizing
+  
+  - Register TanStack's `columnVisibilityFeature`, `columnOrderingFeature`, `columnPinningFeature`,
+    `columnSizingFeature`, and `columnResizingFeature`.
+  - New `v-model` bindings: `column-visibility` (id → visible), `column-order` (ids), and
+    `column-pinning` (`{ start, end }`). Pinning is logical, so pinned cells stick with
+    `inset-inline-start`/`inset-inline-end` and mirror under RTL.
+  - New `resizable` prop renders drag handles on each header (double-click resets a column's size).
+- 0bfa4af: DataTable keyboard expansion + CSV export utilities
+  
+  - `DataTable` now renders a leading expander button per row when `expandable`, a real
+    `<button>` with `aria-expanded` and an `aria-label` (`expandRowLabel`). Row expansion is no
+    longer pointer-only.
+  - Add `toCsv` and `downloadCsv` (with the `CsvColumn`/`CsvOptions` types): RFC 4180 CSV
+    serialization with a UTF-8 BOM by default, and a browser download helper that is a no-op
+    outside a DOM. Exported from `@myghf/ui` and auto-imported by the Nuxt module.
+- 76f1220: DataTable: searching and column filters
+  
+  - Register TanStack's `columnFilteringFeature` + `globalFilteringFeature` (with the filtered row
+    model and `filterFns`) in `DataTableFeatures`.
+  - New `searchable` prop renders a global search input bound with `v-model:global-filter`.
+  - New `filters` prop (`ColumnFiltersState`) bound with `v-model:filters`; active filters render as
+    removable chips in the toolbar, with a **Clear filters** button (`clearFiltersLabel`).
+  - New `noResultsLabel` distinguishes "no rows match your filters" from the empty state, and a
+    `toolbar` slot lets consumers add their own controls.
+- 50c84ef: DataTable: pagination and server-side mode
+  
+  - New `paginate` prop renders the pagination footer over the client-side rows, bound with
+    `v-model:page-index` / `v-model:page-size` and a `pageSizeOptions` list.
+  - New `manual` prop switches to server-side mode: TanStack skips client sorting, filtering, and
+    pagination; `rowCount` supplies the server total, and the component emits `update:pageIndex` /
+    `update:pageSize` (alongside the existing `update:sorting` / `update:filters`) for you to refetch.
+  - A `pagination` slot can replace the default footer.
+  - Fix: `DataTable` no longer caps the body at the default page size (10) — TanStack's paginated
+    row model is now handed `pageSize: Infinity` unless `paginate`/`manual` is set.
+- ddd6a13: DataTable: row selection, bulk actions, and an error state
+  
+  - Register TanStack's `rowSelectionFeature`, so `DataTableFeatures` now includes row selection.
+  - New `selectable` prop adds a labelled checkbox column (header select-all + per-row), bound
+    with `v-model:selection` (a map keyed by row id) and emitting `update:selection`.
+  - New `bulk-actions` slot renders a bar with the selected count while rows are selected,
+    receiving `{ rows, clear }`.
+  - New `error` prop/slot replaces the body with an error message (unless `loading`).
+- 635219b: DataTable: virtual scrolling
+  
+  Set `maxHeight` and `virtual` together and `DataTable` renders only the visible slice of rows
+  (plus a small overscan), padding the rest with spacer rows so the DOM stays small for very large
+  datasets. The windowing math lives in a new pure `src/lib/virtual.ts` (`virtualWindow`). It assumes
+  a uniform `rowHeight` (configurable, default 40) and does not account for expansion rows.
+- 40e075a: Unify the form-field error wiring across every control
+  
+  - Add `useFieldControl`, a shared composable that resolves a control's `id`,
+    `aria-describedby`, `aria-invalid`, and `required` with one consistent precedence
+    (explicit prop → `FormField` context → default). It is exported so custom controls can opt
+    into the same contract.
+  - `Input`, `Textarea`, `Select`, and `Password` now use it (no behavior change).
+  - Wire the remaining controls into the `FormField` context: `Checkbox`, `InputNumber`,
+    `SelectButton`, `DatePicker`, `TreeSelect`, and `TransferList` accept `invalid`/`required`
+    (and `id` where missing) and associate their error text with `aria-describedby`.
+  - Add specs for `TreeSelect` and `TransferList` (previously untested) and extend the a11y
+    catalog to mount the field-wired controls.
+- f65d7bd: Add Hijri (Umm al-Qura) calendar support to DatePicker
+  
+  - New `calendar` prop (`'gregory' | 'islamic-umalqura'`, default `'gregory'`) lays the grid out,
+    labels the month, numbers the days, and formats the selected date in the chosen calendar. The
+    emitted `modelValue` stays a Gregorian `Date`.
+  - New hijri utilities — `addDays`, `hijriParts`, `startOfHijriMonth`, `hijriMonthLength`,
+    `hijriMonthLabel`, `formatHijriDate` (and the `CalendarSystem` / `HijriParts` types) — backed by
+    the platform's `Intl` Umm al-Qura data. Exported from `@myghf/ui` and auto-imported by the Nuxt
+    module.
+- 8cadb17: Add locale number formatting helpers and an RTL source guard
+  
+  - New `formatNumber`, `formatCurrency`, and `formatPercent` helpers: locale-aware `Intl` formatting
+    that falls back to `String(value)` on an invalid locale. Exported from `@myghf/ui` and
+    auto-imported by the Nuxt module.
+  - Add `src/lib/rtlCoverage.spec.ts`, a guard that fails when a component uses a physical
+    left/right utility (`pl-`, `pr-`, `ml-`, `mr-`, `text-left`, `text-right`, `border-l-`,
+    `border-r-`, `rounded-l-`, `rounded-r-`) instead of its logical equivalent.
+- 96f86e1: Add a localization layer (config provider + English/Arabic labels)
+  
+  - New `createConfig` / `provideMyGhfConfig` / `useMyGhfConfig` (plus `myghfConfigKey` and
+    `defaultConfig`): provide a `{ locale, labels }` config at the app root to localize built-in
+    control strings. Ships English and Arabic label sets, matching the locale's base language and
+    falling back to English.
+  - Migrate the previously hardcoded strings to the config: `Select`/`Combobox` "Clear selection",
+    `Combobox` "Show options", `Password` "Toggle password visibility", `Toast`/`Dialog`/`Drawer`
+    "Close", `Drawer`'s title, `TreeSelect` "Clear", `TransferList` "Empty" and its four move
+    labels, and `FormErrors`' default title. Existing per-component label props still override.
+
+### Patch Changes
+
+- 40e075a: Add automated accessibility and contrast guards, and fix form-field wiring
+  
+  - New axe-core accessibility catalog (`src/a11y.spec.ts`) that mounts every public component and
+    fails on missing names, unlabelled controls, nested interactive elements, and broken ARIA.
+  - New token contrast guard (`src/lib/contrast.spec.ts`) asserting WCAG AA for body text and brand
+    tints, and pinning the documented brand exceptions so they cannot regress.
+  - `Password` now consumes the `FormField` context, wiring `id`, `required`, `aria-invalid`, and
+    `aria-describedby` (the input previously had no associated label inside a `FormField`).
+  - `TablePagination`'s page-size `<select>` now has an accessible name.
+  - `TransferList` rows no longer nest interactive controls; the option checkbox has an accessible
+    name and row labels use logical `text-start` so they follow the writing direction.
+  - New PR-triggered CI workflow (`.github/workflows/ci.yml`) running typecheck, tests, and the docs
+    build.
+
 ## 0.5.2
 
 ### Patch Changes
