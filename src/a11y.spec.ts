@@ -78,6 +78,19 @@ describe('a11y: actions & display', () => {
     await expectClean(mount(UI.Progress, { props: { modelValue: 40, label: 'Uploading' } }))
   })
 
+  it('FormErrors', async () => {
+    await expectClean(
+      mount(UI.FormErrors, {
+        props: {
+          errors: [
+            { id: 'email', label: 'Email', message: 'Enter a valid email address' },
+            { id: 'phone', message: 'Required' },
+          ],
+        },
+      }),
+    )
+  })
+
   it('Avatar (initials)', async () => {
     await expectClean(mount(UI.Avatar, { props: { name: 'Amina Farouk' } }))
   })

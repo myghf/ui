@@ -33,6 +33,7 @@ Inputs and controls for collecting and validating user data.
 | Component | Exports | Summary |
 | --- | --- | --- |
 | [Form field](/components/form-field) | `FormField`, `Label`, `FormDescription`, `FormMessage` | Groups a label, control, description, and error with shared id/`aria` wiring. |
+| [FormErrors](/components/form-errors) | `FormErrors` | `role="alert"` summary of form errors; each entry jumps to its field. |
 | [Input](/components/input) | `Input` | Single-line text field with optional leading/trailing icons and three sizes. |
 | [InputNumber](/components/input-number) | `InputNumber` | Numeric field with `min`/`max`/`step`, `Intl` formatting, and optional stepper buttons. |
 | [Textarea](/components/textarea) | `Textarea` | Multi-line text field with a configurable row count. |

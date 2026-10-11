@@ -66,6 +66,7 @@ export default defineConfig({
             collapsed: false,
             items: [
               { text: 'Form field', link: '/components/form-field' },
+              { text: 'FormErrors', link: '/components/form-errors' },
               { text: 'Input', link: '/components/input' },
               { text: 'InputNumber', link: '/components/input-number' },
               { text: 'Textarea', link: '/components/textarea' },
