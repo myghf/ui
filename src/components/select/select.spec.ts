@@ -91,4 +91,29 @@ describe('Select', () => {
     }).get('button')
     expect(trigger.attributes('aria-describedby')).toBeUndefined()
   })
+
+  it('portals the listbox into the body so an ancestor overflow cannot clip it', async () => {
+    // jsdom cannot synthesise the pointer events reka turns into opening, but
+    // the keyboard path works.
+    const wrapper = mount(Select, {
+      props: {
+        options: [
+          { label: 'Room A', value: 'a' },
+          { label: 'Room B', value: 'b' },
+        ],
+        optionLabel: 'label',
+        optionValue: 'value',
+      },
+    })
+    await wrapper.get('button').trigger('keydown', { key: 'Enter' })
+
+    // Rendered in place, the listbox is a descendant of whatever contains the
+    // trigger — inside a Dialog that is an `overflow-hidden` scroller, which
+    // clipped it. Portalled, it escapes that subtree entirely.
+    const listbox = document.body.querySelector('[role="listbox"]')
+    expect(listbox).not.toBeNull()
+    expect(wrapper.element.contains(listbox)).toBe(false)
+
+    wrapper.unmount()
+  })
 })
