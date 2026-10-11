@@ -94,6 +94,7 @@ export default defineConfig({
               { text: 'Tooltip', link: '/components/tooltip' },
               { text: 'Popover', link: '/components/popover' },
               { text: 'Accordion', link: '/components/accordion' },
+              { text: 'CommandPalette', link: '/components/command-palette' },
               { text: 'Toast', link: '/components/toast' },
             ],
           },

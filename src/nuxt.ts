@@ -88,6 +88,7 @@ export const AUTO_IMPORT_COMPONENTS = [
   'Popover',
   'Accordion',
   'AccordionItem',
+  'CommandPalette',
   'TransferList',
   'Table',
   'TableHeader',

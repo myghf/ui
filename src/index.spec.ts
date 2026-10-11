@@ -14,7 +14,7 @@ const EXPECTED = [
   'Drawer',
   'DropdownMenu', 'DropdownMenuTrigger', 'DropdownMenuContent', 'DropdownMenuItem',
   'DropdownMenuSeparator', 'DropdownMenuLabel', 'DropdownMenuGroup',
-  'Tooltip', 'Popover', 'Accordion', 'AccordionItem',
+  'Tooltip', 'Popover', 'Accordion', 'AccordionItem', 'CommandPalette',
   'TransferList',
   'Table', 'TableHeader', 'TableBody', 'TableRow', 'TableHead', 'TableCell',
   'TableEmpty', 'TablePagination', 'DataTable', 'TreeTable', 'TreeSelect',

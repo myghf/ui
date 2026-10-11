@@ -61,6 +61,7 @@ Dialogs, drawers, menus, and toast notifications.
 | [Tooltip](/components/tooltip) | `Tooltip` | Short hover/focus label for a single trigger. |
 | [Popover](/components/popover) | `Popover` | Floating panel anchored to a trigger. |
 | [Accordion](/components/accordion) | `Accordion`, `AccordionItem` | Collapsible sections for dense forms and details. |
+| [CommandPalette](/components/command-palette) | `CommandPalette` | Keyboard-first command launcher over a filterable list. |
 | [Toast](/components/toast) | `Toaster`, `useToast`, `createToastStore` | Provider plus store for transient notifications in six logical positions. |
 
 ## Navigation & data

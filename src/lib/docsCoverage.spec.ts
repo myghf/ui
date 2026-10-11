@@ -107,6 +107,7 @@ const MAP: Record<string, string> = {
   Popover: 'components/popover.md',
   Accordion: 'components/accordion.md',
   AccordionItem: 'components/accordion.md',
+  CommandPalette: 'components/command-palette.md',
   TransferList: 'components/transfer-list.md',
   Table: 'components/table.md',
   TableHeader: 'components/table.md',

@@ -640,6 +640,20 @@ describe('a11y: overlays (teleported, asserted on document.body)', () => {
     await expectBodyClean()
   })
 
+  it('CommandPalette', async () => {
+    mount(UI.CommandPalette, {
+      props: {
+        open: true,
+        items: [
+          { id: 'a', label: 'New patient', description: 'Register an admission', group: 'Patients' },
+          { id: 'b', label: 'Settings', group: 'App' },
+        ],
+      },
+      attachTo: document.body,
+    })
+    await expectBodyClean()
+  })
+
   it('Toaster (with a toast)', async () => {
     const store = UI.createToastStore()
     mount(UI.Toaster, { props: { store }, attachTo: document.body })
