@@ -42,6 +42,8 @@ accessible name. `disabled` removes it from interaction and dims it.
 | --- | --- | --- | --- |
 | `modelValue` | `boolean` | `false` | Checked state. |
 | `disabled` | `boolean` | `false` | Disables the control and blocks interaction. |
+| `invalid` | `boolean` | `false` | Marks the control invalid. Falls through to the `FormField` context when omitted. |
+| `required` | `boolean` | `false` | Marks the control required. Falls through to the `FormField` context when omitted. |
 | `id` | `string` | — | Applied to the checkbox button so an external `<label for>` matches. |
 
 ## Events
@@ -68,8 +70,9 @@ None. `Checkbox` does not call `defineExpose`.
   ```vue
   <Checkbox v-model="ok" aria-label="Email notifications" />
   ```
-- There is no `invalid` prop and no `aria-invalid` wiring. If the control is inside an
-  invalid group, set `aria-invalid` and `aria-describedby` yourself.
+- Inside a [`FormField`](/components/form-field) it picks up `id`, `aria-describedby`,
+  `aria-invalid`, and `aria-required` through the shared `useFieldControl` composable, so an
+  explicit `invalid`/`required` prop always wins and the context fills the rest.
 - Only the two-state model is supported; there is no indeterminate/`mixed` state. If a
   "select all" parent needs a partial state, render that explicitly.
 

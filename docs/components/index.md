@@ -37,6 +37,7 @@ Inputs and controls for collecting and validating user data.
 | [Textarea](/components/textarea) | `Textarea` | Multi-line text field with a configurable row count. |
 | [Password](/components/password) | `Password` | Password field with a show/hide toggle and optional strength feedback. |
 | [Checkbox](/components/checkbox) | `Checkbox` | Boolean control with an `aria-checked` state. |
+| [Switch](/components/switch) | `Switch` | On/off toggle for immediately-applied settings. |
 | [Select](/components/select) | `Select` | Dropdown listbox for single or multiple selection, with optional clear. |
 | [SelectButton](/components/select-button) | `SelectButton` | Segmented control for a mutually exclusive set of options. |
 | [DatePicker](/components/date-picker) | `DatePicker` | Calendar field for a single date, a range, or a date and time. |

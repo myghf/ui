@@ -108,6 +108,10 @@ describe('a11y: form controls', () => {
     await expectClean(mount(UI.Checkbox, { attrs: { 'aria-label': 'Accept terms' } }))
   })
 
+  it('Switch', async () => {
+    await expectClean(mount(UI.Switch, { attrs: { 'aria-label': 'Enable alerts' } }))
+  })
+
   it('InputNumber', async () => {
     await expectClean(
       mount(UI.InputNumber, { props: { modelValue: 5 }, attrs: { 'aria-label': 'Amount' } }),
@@ -242,6 +246,10 @@ describe('a11y: controls inside FormField', () => {
 
   it('Checkbox', async () => {
     await expectClean(mountInField(field, () => h(UI.Checkbox)))
+  })
+
+  it('Switch', async () => {
+    await expectClean(mountInField(field, () => h(UI.Switch)))
   })
 
   it('InputNumber', async () => {

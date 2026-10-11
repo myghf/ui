@@ -70,6 +70,7 @@ export default defineConfig({
               { text: 'Textarea', link: '/components/textarea' },
               { text: 'Password', link: '/components/password' },
               { text: 'Checkbox', link: '/components/checkbox' },
+              { text: 'Switch', link: '/components/switch' },
               { text: 'Select', link: '/components/select' },
               { text: 'SelectButton', link: '/components/select-button' },
               { text: 'DatePicker', link: '/components/date-picker' },
