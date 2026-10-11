@@ -4,6 +4,7 @@ import {
   FlexRender,
   useTable,
   type ColumnDef,
+  type ColumnFiltersState,
   type RowData,
   type RowSelectionState,
   type SortingState,
@@ -11,8 +12,11 @@ import {
 import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
+import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
+import Input from '../input/Input.vue'
 import Skeleton from '../skeleton/Skeleton.vue'
+import Tag from '../tag/Tag.vue'
 import Table from '../table/Table.vue'
 import TableBody from '../table/TableBody.vue'
 import TableCell from '../table/TableCell.vue'
@@ -49,6 +53,17 @@ const props = withDefaults(
     error?: string
     /** Accessible name for a row's expand/collapse button. */
     expandRowLabel?: string
+    /** Render a global search input in the toolbar. */
+    searchable?: boolean
+    searchPlaceholder?: string
+    searchLabel?: string
+    /** Global filter term. Bind with `v-model:global-filter`. */
+    globalFilter?: string
+    /** Per-column filters. Bind with `v-model:filters`. */
+    filters?: ColumnFiltersState
+    /** Message shown when rows are filtered out. */
+    noResultsLabel?: string
+    clearFiltersLabel?: string
   }>(),
   {
     size: 'default',
@@ -68,6 +83,13 @@ const props = withDefaults(
     selectedLabel: 'selected',
     error: undefined,
     expandRowLabel: 'Toggle row',
+    searchable: false,
+    searchPlaceholder: 'Search…',
+    searchLabel: 'Search',
+    globalFilter: '',
+    filters: () => [],
+    noResultsLabel: 'No results match your filters',
+    clearFiltersLabel: 'Clear filters',
   },
 )
 
@@ -75,6 +97,8 @@ const emit = defineEmits<{
   'update:sorting': [value: { id: string; desc: boolean }[]]
   'update:expanded': [value: Record<string, boolean>]
   'update:selection': [value: RowSelectionState]
+  'update:globalFilter': [value: string]
+  'update:filters': [value: ColumnFiltersState]
   'row-click': [row: unknown]
 }>()
 const slots = useSlots()
@@ -104,6 +128,12 @@ const table = useTable({
       // Public type is a plain `Record<string, boolean>`; TanStack narrows it to `true` values.
       return props.selection as RowSelectionState
     },
+    get globalFilter() {
+      return props.globalFilter
+    },
+    get columnFilters() {
+      return props.filters
+    },
   },
   onSortingChange: (updater) => {
     sorting.value = typeof updater === 'function' ? updater(sorting.value) : updater
@@ -122,6 +152,14 @@ const table = useTable({
       typeof updater === 'function' ? updater(props.selection as RowSelectionState) : updater
     emit('update:selection', next)
   },
+  onGlobalFilterChange: (updater) => {
+    const next = typeof updater === 'function' ? updater(props.globalFilter) : updater
+    emit('update:globalFilter', next)
+  },
+  onColumnFiltersChange: (updater) => {
+    const next = typeof updater === 'function' ? updater(props.filters) : updater
+    emit('update:filters', next)
+  },
 })
 
 const rows = computed(() => table.getRowModel().rows)
@@ -135,6 +173,24 @@ const columnCount = computed(
 )
 /** Clamp to at least one placeholder row so 0/negative/fractional values still render. */
 const placeholderRowCount = computed(() => Math.max(1, Math.floor(props.loadingRows)))
+
+const hasActiveFilters = computed(
+  () => props.globalFilter.trim().length > 0 || props.filters.length > 0,
+)
+
+/** Human-readable chips for the active column filters, keyed by column id. */
+const filterChips = computed(() =>
+  props.filters.map((filter) => {
+    const header = table.getColumn(filter.id)?.columnDef.header
+    return {
+      id: filter.id,
+      label: typeof header === 'string' ? header : filter.id,
+      value: Array.isArray(filter.value)
+        ? filter.value.map((value) => String(value)).join(', ')
+        : String(filter.value ?? ''),
+    }
+  }),
+)
 
 function sortDirection(columnId: string): 'ascending' | 'descending' | 'none' {
   const column = table.getColumn(columnId)
@@ -159,6 +215,18 @@ function toggleRow(rowId: string) {
   emit('update:expanded', toggleExpandedRow(props.expanded, rowId))
 }
 
+function removeFilter(columnId: string) {
+  emit(
+    'update:filters',
+    props.filters.filter((filter) => filter.id !== columnId),
+  )
+}
+
+function clearFilters() {
+  if (props.filters.length > 0) emit('update:filters', [])
+  if (props.globalFilter) emit('update:globalFilter', '')
+}
+
 function onRowClick(event: MouseEvent, rowId: string) {
   emit('row-click', rows.value.find((row) => row.id === rowId)?.original)
   if (!props.expandable) return
@@ -174,6 +242,44 @@ function onRowClick(event: MouseEvent, rowId: string) {
     :aria-busy="loading || undefined"
   >
     <span v-if="loading" class="sr-only" role="status" aria-live="polite">{{ loadingLabel }}</span>
+
+    <div
+      v-if="searchable || hasActiveFilters || $slots.toolbar"
+      class="flex flex-wrap items-center gap-2 border-b border-border px-3 py-2"
+    >
+      <Input
+        v-if="searchable"
+        :model-value="globalFilter"
+        :placeholder="searchPlaceholder"
+        :aria-label="searchLabel"
+        leading-icon="search"
+        size="sm"
+        class="max-w-xs"
+        @update:model-value="emit('update:globalFilter', String($event))"
+      />
+      <ul v-if="filterChips.length > 0" class="flex flex-wrap items-center gap-1">
+        <li v-for="chip in filterChips" :key="chip.id">
+          <Tag
+            tone="secondary"
+            removable
+            :remove-label="`Remove ${chip.label} filter`"
+            @remove="removeFilter(chip.id)"
+          >
+            {{ chip.label }}: {{ chip.value }}
+          </Tag>
+        </li>
+      </ul>
+      <slot name="toolbar" />
+      <Button
+        v-if="hasActiveFilters"
+        variant="ghost"
+        size="sm"
+        class="ms-auto"
+        @click="clearFilters"
+      >
+        {{ clearFiltersLabel }}
+      </Button>
+    </div>
 
     <div
       v-if="selectable && selectedRows.length > 0"
@@ -222,7 +328,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
       </TableHeader>
       <TableBody>
         <TableEmpty v-if="!loading && !error && rows.length === 0" :columns="columnCount">
-          <slot name="empty">{{ emptyLabel }}</slot>
+          <slot name="empty">{{ hasActiveFilters ? noResultsLabel : emptyLabel }}</slot>
         </TableEmpty>
         <template v-if="loading">
           <TableRow v-for="n in placeholderRowCount" :key="'loading-' + n">

@@ -3,6 +3,7 @@ import DataTableSorting from '../.vitepress/theme/demos/data-table/sorting.vue'
 import DataTableExpanding from '../.vitepress/theme/demos/data-table/expanding.vue'
 import DataTableLoading from '../.vitepress/theme/demos/data-table/loading.vue'
 import DataTableSelection from '../.vitepress/theme/demos/data-table/selection.vue'
+import DataTableFiltering from '../.vitepress/theme/demos/data-table/filtering.vue'
 </script>
 
 # DataTable
@@ -94,6 +95,20 @@ receives the selected `rows` and a `clear` function. Pair it with [`toCsv`](/uti
 Set `error` to a message and `DataTable` replaces the body with it (use the `error` slot for
 custom content). The loading state still wins while `loading` is `true`.
 
+### Searching and filters
+
+`searchable` renders a global search input, bound with `v-model:global-filter`. Per-column
+filters are a `ColumnFiltersState` bound with `v-model:filters` — every active filter shows as a
+removable chip in the toolbar, with a **Clear filters** button. When rows are filtered out the
+empty state switches to `noResultsLabel`. Use the `toolbar` slot to add your own controls
+(e.g. a per-column filter select).
+
+<Demo>
+  <DataTableFiltering />
+</Demo>
+
+<<< ../.vitepress/theme/demos/data-table/filtering.vue
+
 ### DataTableFeatures
 
 `columns` is typed against `DataTableFeatures`, the feature set registered in
@@ -106,9 +121,11 @@ features:
 | `rowPaginationFeature` (+ `paginatedRowModel`) | Registers the paginated row model. `DataTable` itself renders no pagination controls and does not expose the table instance, so reach this model by composing TanStack directly with `DataTableFeatures`. |
 | `rowExpandingFeature` (+ `expandedRowModel`) | Per-row expansion driven by the `expanded` map. |
 | `rowSelectionFeature` | Per-row selection, select-all, and the bulk-actions bar. |
+| `columnFilteringFeature` (+ `filteredRowModel`, `filterFns`) | Per-column filters, the toolbar chips, and `update:filters`. |
+| `globalFilteringFeature` | The global search term and `update:globalFilter`. |
 
 TanStack v9 tree-shakes anything not registered, so features outside this list — column
-filtering, column resizing, grouping — are **not** available through
+resizing, grouping — are **not** available through
 `DataTable`. Use it when you need exactly this set; otherwise compose
 [Table](/components/table) yourself.
 
@@ -142,6 +159,13 @@ filtering, column resizing, grouping — are **not** available through
 | `selectedLabel` | `string` | `'selected'` | Word following the count in the bulk-actions bar. |
 | `error` | `string` | — | Error message. Replaces the body unless `loading` is set. |
 | `expandRowLabel` | `string` | `'Toggle row'` | Accessible-name prefix for each row's expander button (the row number is appended). |
+| `searchable` | `boolean` | `false` | Renders a global search input in the toolbar. |
+| `searchPlaceholder` | `string` | `'Search…'` | Placeholder for the search input. |
+| `searchLabel` | `string` | `'Search'` | Accessible name for the search input. |
+| `globalFilter` | `string` | `''` | Global filter term. Bind with `v-model:global-filter`. |
+| `filters` | `ColumnFiltersState` | `[]` | Per-column filters. Bind with `v-model:filters`. |
+| `noResultsLabel` | `string` | `'No results match your filters'` | Empty-state text shown while a filter is active. |
+| `clearFiltersLabel` | `string` | `'Clear filters'` | Toolbar button that clears all filters. |
 
 ## Events
 
@@ -150,6 +174,8 @@ filtering, column resizing, grouping — are **not** available through
 | `update:sorting` | `{ id: string; desc: boolean }[]` | Emitted whenever the sort state changes. |
 | `update:expanded` | `Record<string, boolean>` | Emitted with the new expansion map. |
 | `update:selection` | `Record<string, boolean>` | Emitted with the new selection map. |
+| `update:globalFilter` | `string` | Emitted with the new global filter term. |
+| `update:filters` | `ColumnFiltersState` | Emitted with the new per-column filters. |
 | `row-click` | `unknown` | Emitted with the clicked row's original data. Fires even when `expandable` is `false`. |
 
 ## Slots
@@ -161,6 +187,7 @@ filtering, column resizing, grouping — are **not** available through
 | `expansion` | `{ row }` | Content of the expansion row, shown for expanded rows only. |
 | `bulk-actions` | `{ rows, clear }` | Content of the bulk-actions bar, shown while rows are selected. |
 | `error` | — | Replaces the error text when `error` is set. |
+| `toolbar` | — | Extra controls in the toolbar (next to the search input and chips). |
 
 `DataTable` renders no default slot — all cells come from `FlexRender` or a `cell-*` slot.
 

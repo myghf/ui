@@ -1,7 +1,11 @@
 import {
+  columnFilteringFeature,
   createExpandedRowModel,
+  createFilteredRowModel,
   createPaginatedRowModel,
   createSortedRowModel,
+  filterFns,
+  globalFilteringFeature,
   rowExpandingFeature,
   rowPaginationFeature,
   rowSelectionFeature,
@@ -20,10 +24,14 @@ export const dataTableFeatures = tableFeatures({
   rowPaginationFeature,
   rowExpandingFeature,
   rowSelectionFeature,
+  columnFilteringFeature,
+  globalFilteringFeature,
   sortedRowModel: createSortedRowModel(),
+  filteredRowModel: createFilteredRowModel(),
   paginatedRowModel: createPaginatedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   sortFns,
+  filterFns,
 })
 
 export type DataTableFeatures = typeof dataTableFeatures

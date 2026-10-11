@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { mount, type VueWrapper } from '@vue/test-utils'
-import { createColumnHelper, type ColumnDef } from '@tanstack/vue-table'
+import { createColumnHelper, type ColumnDef, type ColumnFiltersState } from '@tanstack/vue-table'
 import { h, nextTick, type DefineComponent } from 'vue'
 import { describe, expect, it, vi } from 'vitest'
 import type { DataTableFeatures } from '../../lib/table'
@@ -28,9 +28,18 @@ interface DataTableProps {
   selectedLabel?: string
   error?: string
   expandRowLabel?: string
+  searchable?: boolean
+  searchPlaceholder?: string
+  searchLabel?: string
+  globalFilter?: string
+  filters?: ColumnFiltersState
+  noResultsLabel?: string
+  clearFiltersLabel?: string
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
   'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
   'onUpdate:selection'?: (value: Record<string, boolean>) => void
+  'onUpdate:globalFilter'?: (value: string) => void
+  'onUpdate:filters'?: (value: ColumnFiltersState) => void
 }
 
 /**
@@ -287,5 +296,72 @@ describe('DataTable error state', () => {
       props: { data: [], columns, loading: true, error: 'nope' },
     })
     expect(wrapper.text()).not.toContain('nope')
+  })
+})
+
+describe('DataTable filtering', () => {
+  it('filters rows from the global filter', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, globalFilter: 'Youssef' },
+    })
+    expect(bodyRows(wrapper)).toHaveLength(1)
+    expect(wrapper.text()).toContain('Youssef Kamal')
+    expect(wrapper.text()).not.toContain('Amina Farouk')
+  })
+
+  it('renders a search input when searchable and emits update:globalFilter', async () => {
+    const onUpdate = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, searchable: true, 'onUpdate:globalFilter': onUpdate },
+    })
+    expect(wrapper.get('input').attributes('aria-label')).toBe('Search')
+    await wrapper.get('input').setValue('amin')
+    expect(onUpdate).toHaveBeenCalledWith('amin')
+  })
+
+  it('renders a chip per active column filter and removes one', async () => {
+    const onUpdate = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns,
+        getRowId,
+        filters: [{ id: 'patient', value: 'Amina' }],
+        'onUpdate:filters': onUpdate,
+      },
+    })
+    expect(wrapper.text()).toContain('Patient: Amina')
+    await wrapper.get('[aria-label="Remove Patient filter"]').trigger('click')
+    expect(onUpdate).toHaveBeenCalledWith([])
+  })
+
+  it('clears every filter from the clear button', async () => {
+    const onUpdateFilters = vi.fn()
+    const onUpdateGlobal = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns,
+        getRowId,
+        filters: [{ id: 'patient', value: 'Amina' }],
+        globalFilter: 'amin',
+        'onUpdate:filters': onUpdateFilters,
+        'onUpdate:globalFilter': onUpdateGlobal,
+      },
+    })
+    await wrapper.get('button.ms-auto').trigger('click')
+    expect(onUpdateFilters).toHaveBeenCalledWith([])
+    expect(onUpdateGlobal).toHaveBeenCalledWith('')
+  })
+
+  it('shows the no-results label only while a filter is active', () => {
+    const filtered = mount(TestDataTable, {
+      props: { data: [], columns, globalFilter: 'zzz' },
+    })
+    expect(filtered.text()).toContain('No results match your filters')
+
+    const empty = mount(TestDataTable, { props: { data: [], columns } })
+    expect(empty.text()).toContain('No results')
+    expect(empty.text()).not.toContain('match your filters')
   })
 })
