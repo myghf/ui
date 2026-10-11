@@ -341,6 +341,20 @@ describe('a11y: navigation & data', () => {
     )
   })
 
+  it('DataTable (paginated)', async () => {
+    const columnHelper = createColumnHelper<DataTableFeatures, { id: string; patient: string }>()
+    const columns = columnHelper.columns([columnHelper.accessor('patient', { header: 'Patient' })])
+    const data = [
+      { id: 'r1', patient: 'Amina Farouk' },
+      { id: 'r2', patient: 'Youssef Kamal' },
+    ]
+    await expectClean(
+      mountAny(UI.DataTable, {
+        props: { data, columns, getRowId: (row: { id: string }) => row.id, paginate: true, pageSize: 5 },
+      }),
+    )
+  })
+
   it('TreeTable', async () => {
     await expectClean(
       mountAny(UI.TreeTable, {

@@ -5,6 +5,7 @@ import DataTableLoading from '../.vitepress/theme/demos/data-table/loading.vue'
 import DataTableSelection from '../.vitepress/theme/demos/data-table/selection.vue'
 import DataTableFiltering from '../.vitepress/theme/demos/data-table/filtering.vue'
 import DataTableColumns from '../.vitepress/theme/demos/data-table/columns.vue'
+import DataTablePagination from '../.vitepress/theme/demos/data-table/pagination.vue'
 </script>
 
 # DataTable
@@ -124,6 +125,32 @@ pins another).
 
 <<< ../.vitepress/theme/demos/data-table/columns.vue
 
+### Pagination and server-side mode
+
+Set `paginate` to render the pagination footer (bound with `v-model:page-index` / `v-model:page-size`)
+over the client-side rows. For large datasets set `manual` instead: TanStack skips client
+sorting/filtering/pagination, `rowCount` supplies the server total, and you refetch on
+`update:pageIndex`, `update:pageSize`, `update:sorting`, and `update:filters`. The `pagination`
+slot replaces the default footer.
+
+```vue
+<DataTable
+  v-model:page-index="pageIndex"
+  v-model:page-size="pageSize"
+  :data="rows"
+  :columns="columns"
+  :get-row-id="getRowId"
+  :row-count="total"
+  manual
+/>
+```
+
+<Demo>
+  <DataTablePagination />
+</Demo>
+
+<<< ../.vitepress/theme/demos/data-table/pagination.vue
+
 ### DataTableFeatures
 
 `columns` is typed against `DataTableFeatures`, the feature set registered in
@@ -133,7 +160,7 @@ features:
 | Feature | What it adds |
 | --- | --- |
 | `rowSortingFeature` (+ `sortedRowModel`, `sortFns`) | Sortable columns and the `update:sorting` state. |
-| `rowPaginationFeature` (+ `paginatedRowModel`) | Registers the paginated row model. `DataTable` itself renders no pagination controls and does not expose the table instance, so reach this model by composing TanStack directly with `DataTableFeatures`. |
+| `rowPaginationFeature` (+ `paginatedRowModel`) | Pagination state. `DataTable` renders the footer when `paginate` (or `manual`) is set; otherwise reach the row model by composing TanStack directly with `DataTableFeatures`. |
 | `rowExpandingFeature` (+ `expandedRowModel`) | Per-row expansion driven by the `expanded` map. |
 | `rowSelectionFeature` | Per-row selection, select-all, and the bulk-actions bar. |
 | `columnFilteringFeature` (+ `filteredRowModel`, `filterFns`) | Per-column filters, the toolbar chips, and `update:filters`. |
@@ -189,6 +216,12 @@ grouping — are **not** available through
 | `columnOrder` | `string[]` | `[]` | Column order (ids). Bind with `v-model:column-order`. |
 | `columnPinning` | `{ start?: string[]; end?: string[] }` | `{ start: [], end: [] }` | Pinned columns (logical). Bind with `v-model:column-pinning`. |
 | `resizable` | `boolean` | `false` | Render drag handles to resize columns. |
+| `manual` | `boolean` | `false` | Server-side mode: skip client sorting/filtering/pagination. |
+| `paginate` | `boolean` | `false` | Render the pagination footer. |
+| `pageIndex` | `number` | `0` | Current page (0-based). Bind with `v-model:page-index`. |
+| `pageSize` | `number` | `10` | Rows per page. Bind with `v-model:page-size`. |
+| `rowCount` | `number` | `0` | Total rows across all pages (server-side). |
+| `pageSizeOptions` | `number[]` | `[5, 10, 20]` | Page-size choices in the footer. |
 
 ## Events
 
@@ -202,6 +235,8 @@ grouping — are **not** available through
 | `update:columnVisibility` | `Record<string, boolean>` | Emitted with the new visibility map. |
 | `update:columnOrder` | `string[]` | Emitted with the new column order. |
 | `update:columnPinning` | `{ start?: string[]; end?: string[] }` | Emitted with the new pinning state. |
+| `update:pageIndex` | `number` | Emitted when the page changes. |
+| `update:pageSize` | `number` | Emitted when the page size changes. |
 | `row-click` | `unknown` | Emitted with the clicked row's original data. Fires even when `expandable` is `false`. |
 
 ## Slots
@@ -214,6 +249,7 @@ grouping — are **not** available through
 | `bulk-actions` | `{ rows, clear }` | Content of the bulk-actions bar, shown while rows are selected. |
 | `error` | — | Replaces the error text when `error` is set. |
 | `toolbar` | — | Extra controls in the toolbar (next to the search input and chips). |
+| `pagination` | `{ pageIndex, pageSize, total }` | Replaces the default pagination footer. |
 
 `DataTable` renders no default slot — all cells come from `FlexRender` or a `cell-*` slot.
 

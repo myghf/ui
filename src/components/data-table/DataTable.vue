@@ -24,6 +24,7 @@ import TableCell from '../table/TableCell.vue'
 import TableEmpty from '../table/TableEmpty.vue'
 import TableHead from '../table/TableHead.vue'
 import TableHeader from '../table/TableHeader.vue'
+import TablePagination from '../table/TablePagination.vue'
 import TableRow from '../table/TableRow.vue'
 
 const props = withDefaults(
@@ -73,6 +74,15 @@ const props = withDefaults(
     columnPinning?: ColumnPinningState
     /** Show drag handles to resize columns. */
     resizable?: boolean
+    /** Server-side mode: TanStack skips client sorting/filtering/pagination and you fetch. */
+    manual?: boolean
+    /** Render a pagination footer (client-side, or the server total when `manual`). */
+    paginate?: boolean
+    pageIndex?: number
+    pageSize?: number
+    /** Total row count across all pages (server-side). */
+    rowCount?: number
+    pageSizeOptions?: number[]
   }>(),
   {
     size: 'default',
@@ -103,6 +113,12 @@ const props = withDefaults(
     columnOrder: () => [],
     columnPinning: () => ({ start: [], end: [] }),
     resizable: false,
+    manual: false,
+    paginate: false,
+    pageIndex: 0,
+    pageSize: 10,
+    rowCount: 0,
+    pageSizeOptions: () => [5, 10, 20],
   },
 )
 
@@ -115,6 +131,8 @@ const emit = defineEmits<{
   'update:columnVisibility': [value: Record<string, boolean>]
   'update:columnOrder': [value: string[]]
   'update:columnPinning': [value: ColumnPinningState]
+  'update:pageIndex': [value: number]
+  'update:pageSize': [value: number]
   'row-click': [row: unknown]
 }>()
 const slots = useSlots()
@@ -159,6 +177,9 @@ const table = useTable({
     get columnPinning() {
       return props.columnPinning
     },
+    get pagination() {
+      return { pageIndex: props.pageIndex, pageSize: props.pageSize }
+    },
   },
   onSortingChange: (updater) => {
     sorting.value = typeof updater === 'function' ? updater(sorting.value) : updater
@@ -201,6 +222,24 @@ const table = useTable({
     return props.resizable
   },
   columnResizeMode: 'onChange',
+  get manualPagination() {
+    return props.manual
+  },
+  get manualSorting() {
+    return props.manual
+  },
+  get manualFiltering() {
+    return props.manual
+  },
+  get rowCount() {
+    return props.manual ? props.rowCount : undefined
+  },
+  onPaginationChange: (updater) => {
+    const current = { pageIndex: props.pageIndex, pageSize: props.pageSize }
+    const next = typeof updater === 'function' ? updater(current) : updater
+    emit('update:pageIndex', next.pageIndex)
+    emit('update:pageSize', next.pageSize)
+  },
 })
 const rows = computed(() => table.getRowModel().rows)
 const selectedRows = computed(() => table.getSelectedRowModel().rows)
@@ -216,6 +255,11 @@ const placeholderRowCount = computed(() => Math.max(1, Math.floor(props.loadingR
 
 const hasActiveFilters = computed(
   () => props.globalFilter.trim().length > 0 || props.filters.length > 0,
+)
+
+/** Rows to paginate over: the server total when manual, else the filtered row count. */
+const totalRows = computed(() =>
+  props.manual ? props.rowCount : table.getFilteredRowModel().rows.length,
 )
 
 /** Human-readable chips for the active column filters, keyed by column id. */
@@ -470,5 +514,18 @@ function onRowClick(event: MouseEvent, rowId: string) {
         </template>
       </TableBody>
     </Table>
+
+    <div v-if="paginate || manual" class="border-t border-border">
+      <slot name="pagination" :page-index="pageIndex" :page-size="pageSize" :total="totalRows">
+        <TablePagination
+          :page-index="pageIndex"
+          :page-size="pageSize"
+          :total="totalRows"
+          :page-size-options="pageSizeOptions"
+          @update:page-index="emit('update:pageIndex', $event)"
+          @update:page-size="emit('update:pageSize', $event)"
+        />
+      </slot>
+    </div>
   </div>
 </template>

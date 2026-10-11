@@ -39,6 +39,12 @@ interface DataTableProps {
   columnOrder?: string[]
   columnPinning?: { start?: string[]; end?: string[] }
   resizable?: boolean
+  manual?: boolean
+  paginate?: boolean
+  pageIndex?: number
+  pageSize?: number
+  rowCount?: number
+  pageSizeOptions?: number[]
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
   'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
   'onUpdate:selection'?: (value: Record<string, boolean>) => void
@@ -47,6 +53,8 @@ interface DataTableProps {
   'onUpdate:columnVisibility'?: (value: Record<string, boolean>) => void
   'onUpdate:columnOrder'?: (value: string[]) => void
   'onUpdate:columnPinning'?: (value: { start?: string[]; end?: string[] }) => void
+  'onUpdate:pageIndex'?: (value: number) => void
+  'onUpdate:pageSize'?: (value: number) => void
 }
 
 /**
@@ -408,5 +416,37 @@ describe('DataTable columns', () => {
 
     const plain = mount(TestDataTable, { props: { data, columns, getRowId } })
     expect(plain.findAll('thead th span[aria-hidden="true"]')).toHaveLength(0)
+  })
+})
+
+describe('DataTable pagination', () => {
+  it('paginates client-side and emits update:pageIndex', async () => {
+    const onUpdate = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns,
+        getRowId,
+        paginate: true,
+        pageSize: 1,
+        'onUpdate:pageIndex': onUpdate,
+      },
+    })
+    expect(bodyRows(wrapper)).toHaveLength(1)
+    await wrapper.get('[aria-label="Next page"]').trigger('click')
+    expect(onUpdate).toHaveBeenCalledWith(1)
+  })
+
+  it('renders all received rows and the server total in manual mode', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, manual: true, paginate: true, rowCount: 50, pageSize: 10 },
+    })
+    expect(bodyRows(wrapper)).toHaveLength(2)
+    expect(wrapper.text()).toContain('50')
+  })
+
+  it('renders no pagination footer by default', () => {
+    const wrapper = mount(TestDataTable, { props: { data, columns, getRowId } })
+    expect(wrapper.find('[aria-label="Next page"]').exists()).toBe(false)
   })
 })
