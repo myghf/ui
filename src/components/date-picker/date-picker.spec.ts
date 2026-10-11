@@ -72,6 +72,42 @@ describe('DatePicker', () => {
   })
 })
 
+describe('DatePicker Hijri calendar', () => {
+  const hijri = (props: Record<string, unknown> = {}) =>
+    mount(DatePicker, {
+      props: { mode: 'date', defaultOpen: true, calendar: 'islamic-umalqura', locale: 'en-US', ...props },
+    })
+
+  it('labels the month in the Hijri calendar', () => {
+    expect(hijri().get('[data-test="month-label"]').text()).toMatch(/14\d\d/)
+  })
+
+  it('numbers the day cells from the Hijri day of month', () => {
+    const cells = hijri().findAll('[data-test="weekdays"] button')
+    expect(cells.length).toBeGreaterThan(0)
+    expect(cells[0].text()).toBe('1')
+  })
+
+  it('pages by Hijri month', async () => {
+    const wrapper = hijri()
+    const before = wrapper.get('[data-test="month-label"]').text()
+    await wrapper.get('[aria-label="Next month"]').trigger('click')
+    expect(wrapper.get('[data-test="month-label"]').text()).not.toBe(before)
+  })
+
+  it('stays Gregorian by default', () => {
+    const wrapper = mount(DatePicker, { props: { mode: 'date', defaultOpen: true, locale: 'en-US' } })
+    expect(wrapper.get('[data-test="month-label"]').text()).not.toMatch(/14\d\d/)
+  })
+
+  it('formats the selected date in the Hijri calendar', () => {
+    const wrapper = mount(DatePicker, {
+      props: { mode: 'date', defaultOpen: true, calendar: 'islamic-umalqura', locale: 'en-US', modelValue: new Date(2024, 6, 7) },
+    })
+    expect(wrapper.get('[aria-haspopup="dialog"]').text()).toContain('1446')
+  })
+})
+
 describe('DatePicker form-field wiring', () => {
   it('takes its id and describedby from a FormField', () => {
     const wrapper = mount(FormField, {

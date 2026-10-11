@@ -128,6 +128,7 @@ export default defineConfig({
           { text: 'cn', link: '/utilities/cn' },
           { text: 'date', link: '/utilities/date' },
           { text: 'locale', link: '/utilities/locale' },
+          { text: 'hijri', link: '/utilities/hijri' },
           { text: 'number', link: '/utilities/number' },
           { text: 'csv', link: '/utilities/csv' },
           { text: 'icons', link: '/utilities/icons' },

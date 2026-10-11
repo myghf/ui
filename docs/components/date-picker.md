@@ -47,6 +47,18 @@ commits it and closes the popover; a Clear action appears once a value exists.
 
 <<< ../.vitepress/theme/demos/date-picker/modes.vue
 
+## Hijri calendar
+
+Set `calendar="islamic-umalqura"` to lay the grid out — and label the month and days — in the
+Hijri (Umm al-Qura) calendar. Paging moves by Hijri month, but the emitted `modelValue` is still
+a Gregorian `Date`. Gregorian is the default.
+
+```vue
+<DatePicker v-model="date" calendar="islamic-umalqura" locale="ar-EG" />
+```
+
+The [hijri utilities](/utilities/hijri) expose the same conversion if you need it elsewhere.
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -55,7 +67,7 @@ commits it and closes the popover; a Clear action appears once a value exists.
 | `modelValue` | `Date \| [Date, Date] \| null` | — | Selected value: a `Date` for `date`/`datetime`, a `[start, end]` tuple for `range`, `null` when empty. |
 | `placeholder` | `string` | — | Trigger text while empty. **Deprecated** — prefer `labels.placeholder`; a `labels.placeholder` value wins over it. |
 | `disabled` | `boolean` | `false` | Disables the trigger. |
-| `invalid` | `boolean` | `false` | Applies the error border. Visual only; it does not set `aria-invalid`. |
+| `invalid` | `boolean` | `false` | Applies the error border. Falls through to the `FormField` context when omitted. The trigger is a button, so `aria-invalid` is not set — the `aria-describedby` association carries the message. |
 | `size` | `'sm' \| 'default'` | `'default'` | Trigger height. |
 | `inputId` | `string` | — | Applied to the trigger button so an external `<label for>` matches. |
 | `hourFormat` | `'12' \| '24'` | `'24'` | Time format in `datetime` mode. `'12'` also renders an AM/PM control. |
@@ -64,6 +76,7 @@ commits it and closes the popover; a Clear action appears once a value exists.
 | `labels` | `Partial<DatePickerLabels>` | — | Per-instance text overrides; merged over the locale defaults. |
 | `weekStartsOn` | `number` | from locale | First day of the week (`0` = Sunday … `6` = Saturday). Defaults to the locale's week info, falling back to Monday. |
 | `defaultOpen` | `boolean` | `false` | Opens the popover on mount. Useful for demos and tests. |
+| `calendar` | `'gregory' \| 'islamic-umalqura'` | `'gregory'` | Calendar system for the grid, month label, and displayed date. |
 
 ### `labels` keys
 

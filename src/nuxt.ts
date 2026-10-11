@@ -162,6 +162,12 @@ export const AUTO_IMPORT_UTILITIES = [
   'getMonthLabel',
   'formatLocalizedDate',
   'formatLocalizedTime',
+  'addDays',
+  'hijriParts',
+  'startOfHijriMonth',
+  'hijriMonthLength',
+  'hijriMonthLabel',
+  'formatHijriDate',
 ]
 
 /** Tailwind content glob needed to scan the published library bundle. */

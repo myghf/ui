@@ -19,6 +19,15 @@ import {
   getMonthLabel,
   getWeekdayLabels,
 } from '../../lib/locale'
+import {
+  addDays,
+  formatHijriDate,
+  hijriMonthLabel,
+  hijriMonthLength,
+  hijriParts,
+  startOfHijriMonth,
+  type CalendarSystem,
+} from '../../lib/hijri'
 
 export interface DatePickerLabels {
   placeholder: string
@@ -124,12 +133,15 @@ const props = withDefaults(
     labels?: Partial<DatePickerLabels>
     weekStartsOn?: number
     defaultOpen?: boolean
+    /** Calendar system for the grid and display. Gregorian is the default. */
+    calendar?: CalendarSystem
   }>(),
   {
     mode: 'date',
     size: 'default',
     hourFormat: '24',
     minuteStep: 1,
+    calendar: 'gregory',
     // `invalid` defaults to `undefined` so Boolean casting does not swallow it
     // and it can fall through to the form field context.
     invalid: undefined,
@@ -193,7 +205,12 @@ function labelFor(key: keyof DatePickerLabels): string {
 
 const weekStartsOn = computed(() => props.weekStartsOn ?? getFirstDayOfWeek(effectiveLocale.value))
 const weekdayLabels = computed(() => getWeekdayLabels(effectiveLocale.value, weekStartsOn.value))
-const monthLabel = computed(() => getMonthLabel(viewDate.value, effectiveLocale.value))
+const isHijri = computed(() => props.calendar === 'islamic-umalqura')
+const monthLabel = computed(() =>
+  isHijri.value
+    ? hijriMonthLabel(viewDate.value, effectiveLocale.value)
+    : getMonthLabel(viewDate.value, effectiveLocale.value),
+)
 
 watch(
   () => props.modelValue,
@@ -212,14 +229,29 @@ watch(
   { immediate: true },
 )
 
-const grid = computed(() => {
+/** First day and length of the month currently shown, in the active calendar. */
+const monthBounds = computed(() => {
+  if (isHijri.value) {
+    const first = startOfHijriMonth(viewDate.value, effectiveLocale.value)
+    return { first, length: hijriMonthLength(first, effectiveLocale.value) }
+  }
   const first = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth(), 1)
+  const length = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth() + 1, 0).getDate()
+  return { first, length }
+})
+
+const grid = computed(() => {
+  const { first, length } = monthBounds.value
   const lead = (first.getDay() - weekStartsOn.value + 7) % 7
   const cells: (Date | null)[] = Array.from({ length: lead }, () => null)
-  const days = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth() + 1, 0).getDate()
-  for (let d = 1; d <= days; d++) cells.push(new Date(viewDate.value.getFullYear(), viewDate.value.getMonth(), d))
+  for (let i = 0; i < length; i++) cells.push(addDays(first, i))
   return cells
 })
+
+/** Day number shown in a cell, in the active calendar. */
+function dayLabel(date: Date): number {
+  return isHijri.value ? hijriParts(date, effectiveLocale.value).day : date.getDate()
+}
 
 function inRange(d: Date): boolean {
   if (!start.value || !end.value) return false
@@ -228,6 +260,13 @@ function inRange(d: Date): boolean {
 }
 
 function shiftMonth(n: number) {
+  if (isHijri.value) {
+    const { first, length } = monthBounds.value
+    // Move by one Hijri month: back to the day before day 1, or forward a month's length.
+    viewDate.value =
+      n < 0 ? startOfHijriMonth(addDays(first, -1), effectiveLocale.value) : addDays(first, length)
+    return
+  }
   viewDate.value = new Date(viewDate.value.getFullYear(), viewDate.value.getMonth() + n, 1)
 }
 
@@ -316,17 +355,21 @@ function pad(n: number): string {
 }
 
 const display = computed(() => {
+  const formatDate = (date: Date) =>
+    isHijri.value
+      ? formatHijriDate(date, effectiveLocale.value)
+      : formatLocalizedDate(date, effectiveLocale.value)
   if (props.mode === 'range') {
     if (!start.value || !end.value) return ''
     const [s, e] = sortRange(start.value, end.value)
-    return `${formatLocalizedDate(s, effectiveLocale.value)} – ${formatLocalizedDate(e, effectiveLocale.value)}`
+    return `${formatDate(s)} – ${formatDate(e)}`
   }
   if (!start.value) return ''
   const d = props.mode === 'datetime' ? clampTime(start.value, time.value) : start.value
   if (props.mode === 'datetime') {
-    return `${formatLocalizedDate(d, effectiveLocale.value)} ${formatLocalizedTime(d, effectiveLocale.value, props.hourFormat)}`
+    return `${formatDate(d)} ${formatLocalizedTime(d, effectiveLocale.value, props.hourFormat)}`
   }
-  return formatLocalizedDate(d, effectiveLocale.value)
+  return formatDate(d)
 })
 </script>
 
@@ -389,7 +432,7 @@ const display = computed(() => {
             ]"
             @click="pick(cell)"
           >
-            {{ cell.getDate() }}
+            {{ dayLabel(cell) }}
           </button>
         </template>
       </div>

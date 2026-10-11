@@ -1,6 +1,15 @@
 export { cn } from './lib/cn'
 export * from './lib/date'
 export * from './lib/locale'
+export {
+  addDays,
+  hijriParts,
+  startOfHijriMonth,
+  hijriMonthLength,
+  hijriMonthLabel,
+  formatHijriDate,
+} from './lib/hijri'
+export type { CalendarSystem, HijriParts } from './lib/hijri'
 export { toNumberOrNull, mergeFormatOptions, formatNumber, formatCurrency, formatPercent } from './lib/number'
 export { toCsv, downloadCsv } from './lib/csv'
 export type { CsvColumn, CsvOptions } from './lib/csv'
