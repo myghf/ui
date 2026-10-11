@@ -320,6 +320,27 @@ describe('a11y: navigation & data', () => {
     )
   })
 
+  it('DataTable (column features)', async () => {
+    const columnHelper = createColumnHelper<DataTableFeatures, { id: string; patient: string }>()
+    const columns = columnHelper.columns([
+      columnHelper.accessor('patient', { header: 'Patient', size: 120 }),
+      columnHelper.accessor('id', { header: 'ID', size: 80 }),
+    ])
+    const data = [{ id: 'r1', patient: 'Amina Farouk' }]
+    await expectClean(
+      mountAny(UI.DataTable, {
+        props: {
+          data,
+          columns,
+          getRowId: (row: { id: string }) => row.id,
+          columnPinning: { start: ['patient'], end: [] },
+          columnVisibility: { id: true },
+          resizable: true,
+        },
+      }),
+    )
+  })
+
   it('TreeTable', async () => {
     await expectClean(
       mountAny(UI.TreeTable, {

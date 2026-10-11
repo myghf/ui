@@ -5,6 +5,7 @@ import {
   useTable,
   type ColumnDef,
   type ColumnFiltersState,
+  type ColumnPinningState,
   type RowData,
   type RowSelectionState,
   type SortingState,
@@ -64,6 +65,14 @@ const props = withDefaults(
     /** Message shown when rows are filtered out. */
     noResultsLabel?: string
     clearFiltersLabel?: string
+    /** Column visibility map, keyed by column id. Bind with `v-model:column-visibility`. */
+    columnVisibility?: Record<string, boolean>
+    /** Column order (ids). Bind with `v-model:column-order`. */
+    columnOrder?: string[]
+    /** Pinned columns. Bind with `v-model:column-pinning`. */
+    columnPinning?: ColumnPinningState
+    /** Show drag handles to resize columns. */
+    resizable?: boolean
   }>(),
   {
     size: 'default',
@@ -90,6 +99,10 @@ const props = withDefaults(
     filters: () => [],
     noResultsLabel: 'No results match your filters',
     clearFiltersLabel: 'Clear filters',
+    columnVisibility: () => ({}),
+    columnOrder: () => [],
+    columnPinning: () => ({ start: [], end: [] }),
+    resizable: false,
   },
 )
 
@@ -99,6 +112,9 @@ const emit = defineEmits<{
   'update:selection': [value: RowSelectionState]
   'update:globalFilter': [value: string]
   'update:filters': [value: ColumnFiltersState]
+  'update:columnVisibility': [value: Record<string, boolean>]
+  'update:columnOrder': [value: string[]]
+  'update:columnPinning': [value: ColumnPinningState]
   'row-click': [row: unknown]
 }>()
 const slots = useSlots()
@@ -134,6 +150,15 @@ const table = useTable({
     get columnFilters() {
       return props.filters
     },
+    get columnVisibility() {
+      return props.columnVisibility
+    },
+    get columnOrder() {
+      return props.columnOrder
+    },
+    get columnPinning() {
+      return props.columnPinning
+    },
   },
   onSortingChange: (updater) => {
     sorting.value = typeof updater === 'function' ? updater(sorting.value) : updater
@@ -160,8 +185,23 @@ const table = useTable({
     const next = typeof updater === 'function' ? updater(props.filters) : updater
     emit('update:filters', next)
   },
+  onColumnVisibilityChange: (updater) => {
+    const next = typeof updater === 'function' ? updater(props.columnVisibility) : updater
+    emit('update:columnVisibility', next)
+  },
+  onColumnOrderChange: (updater) => {
+    const next = typeof updater === 'function' ? updater(props.columnOrder) : updater
+    emit('update:columnOrder', next)
+  },
+  onColumnPinningChange: (updater) => {
+    const next = typeof updater === 'function' ? updater(props.columnPinning) : updater
+    emit('update:columnPinning', next)
+  },
+  get enableColumnResizing() {
+    return props.resizable
+  },
+  columnResizeMode: 'onChange',
 })
-
 const rows = computed(() => table.getRowModel().rows)
 const selectedRows = computed(() => table.getSelectedRowModel().rows)
 /** Includes the leading selection/expander columns. */
@@ -204,6 +244,25 @@ const hasCellSlot = (columnId: string) => Boolean(slots[`cell-${columnId}`])
 const widthOf = (columnDef: unknown) => {
   const size = (columnDef as { size?: number }).size
   return size ? `${size}px` : undefined
+}
+
+interface PinnableColumn {
+  getIsPinned: () => unknown
+  getStart: (position: 'start') => number
+  getAfter: (position: 'end') => number
+}
+
+/** Sticky offset for a pinned column, or `undefined` when it is not pinned. */
+function pinStyle(column: PinnableColumn): Record<string, string | number> | undefined {
+  const pinned = column.getIsPinned()
+  // Logical insets, so a start/end pin sticks to the correct edge under RTL.
+  if (pinned === 'start') {
+    return { position: 'sticky', insetInlineStart: `${column.getStart('start')}px`, zIndex: 1 }
+  }
+  if (pinned === 'end') {
+    return { position: 'sticky', insetInlineEnd: `${column.getAfter('end')}px`, zIndex: 1 }
+  }
+  return undefined
 }
 
 function clearSelection() {
@@ -310,6 +369,8 @@ function onRowClick(event: MouseEvent, rowId: string) {
             :key="header.id"
             :width="widthOf(header.column.columnDef)"
             :sort-direction="header.column.getCanSort() ? sortDirection(header.column.id) : undefined"
+            :class="[resizable ? 'relative' : '', header.column.getIsPinned() ? 'bg-surface' : '']"
+            :style="pinStyle(header.column)"
           >
             <button
               v-if="sortable && header.column.getCanSort()"
@@ -323,6 +384,17 @@ function onRowClick(event: MouseEvent, rowId: string) {
               <ChevronsUpDown v-else class="size-3.5 opacity-40" />
             </button>
             <FlexRender v-else :header="header" />
+            <span
+              v-if="resizable && header.column.getCanResize()"
+              :class="[
+                'absolute end-0 top-0 h-full w-1 touch-none select-none bg-border',
+                header.column.getIsResizing() ? 'bg-primary-500' : '',
+              ]"
+              aria-hidden="true"
+              @dblclick="header.column.resetSize()"
+              @mousedown="header.getResizeHandler()($event)"
+              @touchstart="header.getResizeHandler()($event)"
+            />
           </TableHead>
         </TableRow>
       </TableHeader>
@@ -373,7 +445,12 @@ function onRowClick(event: MouseEvent, rowId: string) {
                   />
                 </button>
               </TableCell>
-              <TableCell v-for="cell in row.getAllCells()" :key="cell.id">
+              <TableCell
+                v-for="cell in row.getAllCells()"
+                :key="cell.id"
+                :class="cell.column.getIsPinned() ? 'bg-surface' : ''"
+                :style="pinStyle(cell.column)"
+              >
                 <slot
                   v-if="hasCellSlot(cell.column.id)"
                   :name="`cell-${cell.column.id}`"

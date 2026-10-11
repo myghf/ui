@@ -4,6 +4,7 @@ import DataTableExpanding from '../.vitepress/theme/demos/data-table/expanding.v
 import DataTableLoading from '../.vitepress/theme/demos/data-table/loading.vue'
 import DataTableSelection from '../.vitepress/theme/demos/data-table/selection.vue'
 import DataTableFiltering from '../.vitepress/theme/demos/data-table/filtering.vue'
+import DataTableColumns from '../.vitepress/theme/demos/data-table/columns.vue'
 </script>
 
 # DataTable
@@ -109,6 +110,20 @@ empty state switches to `noResultsLabel`. Use the `toolbar` slot to add your own
 
 <<< ../.vitepress/theme/demos/data-table/filtering.vue
 
+### Column visibility, order, pinning, and resizing
+
+Three pieces of column state are bound with `v-model`: `column-visibility` (id → visible),
+`column-order` (ids), and `column-pinning` (`{ start, end }`, logical so it mirrors under RTL —
+pinned cells stick with `inset-inline-start`/`inset-inline-end`). Set `resizable` to show drag
+handles on each header. Build the controls in the `toolbar` slot (the demo toggles a column and
+pins another).
+
+<Demo>
+  <DataTableColumns />
+</Demo>
+
+<<< ../.vitepress/theme/demos/data-table/columns.vue
+
 ### DataTableFeatures
 
 `columns` is typed against `DataTableFeatures`, the feature set registered in
@@ -123,9 +138,13 @@ features:
 | `rowSelectionFeature` | Per-row selection, select-all, and the bulk-actions bar. |
 | `columnFilteringFeature` (+ `filteredRowModel`, `filterFns`) | Per-column filters, the toolbar chips, and `update:filters`. |
 | `globalFilteringFeature` | The global search term and `update:globalFilter`. |
+| `columnVisibilityFeature` | Column visibility and `update:columnVisibility`. |
+| `columnOrderingFeature` | Column order and `update:columnOrder`. |
+| `columnPinningFeature` | Logical `start`/`end` pinning and `update:columnPinning`. |
+| `columnSizingFeature` + `columnResizingFeature` | Column sizes and the drag-to-resize handles. |
 
 TanStack v9 tree-shakes anything not registered, so features outside this list — column
-resizing, grouping — are **not** available through
+grouping — are **not** available through
 `DataTable`. Use it when you need exactly this set; otherwise compose
 [Table](/components/table) yourself.
 
@@ -166,6 +185,10 @@ resizing, grouping — are **not** available through
 | `filters` | `ColumnFiltersState` | `[]` | Per-column filters. Bind with `v-model:filters`. |
 | `noResultsLabel` | `string` | `'No results match your filters'` | Empty-state text shown while a filter is active. |
 | `clearFiltersLabel` | `string` | `'Clear filters'` | Toolbar button that clears all filters. |
+| `columnVisibility` | `Record<string, boolean>` | `{}` | Column visibility by id. Bind with `v-model:column-visibility`. |
+| `columnOrder` | `string[]` | `[]` | Column order (ids). Bind with `v-model:column-order`. |
+| `columnPinning` | `{ start?: string[]; end?: string[] }` | `{ start: [], end: [] }` | Pinned columns (logical). Bind with `v-model:column-pinning`. |
+| `resizable` | `boolean` | `false` | Render drag handles to resize columns. |
 
 ## Events
 
@@ -176,6 +199,9 @@ resizing, grouping — are **not** available through
 | `update:selection` | `Record<string, boolean>` | Emitted with the new selection map. |
 | `update:globalFilter` | `string` | Emitted with the new global filter term. |
 | `update:filters` | `ColumnFiltersState` | Emitted with the new per-column filters. |
+| `update:columnVisibility` | `Record<string, boolean>` | Emitted with the new visibility map. |
+| `update:columnOrder` | `string[]` | Emitted with the new column order. |
+| `update:columnPinning` | `{ start?: string[]; end?: string[] }` | Emitted with the new pinning state. |
 | `row-click` | `unknown` | Emitted with the clicked row's original data. Fires even when `expandable` is `false`. |
 
 ## Slots

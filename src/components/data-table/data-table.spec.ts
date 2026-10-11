@@ -35,11 +35,18 @@ interface DataTableProps {
   filters?: ColumnFiltersState
   noResultsLabel?: string
   clearFiltersLabel?: string
+  columnVisibility?: Record<string, boolean>
+  columnOrder?: string[]
+  columnPinning?: { start?: string[]; end?: string[] }
+  resizable?: boolean
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
   'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
   'onUpdate:selection'?: (value: Record<string, boolean>) => void
   'onUpdate:globalFilter'?: (value: string) => void
   'onUpdate:filters'?: (value: ColumnFiltersState) => void
+  'onUpdate:columnVisibility'?: (value: Record<string, boolean>) => void
+  'onUpdate:columnOrder'?: (value: string[]) => void
+  'onUpdate:columnPinning'?: (value: { start?: string[]; end?: string[] }) => void
 }
 
 /**
@@ -363,5 +370,43 @@ describe('DataTable filtering', () => {
     const empty = mount(TestDataTable, { props: { data: [], columns } })
     expect(empty.text()).toContain('No results')
     expect(empty.text()).not.toContain('match your filters')
+  })
+})
+
+describe('DataTable columns', () => {
+  it('hides a column listed as not visible', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, columnVisibility: { patient: false } },
+    })
+    expect(wrapper.get('thead').text()).not.toContain('Patient')
+    expect(wrapper.get('thead').text()).toContain('ID')
+  })
+
+  it('reorders columns from the order state', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, columnOrder: ['id', 'patient'] },
+    })
+    const headers = wrapper.findAll('thead th').map((th) => th.text())
+    expect(headers[0]).toContain('ID')
+    expect(headers[1]).toContain('Patient')
+  })
+
+  it('pins a column to the start with a sticky logical inset', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, columnPinning: { start: ['patient'], end: [] } },
+    })
+    const style = wrapper.findAll('thead th')[0].attributes('style') ?? ''
+    expect(style).toContain('sticky')
+    expect(style).toContain('inset-inline-start')
+  })
+
+  it('renders a resize handle per column when resizable', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, resizable: true },
+    })
+    expect(wrapper.findAll('thead th span[aria-hidden="true"]')).toHaveLength(2)
+
+    const plain = mount(TestDataTable, { props: { data, columns, getRowId } })
+    expect(plain.findAll('thead th span[aria-hidden="true"]')).toHaveLength(0)
   })
 })
