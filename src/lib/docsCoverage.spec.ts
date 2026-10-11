@@ -104,6 +104,9 @@ const MAP: Record<string, string> = {
   Stack: 'components/layout.md',
   Inline: 'components/layout.md',
   Grid: 'components/layout.md',
+  Breadcrumbs: 'components/page.md',
+  PageHeader: 'components/page.md',
+  PageContent: 'components/page.md',
 }
 
 const docsDir = fileURLToPath(new URL('../../docs', import.meta.url))

@@ -106,7 +106,7 @@ export default defineConfig({
           {
             text: 'Layout',
             collapsed: false,
-            items: [{ text: 'Layout primitives', link: '/components/layout' }],
+            items: [{ text: 'Layout primitives', link: '/components/layout' }, { text: 'Page', link: '/components/page' }],
           },
         ],
       },

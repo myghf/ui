@@ -101,6 +101,9 @@ export const AUTO_IMPORT_COMPONENTS = [
   'Stack',
   'Inline',
   'Grid',
+  'Breadcrumbs',
+  'PageHeader',
+  'PageContent',
 ]
 
 /**

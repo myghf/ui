@@ -370,6 +370,24 @@ describe('a11y: layout', () => {
       mount(UI.Grid, { props: { cols: 2 }, slots: { default: () => [h('span', 'a'), h('span', 'b')] } }),
     )
   })
+
+  it('Breadcrumbs', async () => {
+    await expectClean(
+      mount(UI.Breadcrumbs, {
+        props: { items: [{ label: 'Home', href: '/' }, { label: 'Patients' }] },
+      }),
+    )
+  })
+
+  it('PageHeader', async () => {
+    await expectClean(
+      mount(UI.PageHeader, { props: { title: 'Patients', description: 'All records' } }),
+    )
+  })
+
+  it('PageContent', async () => {
+    await expectClean(mount(UI.PageContent, { slots: { default: () => 'Body' } }))
+  })
 })
 
 describe('a11y: overlays (teleported, asserted on document.body)', () => {

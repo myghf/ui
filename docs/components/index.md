@@ -78,3 +78,4 @@ Structural wrappers for page and panel composition — no styling beyond layout 
 | Component | Exports | Summary |
 | --- | --- | --- |
 | [Layout primitives](/components/layout) | `Container`, `Stack`, `Inline`, `Grid` | Centred page column, vertical stack, wrapping row, and grid. |
+| [Page](/components/page) | `Breadcrumbs`, `PageHeader`, `PageContent` | Breadcrumb trail, page heading with actions, and the padded page body. |
