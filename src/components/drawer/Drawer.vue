@@ -12,6 +12,7 @@ import {
   VisuallyHidden,
 } from 'reka-ui'
 import { X } from 'lucide-vue-next'
+import { useMyGhfConfig } from '../../lib/config'
 
 export type DrawerPosition = 'left' | 'right' | 'top' | 'bottom' | 'start' | 'end'
 export type DrawerSize = 'sm' | 'md' | 'lg' | 'full'
@@ -42,6 +43,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ 'update:open': [value: boolean]; open: []; close: [] }>()
+
+const labels = useMyGhfConfig().labels
 
 const open = computed({
   get: () => props.open,
@@ -120,7 +123,7 @@ const sizeClass = computed(() => (isVertical.value ? verticalSizes[props.size] :
         @pointer-down-outside="onPointerDownOutside"
       >
         <VisuallyHidden v-if="!title && !$slots.header">
-          <DialogTitle>Drawer</DialogTitle>
+          <DialogTitle>{{ labels.drawerTitle }}</DialogTitle>
         </VisuallyHidden>
 
         <header
@@ -144,7 +147,7 @@ const sizeClass = computed(() => (isVertical.value ? verticalSizes[props.size] :
           <DialogClose
             v-if="showClose"
             class="ms-auto shrink-0 rounded-md p-1 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-            aria-label="Close"
+            :aria-label="labels.close"
           >
             <slot name="close"><X class="size-4" /></slot>
           </DialogClose>

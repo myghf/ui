@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from 'reka-ui'
 import { X } from 'lucide-vue-next'
+import { useMyGhfConfig } from '../../lib/config'
 
 const props = withDefaults(
   defineProps<{
@@ -23,6 +24,8 @@ const props = withDefaults(
 )
 
 const emit = defineEmits<{ 'update:visible': [value: boolean]; close: [] }>()
+
+const labels = useMyGhfConfig().labels
 
 const open = computed({
   get: () => props.visible ?? false,
@@ -66,7 +69,7 @@ function onOpenChange(v: boolean) {
           </div>
           <DialogClose
             class="rounded-md p-1 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-            aria-label="Close"
+            :aria-label="labels.close"
           >
             <X class="size-4" />
           </DialogClose>

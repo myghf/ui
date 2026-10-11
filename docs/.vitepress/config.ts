@@ -38,6 +38,7 @@ export default defineConfig({
           { text: 'Nuxt', link: '/guide/nuxt' },
           { text: 'Theming', link: '/guide/theming' },
           { text: 'RTL & bilingual', link: '/guide/rtl' },
+          { text: 'Localization', link: '/guide/i18n' },
           { text: 'Accessibility', link: '/guide/accessibility' },
           { text: 'Icons', link: '/guide/icons' },
         ],

@@ -42,6 +42,11 @@ const MAP: Record<string, string> = {
   // Composables
   useTheme: 'composables/use-theme.md',
   createTheme: 'composables/use-theme.md',
+  createConfig: 'guide/i18n.md',
+  provideMyGhfConfig: 'guide/i18n.md',
+  useMyGhfConfig: 'guide/i18n.md',
+  myghfConfigKey: 'guide/i18n.md',
+  defaultConfig: 'guide/i18n.md',
   useToast: 'composables/use-toast.md',
   createToastStore: 'composables/use-toast.md',
   toastKey: 'composables/use-toast.md',

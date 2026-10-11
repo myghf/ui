@@ -12,6 +12,7 @@ import {
 } from 'reka-ui'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import { cn } from '../../lib/cn'
+import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'
 
 const props = withDefaults(
@@ -41,6 +42,8 @@ const { id, invalid, required, describedBy } = useFieldControl({
   invalid: () => props.invalid,
   required: () => props.required,
 })
+
+const labels = useMyGhfConfig().labels
 
 const open = ref(false)
 
@@ -110,7 +113,7 @@ function onClear() {
         <button
           v-if="clearable && hasValue"
           type="button"
-          aria-label="Clear selection"
+          :aria-label="labels.clearSelection"
           class="rounded p-0.5 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           @click.stop="onClear"
         >

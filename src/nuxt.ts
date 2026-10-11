@@ -121,6 +121,11 @@ export const AUTO_IMPORT_COMPOSABLES = [
   'toastKey',
   'useFormField',
   'useFieldControl',
+  'createConfig',
+  'provideMyGhfConfig',
+  'useMyGhfConfig',
+  'myghfConfigKey',
+  'defaultConfig',
 ]
 
 /**

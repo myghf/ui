@@ -9,6 +9,7 @@ import {
 } from 'reka-ui'
 import { X } from 'lucide-vue-next'
 import { toneClasses, type Tone } from '../../lib/tones'
+import { useMyGhfConfig } from '../../lib/config'
 import Icon from '../icon/Icon.vue'
 import type { ToastItem, ToastSeverity } from './useToast'
 
@@ -16,6 +17,8 @@ const props = defineProps<{
   item: ToastItem
   duration: number
 }>()
+
+const labels = useMyGhfConfig().labels
 
 const emit = defineEmits<{ close: [] }>()
 
@@ -79,7 +82,7 @@ const defaultIcons: Record<Tone, string> = {
 
     <ToastClose
       v-if="item.closable !== false"
-      aria-label="Close"
+      :aria-label="labels.close"
       class="-me-1 -mt-1 shrink-0 rounded-md p-1 transition-colors hover:bg-black/10 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
     >
       <X class="size-4" />

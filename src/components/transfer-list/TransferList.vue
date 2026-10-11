@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-vue-next'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
+import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'
 
 const props = withDefaults(
@@ -31,6 +32,8 @@ const { id, invalid, describedBy } = useFieldControl({
   id: () => props.id,
   invalid: () => props.invalid,
 })
+
+const labels = useMyGhfConfig().labels
 
 const selected = ref(new Set<string>(props.modelValue ?? []))
 const sourceSel = ref(new Set<string>())
@@ -106,21 +109,21 @@ function moveAllSource() {
             </slot>
           </button>
         </li>
-        <li v-if="left.length === 0" class="px-2 py-1.5 text-sm text-muted">Empty</li>
+        <li v-if="left.length === 0" class="px-2 py-1.5 text-sm text-muted">{{ labels.empty }}</li>
       </ul>
     </div>
 
     <div class="flex flex-row items-center justify-center gap-1 sm:flex-col">
-      <Button variant="outline" size="icon-sm" :disabled="disabled || sourceSel.size === 0" aria-label="Move selected to target" @click="moveToTarget">
+      <Button variant="outline" size="icon-sm" :disabled="disabled || sourceSel.size === 0" :aria-label="labels.moveSelectedToTarget" @click="moveToTarget">
         <ChevronRight class="size-4" />
       </Button>
-      <Button variant="outline" size="icon-sm" :disabled="disabled || targetSel.size === 0" aria-label="Move selected to source" @click="moveToSource">
+      <Button variant="outline" size="icon-sm" :disabled="disabled || targetSel.size === 0" :aria-label="labels.moveSelectedToSource" @click="moveToSource">
         <ChevronLeft class="size-4" />
       </Button>
-      <Button variant="ghost" size="icon-sm" :disabled="disabled" aria-label="Move all to target" @click="moveAllTarget">
+      <Button variant="ghost" size="icon-sm" :disabled="disabled" :aria-label="labels.moveAllToTarget" @click="moveAllTarget">
         <ChevronsRight class="size-4" />
       </Button>
-      <Button variant="ghost" size="icon-sm" :disabled="disabled" aria-label="Move all to source" @click="moveAllSource">
+      <Button variant="ghost" size="icon-sm" :disabled="disabled" :aria-label="labels.moveAllToSource" @click="moveAllSource">
         <ChevronsLeft class="size-4" />
       </Button>
     </div>
@@ -148,7 +151,7 @@ function moveAllSource() {
             </slot>
           </button>
         </li>
-        <li v-if="right.length === 0" class="px-2 py-1.5 text-sm text-muted">Empty</li>
+        <li v-if="right.length === 0" class="px-2 py-1.5 text-sm text-muted">{{ labels.empty }}</li>
       </ul>
     </div>
   </div>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { toneClasses } from '../../lib/tones'
+import { useMyGhfConfig } from '../../lib/config'
 import Icon from '../icon/Icon.vue'
 
 export interface FormError {
@@ -16,13 +17,16 @@ const props = withDefaults(
   defineProps<{
     /** The errors to summarize. Nothing renders while the list is empty. */
     errors?: FormError[]
-    /** Heading shown above the list. */
+    /** Heading shown above the list. Defaults to the config's `formErrorsTitle`. */
     title?: string
     /** Focus and scroll to the first linked control when the summary mounts. */
     focusFirst?: boolean
   }>(),
-  { errors: () => [], title: 'Please fix the following:', focusFirst: false },
+  { errors: () => [], title: undefined, focusFirst: false },
 )
+
+const labels = useMyGhfConfig().labels
+const resolvedTitle = computed(() => props.title ?? labels.formErrorsTitle)
 
 function focusField(id: string) {
   const el = document.getElementById(id)
@@ -45,7 +49,7 @@ onMounted(() => {
   >
     <p class="flex items-center gap-2 font-medium">
       <Icon name="circle-alert" :class="['size-4 shrink-0', toneClasses.danger.icon]" />
-      {{ title }}
+      {{ resolvedTitle }}
     </p>
     <ul class="mt-2 grid gap-1 ps-6">
       <li v-for="error in errors" :key="error.id">

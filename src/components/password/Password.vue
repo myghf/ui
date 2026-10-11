@@ -2,6 +2,7 @@
 import { computed, ref, useAttrs } from 'vue'
 import { Eye, EyeOff } from 'lucide-vue-next'
 import { useFieldControl } from '../../lib/formField'
+import { useMyGhfConfig } from '../../lib/config'
 
 const props = withDefaults(
   defineProps<{
@@ -29,6 +30,8 @@ const { id, invalid, required, describedBy } = useFieldControl({
   invalid: () => props.invalid,
   required: () => props.required,
 })
+
+const labels = useMyGhfConfig().labels
 
 const strength = computed(() => {
   const v = props.modelValue ?? ''
@@ -66,7 +69,7 @@ const strength = computed(() => {
       <button
         type="button"
         :disabled="disabled"
-        aria-label="Toggle password visibility"
+        :aria-label="labels.togglePasswordVisibility"
         class="absolute end-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         @click="visible = !visible"
       >

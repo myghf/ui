@@ -15,6 +15,7 @@ import {
 } from 'reka-ui'
 import { Check, ChevronDown, X } from 'lucide-vue-next'
 import { cn } from '../../lib/cn'
+import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'
 import Tag from '../tag/Tag.vue'
 
@@ -58,6 +59,8 @@ const { id, invalid, required, describedBy } = useFieldControl({
   invalid: () => props.invalid,
   required: () => props.required,
 })
+
+const labels = useMyGhfConfig().labels
 
 const open = ref(props.defaultOpen)
 
@@ -143,7 +146,7 @@ function remove(value: unknown) {
       <button
         v-if="clearable && hasValue"
         type="button"
-        aria-label="Clear selection"
+        :aria-label="labels.clearSelection"
         class="shrink-0 rounded p-0.5 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
         @click.stop="clear"
       >
@@ -151,7 +154,7 @@ function remove(value: unknown) {
       </button>
 
       <ComboboxTrigger
-        aria-label="Show options"
+        :aria-label="labels.showOptions"
         class="shrink-0 rounded p-0.5 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
       >
         <ChevronDown class="size-4 opacity-70" />

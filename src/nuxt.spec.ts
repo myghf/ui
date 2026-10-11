@@ -53,6 +53,11 @@ describe('@myghf/ui Nuxt module', () => {
       'toastKey',
       'useFormField',
       'useFieldControl',
+      'createConfig',
+      'provideMyGhfConfig',
+      'useMyGhfConfig',
+      'myghfConfigKey',
+      'defaultConfig',
     ])
   })
 

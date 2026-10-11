@@ -17,6 +17,7 @@ const EXPECTED = [
   'Table', 'TableHeader', 'TableBody', 'TableRow', 'TableHead', 'TableCell',
   'TableEmpty', 'TablePagination', 'DataTable', 'TreeTable', 'TreeSelect',
   'useTheme', 'createTheme', 'ThemeToggle',
+  'createConfig', 'provideMyGhfConfig', 'useMyGhfConfig', 'myghfConfigKey', 'defaultConfig',
   'Toaster', 'useToast', 'createToastStore',
   'Container', 'Stack', 'Inline', 'Grid', 'Breadcrumbs', 'PageHeader', 'PageContent',
   'AppShell', 'Sidebar', 'Topbar',

@@ -9,6 +9,14 @@ export { toneClasses } from './lib/tones'
 export type { Tone, ToneClasses } from './lib/tones'
 export { useTheme, createTheme } from './lib/theme'
 export type { ThemeMode, UseThemeOptions, UseThemeReturn, ThemeAttribute } from './lib/theme'
+export {
+  createConfig,
+  provideMyGhfConfig,
+  useMyGhfConfig,
+  myghfConfigKey,
+  defaultConfig,
+} from './lib/config'
+export type { MyGhfConfig, MyGhfLabels, CreateConfigOptions } from './lib/config'
 export { default as ThemeToggle } from './components/theme-toggle/ThemeToggle.vue'
 export { default as Icon } from './components/icon/Icon.vue'
 export { default as Button } from './components/button/Button.vue'

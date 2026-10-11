@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { PopoverContent, PopoverRoot, PopoverTrigger, TreeItem, TreeRoot } from 'reka-ui'
 import { Check, ChevronDown, Search, X } from 'lucide-vue-next'
 import Tag from '../tag/Tag.vue'
+import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'
 import {
   checkedStateOf,
@@ -46,6 +47,8 @@ const { id, invalid, describedBy } = useFieldControl({
   id: () => props.id,
   invalid: () => props.invalid,
 })
+
+const labels = useMyGhfConfig().labels
 
 const open = ref(false)
 const query = ref('')
@@ -141,7 +144,7 @@ function onUpdateItems(value: unknown) {
           class="inline-flex items-center gap-1 rounded px-2 py-1 text-xs text-muted hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
           @click="emit('update:modelValue', [])"
         >
-          <X class="size-3" />Clear
+          <X class="size-3" />{{ labels.clear }}
         </button>
       </div>
     </PopoverContent>
