@@ -107,6 +107,9 @@ const MAP: Record<string, string> = {
   Breadcrumbs: 'components/page.md',
   PageHeader: 'components/page.md',
   PageContent: 'components/page.md',
+  AppShell: 'components/app-shell.md',
+  Sidebar: 'components/app-shell.md',
+  Topbar: 'components/app-shell.md',
 }
 
 const docsDir = fileURLToPath(new URL('../../docs', import.meta.url))

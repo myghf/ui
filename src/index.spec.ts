@@ -19,6 +19,7 @@ const EXPECTED = [
   'useTheme', 'createTheme', 'ThemeToggle',
   'Toaster', 'useToast', 'createToastStore',
   'Container', 'Stack', 'Inline', 'Grid', 'Breadcrumbs', 'PageHeader', 'PageContent',
+  'AppShell', 'Sidebar', 'Topbar',
 ]
 
 describe('@myghf/ui barrel', () => {

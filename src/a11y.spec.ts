@@ -388,6 +388,18 @@ describe('a11y: layout', () => {
   it('PageContent', async () => {
     await expectClean(mount(UI.PageContent, { slots: { default: () => 'Body' } }))
   })
+
+  it('AppShell / Sidebar / Topbar', async () => {
+    const Host = defineComponent({
+      render: () =>
+        h(UI.AppShell, null, {
+          topbar: () => h(UI.Topbar, null, { default: () => 'MYGHF' }),
+          sidebar: () => h(UI.Sidebar, null, { default: () => 'Items' }),
+          default: () => h('p', 'Body'),
+        }),
+    })
+    await expectClean(mount(Host))
+  })
 })
 
 describe('a11y: overlays (teleported, asserted on document.body)', () => {

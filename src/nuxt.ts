@@ -104,6 +104,9 @@ export const AUTO_IMPORT_COMPONENTS = [
   'Breadcrumbs',
   'PageHeader',
   'PageContent',
+  'AppShell',
+  'Sidebar',
+  'Topbar',
 ]
 
 /**
