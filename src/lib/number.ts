@@ -23,3 +23,35 @@ export function mergeFormatOptions(input: {
     ...(input.integer ? { maximumFractionDigits: 0 } : {}),
   }
 }
+
+/** Formats a number for a locale (BCP-47), falling back to `String(value)` on a bad locale. */
+export function formatNumber(
+  value: number,
+  locale?: string,
+  options?: Intl.NumberFormatOptions,
+): string {
+  try {
+    return new Intl.NumberFormat(locale, options).format(value)
+  } catch {
+    return String(value)
+  }
+}
+
+/** Formats a number as currency for a locale, e.g. `formatCurrency(1234.5, 'EGP', 'ar-EG')`. */
+export function formatCurrency(
+  value: number,
+  currency: string,
+  locale?: string,
+  options?: Intl.NumberFormatOptions,
+): string {
+  return formatNumber(value, locale, { style: 'currency', currency, ...options })
+}
+
+/** Formats a ratio as a percentage, e.g. `formatPercent(0.25)` → `'25%'`. */
+export function formatPercent(
+  value: number,
+  locale?: string,
+  options?: Intl.NumberFormatOptions,
+): string {
+  return formatNumber(value, locale, { style: 'percent', ...options })
+}

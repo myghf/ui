@@ -1,7 +1,7 @@
 export { cn } from './lib/cn'
 export * from './lib/date'
 export * from './lib/locale'
-export { toNumberOrNull, mergeFormatOptions } from './lib/number'
+export { toNumberOrNull, mergeFormatOptions, formatNumber, formatCurrency, formatPercent } from './lib/number'
 export { toCsv, downloadCsv } from './lib/csv'
 export type { CsvColumn, CsvOptions } from './lib/csv'
 export { toPascalCase, resolveIconName } from './lib/icons'

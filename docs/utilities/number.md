@@ -1,8 +1,9 @@
 # number
 
-Helpers for numeric form fields. `toNumberOrNull` normalises an optional value, and
-`mergeFormatOptions` composes `Intl.NumberFormat` options with a predictable precedence.
-Both are used by [InputNumber](/components/input-number).
+Helpers for numeric form fields and locale-aware display. `toNumberOrNull` normalises an optional
+value, `mergeFormatOptions` composes `Intl.NumberFormat` options with a predictable precedence,
+and `formatNumber` / `formatCurrency` / `formatPercent` format values for a locale.
+`toNumberOrNull` and `mergeFormatOptions` are used by [InputNumber](/components/input-number).
 
 ## `toNumberOrNull(value)`
 
@@ -89,3 +90,49 @@ new Intl.NumberFormat('en-US', mergeFormatOptions({ currency: 'EUR' })).format(1
 
 Pass the result straight to `Intl.NumberFormat` or to the `:format-options` prop of
 [InputNumber](/components/input-number).
+
+## `formatNumber(value, locale?, options?)`
+
+```ts
+function formatNumber(value: number, locale?: string, options?: Intl.NumberFormatOptions): string
+```
+
+Formats a number for a BCP-47 locale, passing `options` through to `Intl.NumberFormat`. If the
+locale is invalid it falls back to `String(value)` instead of throwing.
+
+```ts
+import { formatNumber } from '@myghf/ui'
+
+formatNumber(1234.5, 'en-US') // → '1,234.5'
+formatNumber(1234.5, 'de-DE') // → '1.234,5'
+formatNumber(1234.5, 'en-US', { maximumFractionDigits: 0 }) // → '1,235'
+```
+
+## `formatCurrency(value, currency, locale?, options?)`
+
+```ts
+function formatCurrency(value: number, currency: string, locale?: string, options?: Intl.NumberFormatOptions): string
+```
+
+Formats a number as currency. `options` wins over the currency shorthand.
+
+```ts
+import { formatCurrency } from '@myghf/ui'
+
+formatCurrency(1234.5, 'USD', 'en-US') // → '$1,234.50'
+formatCurrency(1234.5, 'EGP', 'ar-EG') // → '‏١٬٢٣٤٫٥٠ ج.م.‏'
+```
+
+## `formatPercent(value, locale?, options?)`
+
+```ts
+function formatPercent(value: number, locale?: string, options?: Intl.NumberFormatOptions): string
+```
+
+Formats a **ratio** as a percentage (`0.25` → `25%`).
+
+```ts
+import { formatPercent } from '@myghf/ui'
+
+formatPercent(0.25, 'en-US') // → '25%'
+```
