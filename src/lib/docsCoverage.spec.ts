@@ -33,6 +33,8 @@ const MAP: Record<string, string> = {
   formatLocalizedTime: 'utilities/locale.md',
   toNumberOrNull: 'utilities/number.md',
   mergeFormatOptions: 'utilities/number.md',
+  toCsv: 'utilities/csv.md',
+  downloadCsv: 'utilities/csv.md',
   toPascalCase: 'utilities/icons.md',
   resolveIconName: 'utilities/icons.md',
   toneClasses: 'utilities/tones.md',

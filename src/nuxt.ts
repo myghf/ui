@@ -136,6 +136,8 @@ export const AUTO_IMPORT_UTILITIES = [
   'resolveIconName',
   'toNumberOrNull',
   'mergeFormatOptions',
+  'toCsv',
+  'downloadCsv',
   'dateToValue',
   'valueToDate',
   'toMinutes',

@@ -128,6 +128,7 @@ export default defineConfig({
           { text: 'date', link: '/utilities/date' },
           { text: 'locale', link: '/utilities/locale' },
           { text: 'number', link: '/utilities/number' },
+          { text: 'csv', link: '/utilities/csv' },
           { text: 'icons', link: '/utilities/icons' },
           { text: 'tones', link: '/utilities/tones' },
         ],

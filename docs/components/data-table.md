@@ -80,7 +80,8 @@ while loading, so an empty `data` array does not flash "No results" before the r
 Set `selectable` and bind `v-model:selection` to a map keyed by row id (provide `getRowId` so the
 keys are stable). A leading checkbox column appears; the header checkbox selects every row, and a
 bulk-actions bar is shown while rows are selected. Fill it through the `bulk-actions` slot, which
-receives the selected `rows` and a `clear` function.
+receives the selected `rows` and a `clear` function. Pair it with [`toCsv`](/utilities/csv) +
+`downloadCsv` to export the selection — the demo's **Export** button does exactly that.
 
 <Demo>
   <DataTableSelection />
@@ -140,6 +141,7 @@ filtering, column resizing, grouping — are **not** available through
 | `selectRowLabel` | `string` | `'Select row'` | Accessible-name prefix for each row checkbox (the row number is appended). |
 | `selectedLabel` | `string` | `'selected'` | Word following the count in the bulk-actions bar. |
 | `error` | `string` | — | Error message. Replaces the body unless `loading` is set. |
+| `expandRowLabel` | `string` | `'Toggle row'` | Accessible-name prefix for each row's expander button (the row number is appended). |
 
 ## Events
 
@@ -173,11 +175,10 @@ and the events above.
   by the underlying [TableHead](/components/table). Non-sortable headers render plain text.
   Keyboard users can focus and activate each sort button.
 - Expansion is toggled by clicking the row (`TableRow` gets `clickable` and
-  `data-state="expanded"`). `stopRowToggleOnInteractiveCells` prevents a click on an
-  interactive cell from also toggling the row. **Known gap:** the `<tr>` itself has no
-  `tabindex`, role, or keyboard handler, so row expansion is pointer-only — provide an
-  explicit control (or keep essential detail outside the expansion) if keyboard users must
-  open rows.
+  `data-state="expanded"`), and by a leading expander button rendered when `expandable`.
+  `stopRowToggleOnInteractiveCells` prevents a click on an interactive cell from also toggling
+  the row. The expander is a real `<button>` with `aria-expanded` and an
+  `aria-label` (`expandRowLabel` plus the row number), so expansion is keyboard reachable.
 - With `expandable`, the expansion row spans all columns and is revealed inline after the
   row it belongs to.
 - While `loading`, the wrapper carries `aria-busy="true"` and a `sr-only` element holds

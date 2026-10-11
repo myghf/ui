@@ -27,6 +27,7 @@ interface DataTableProps {
   selectRowLabel?: string
   selectedLabel?: string
   error?: string
+  expandRowLabel?: string
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
   'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
   'onUpdate:selection'?: (value: Record<string, boolean>) => void
@@ -187,6 +188,27 @@ describe('DataTable loading state', () => {
     await bodyRows(wrapper)[0].trigger('click')
 
     expect(onUpdateExpanded).not.toHaveBeenCalled()
+  })
+
+  it('exposes a keyboard-reachable expander button per row', async () => {
+    const onUpdateExpanded = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, expandable: true, 'onUpdate:expanded': onUpdateExpanded },
+    })
+
+    const button = wrapper.get('[data-row-id="r1"] button')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    expect(button.attributes('aria-label')).toBe('Toggle row: 1')
+
+    await button.trigger('click')
+    expect(onUpdateExpanded).toHaveBeenCalledWith({ r1: true })
+  })
+
+  it('reflects the expanded state on the expander button', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns, getRowId, expandable: true, expanded: { r1: true } },
+    })
+    expect(wrapper.get('[data-row-id="r1"] button').attributes('aria-expanded')).toBe('true')
   })
 })
 

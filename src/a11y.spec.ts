@@ -286,6 +286,23 @@ describe('a11y: navigation & data', () => {
     )
   })
 
+  it('DataTable (expandable)', async () => {
+    const columnHelper = createColumnHelper<DataTableFeatures, { id: string; patient: string }>()
+    const columns = columnHelper.columns([columnHelper.accessor('patient', { header: 'Patient' })])
+    const data = [{ id: 'r1', patient: 'Amina Farouk' }]
+    await expectClean(
+      mountAny(UI.DataTable, {
+        props: {
+          data,
+          columns,
+          getRowId: (row: { id: string }) => row.id,
+          expandable: true,
+          expanded: { r1: true },
+        },
+      }),
+    )
+  })
+
   it('TreeTable', async () => {
     await expectClean(
       mountAny(UI.TreeTable, {

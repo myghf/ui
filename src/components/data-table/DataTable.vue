@@ -8,7 +8,7 @@ import {
   type RowSelectionState,
   type SortingState,
 } from '@tanstack/vue-table'
-import { ChevronDown, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
+import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
 import Checkbox from '../checkbox/Checkbox.vue'
@@ -47,6 +47,8 @@ const props = withDefaults(
     selectedLabel?: string
     /** Error message. Replaces the body when set (and not `loading`). */
     error?: string
+    /** Accessible name for a row's expand/collapse button. */
+    expandRowLabel?: string
   }>(),
   {
     size: 'default',
@@ -65,6 +67,7 @@ const props = withDefaults(
     selectRowLabel: 'Select row',
     selectedLabel: 'selected',
     error: undefined,
+    expandRowLabel: 'Toggle row',
   },
 )
 
@@ -123,9 +126,12 @@ const table = useTable({
 
 const rows = computed(() => table.getRowModel().rows)
 const selectedRows = computed(() => table.getSelectedRowModel().rows)
-/** Includes the leading selection column when `selectable`. */
+/** Includes the leading selection/expander columns. */
 const columnCount = computed(
-  () => table.getAllLeafColumns().length + (props.selectable ? 1 : 0),
+  () =>
+    table.getAllLeafColumns().length +
+    (props.selectable ? 1 : 0) +
+    (props.expandable ? 1 : 0),
 )
 /** Clamp to at least one placeholder row so 0/negative/fractional values still render. */
 const placeholderRowCount = computed(() => Math.max(1, Math.floor(props.loadingRows)))
@@ -146,6 +152,11 @@ const widthOf = (columnDef: unknown) => {
 
 function clearSelection() {
   table.toggleAllRowsSelected(false)
+}
+
+/** Toggles one row's expansion — the keyboard-reachable path (the expander button). */
+function toggleRow(rowId: string) {
+  emit('update:expanded', toggleExpandedRow(props.expanded, rowId))
 }
 
 function onRowClick(event: MouseEvent, rowId: string) {
@@ -184,6 +195,9 @@ function onRowClick(event: MouseEvent, rowId: string) {
               :aria-label="selectAllLabel"
               @update:model-value="table.toggleAllRowsSelected($event)"
             />
+          </TableHead>
+          <TableHead v-if="expandable" class="w-10">
+            <span class="sr-only">{{ expandRowLabel }}</span>
           </TableHead>
           <TableHead
             v-for="header in table.getHeaderGroups()[0]?.headers ?? []"
@@ -237,6 +251,21 @@ function onRowClick(event: MouseEvent, rowId: string) {
                   :aria-label="`${selectRowLabel} ${row.index + 1}`"
                   @update:model-value="row.toggleSelected($event)"
                 />
+              </TableCell>
+              <TableCell v-if="expandable" class="w-10">
+                <button
+                  type="button"
+                  :aria-expanded="row.getIsExpanded()"
+                  :aria-label="`${expandRowLabel}: ${row.index + 1}`"
+                  class="rounded p-0.5 text-muted transition-colors hover:bg-surface-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+                  @click.stop="toggleRow(row.id)"
+                >
+                  <ChevronRight
+                    class="size-4 transition-transform rtl:rotate-180"
+                    :class="row.getIsExpanded() ? 'rotate-90' : ''"
+                    aria-hidden="true"
+                  />
+                </button>
               </TableCell>
               <TableCell v-for="cell in row.getAllCells()" :key="cell.id">
                 <slot
