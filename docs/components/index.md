@@ -58,6 +58,9 @@ Dialogs, drawers, menus, and toast notifications.
 | [Dialog](/components/dialog) | `Dialog` | Modal window with header, body, and footer regions. |
 | [Drawer](/components/drawer) | `Drawer` | Edge-anchored panel with logical `start`/`end` positions and configurable dismissal. |
 | [DropdownMenu](/components/dropdown-menu) | `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, `DropdownMenuItem`, `DropdownMenuSeparator`, `DropdownMenuLabel`, `DropdownMenuGroup` | Composable dropdown menu for actions and commands. |
+| [Tooltip](/components/tooltip) | `Tooltip` | Short hover/focus label for a single trigger. |
+| [Popover](/components/popover) | `Popover` | Floating panel anchored to a trigger. |
+| [Accordion](/components/accordion) | `Accordion`, `AccordionItem` | Collapsible sections for dense forms and details. |
 | [Toast](/components/toast) | `Toaster`, `useToast`, `createToastStore` | Provider plus store for transient notifications in six logical positions. |
 
 ## Navigation & data

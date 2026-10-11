@@ -532,6 +532,30 @@ describe('a11y: charts', () => {
   })
 })
 
+describe('a11y: tooltip & accordion', () => {
+  it('Tooltip', async () => {
+    await expectClean(
+      mount(UI.Tooltip, {
+        props: { text: 'Help' },
+        slots: { default: () => h('button', { type: 'button' }, 'Hover me') },
+      }),
+    )
+  })
+
+  it('Accordion', async () => {
+    const wrapper = mount(UI.Accordion, {
+      props: { modelValue: 'a' },
+      slots: {
+        default: () => [
+          h(UI.AccordionItem, { value: 'a', title: 'Section A' }, { default: () => 'Body A' }),
+          h(UI.AccordionItem, { value: 'b', title: 'Section B' }, { default: () => 'Body B' }),
+        ],
+      },
+    })
+    await expectClean(wrapper)
+  })
+})
+
 describe('a11y: overlays (teleported, asserted on document.body)', () => {
   async function expectBodyClean(): Promise<void> {
     await nextTick()
@@ -569,6 +593,15 @@ describe('a11y: overlays (teleported, asserted on document.body)', () => {
           }),
         ],
       },
+      attachTo: document.body,
+    })
+    await expectBodyClean()
+  })
+
+  it('Popover', async () => {
+    mount(UI.Popover, {
+      props: { open: true },
+      slots: { trigger: () => h(UI.Button, null, { default: () => 'Open' }), default: () => 'Body' },
       attachTo: document.body,
     })
     await expectBodyClean()
