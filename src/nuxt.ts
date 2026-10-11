@@ -97,6 +97,10 @@ export const AUTO_IMPORT_COMPONENTS = [
   'TreeTable',
   'TreeSelect',
   'Toaster',
+  'Container',
+  'Stack',
+  'Inline',
+  'Grid',
 ]
 
 /**

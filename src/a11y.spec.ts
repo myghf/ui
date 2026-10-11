@@ -352,6 +352,26 @@ describe('a11y: controls inside FormField', () => {
   })
 })
 
+describe('a11y: layout', () => {
+  it('Container', async () => {
+    await expectClean(mount(UI.Container, { slots: { default: () => 'Content' } }))
+  })
+
+  it('Stack', async () => {
+    await expectClean(mount(UI.Stack, { slots: { default: () => [h('span', 'a'), h('span', 'b')] } }))
+  })
+
+  it('Inline', async () => {
+    await expectClean(mount(UI.Inline, { slots: { default: () => [h('span', 'a'), h('span', 'b')] } }))
+  })
+
+  it('Grid', async () => {
+    await expectClean(
+      mount(UI.Grid, { props: { cols: 2 }, slots: { default: () => [h('span', 'a'), h('span', 'b')] } }),
+    )
+  })
+})
+
 describe('a11y: overlays (teleported, asserted on document.body)', () => {
   async function expectBodyClean(): Promise<void> {
     await nextTick()

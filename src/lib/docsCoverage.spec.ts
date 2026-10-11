@@ -100,6 +100,10 @@ const MAP: Record<string, string> = {
   TreeTable: 'components/tree-table.md',
   TreeSelect: 'components/tree-select.md',
   Toaster: 'components/toast.md',
+  Container: 'components/layout.md',
+  Stack: 'components/layout.md',
+  Inline: 'components/layout.md',
+  Grid: 'components/layout.md',
 }
 
 const docsDir = fileURLToPath(new URL('../../docs', import.meta.url))

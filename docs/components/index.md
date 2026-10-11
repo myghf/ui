@@ -70,3 +70,11 @@ Tabbed navigation and the table family, from unstyled primitives to a headless d
 | [Table](/components/table) | `Table`, `TableHeader`, `TableBody`, `TableRow`, `TableHead`, `TableCell`, `TableEmpty`, `TablePagination` | Unstyled table primitives plus a pagination control. |
 | [DataTable](/components/data-table) | `DataTable`, `DataTableFeatures` | Headless TanStack Table v9 grid with sorting, row expansion, and a loading state. |
 | [TreeTable](/components/tree-table) | `TreeTable`, `TreeTableColumn`, `TreeNode` | Expandable hierarchical grid with per-column cell slots. |
+
+## Layout
+
+Structural wrappers for page and panel composition — no styling beyond layout utilities.
+
+| Component | Exports | Summary |
+| --- | --- | --- |
+| [Layout primitives](/components/layout) | `Container`, `Stack`, `Inline`, `Grid` | Centred page column, vertical stack, wrapping row, and grid. |

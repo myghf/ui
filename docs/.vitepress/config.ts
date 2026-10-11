@@ -103,6 +103,11 @@ export default defineConfig({
               { text: 'TreeTable', link: '/components/tree-table' },
             ],
           },
+          {
+            text: 'Layout',
+            collapsed: false,
+            items: [{ text: 'Layout primitives', link: '/components/layout' }],
+          },
         ],
       },
       {

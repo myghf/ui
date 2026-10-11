@@ -18,6 +18,7 @@ const EXPECTED = [
   'TableEmpty', 'TablePagination', 'DataTable', 'TreeTable', 'TreeSelect',
   'useTheme', 'createTheme', 'ThemeToggle',
   'Toaster', 'useToast', 'createToastStore',
+  'Container', 'Stack', 'Inline', 'Grid',
 ]
 
 describe('@myghf/ui barrel', () => {

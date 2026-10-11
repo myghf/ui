@@ -80,3 +80,9 @@ export type {
   ToastStore,
   ToastStoreOptions,
 } from './components/toast/useToast'
+
+// Layout primitives
+export { default as Container } from './components/container/Container.vue'
+export { default as Stack } from './components/stack/Stack.vue'
+export { default as Inline } from './components/inline/Inline.vue'
+export { default as Grid } from './components/grid/Grid.vue'
