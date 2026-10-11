@@ -21,6 +21,7 @@ Components that trigger actions or present short, non-interactive information.
 | [Alert / Message](/components/alert) | `Alert`, `Message` | Inline feedback message; the same component is exported under two names. |
 | [Spinner](/components/spinner) | `Spinner` | Inline loading indicator with an accessible status label. |
 | [Skeleton](/components/skeleton) | `Skeleton` | Pulsing placeholder block for loading layouts, with shape and size control. |
+| [Progress](/components/progress) | `Progress` | Horizontal progress bar, determinate or indeterminate. |
 | [Avatar](/components/avatar) | `Avatar` | Circular profile image that falls back to initials when no image is available. |
 | [ThemeToggle](/components/theme-toggle) | `ThemeToggle` | Button that flips the shared light/dark theme. |
 | [Icon](/components/icon) | `Icon` | Renders a Lucide icon by name. |

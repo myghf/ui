@@ -64,6 +64,7 @@ export const AUTO_IMPORT_COMPONENTS = [
   'Message',
   'Spinner',
   'Skeleton',
+  'Progress',
   'Avatar',
   'Tabs',
   'TabsList',

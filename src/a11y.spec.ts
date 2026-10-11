@@ -74,6 +74,10 @@ describe('a11y: actions & display', () => {
     await expectClean(mount(UI.Skeleton, { props: { width: '8rem', height: '1rem' } }))
   })
 
+  it('Progress', async () => {
+    await expectClean(mount(UI.Progress, { props: { modelValue: 40, label: 'Uploading' } }))
+  })
+
   it('Avatar (initials)', async () => {
     await expectClean(mount(UI.Avatar, { props: { name: 'Amina Farouk' } }))
   })

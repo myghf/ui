@@ -30,6 +30,7 @@ known gaps.
 | `Switch` | Reka renders a `<button role="switch">` with `aria-checked`; the component adds `aria-invalid` and `aria-required` when set. |
 | `RadioGroup` | Reka renders `role="radiogroup"` with a `role="radio"` item per option; each option is named by its own `<label for>`, and the group adds `aria-invalid`/`aria-required` when set. |
 | `Combobox` | The search input is `role="combobox"` with `aria-expanded`/`aria-controls`/`aria-autocomplete`; the popup is a `listbox` of `option`s, and the input adds `aria-invalid`/`aria-required` when set. |
+| `Progress` | Reka renders `role="progressbar"` with `aria-valuenow`/`aria-valuemin`/`aria-valuemax` (the value is omitted when indeterminate); pass `label` for its accessible name. |
 | `TableHead` | Sets `scope="col"` and `aria-sort` when `sortDirection` is `ascending`/`descending`. |
 | `TablePagination` | The current page button gets `aria-current="page"`; previous/next buttons have labels. |
 | `Toaster` | Reka's `ToastProvider`/`ToastViewport` announce toasts; the viewport is labelled (`label`, default `'Notifications'`). |
