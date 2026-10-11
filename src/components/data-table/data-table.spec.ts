@@ -45,6 +45,9 @@ interface DataTableProps {
   pageSize?: number
   rowCount?: number
   pageSizeOptions?: number[]
+  maxHeight?: string
+  virtual?: boolean
+  rowHeight?: number
   'onUpdate:expanded'?: (value: Record<string, boolean>) => void
   'onUpdate:sorting'?: (value: { id: string; desc: boolean }[]) => void
   'onUpdate:selection'?: (value: Record<string, boolean>) => void
@@ -448,5 +451,29 @@ describe('DataTable pagination', () => {
   it('renders no pagination footer by default', () => {
     const wrapper = mount(TestDataTable, { props: { data, columns, getRowId } })
     expect(wrapper.find('[aria-label="Next page"]').exists()).toBe(false)
+  })
+})
+
+describe('DataTable virtualization', () => {
+  const many = Array.from({ length: 50 }, (_, index) => ({
+    id: `r${index + 1}`,
+    patient: `Patient ${index + 1}`,
+  }))
+
+  it('renders only the window plus overscan, with a spacer for the rest', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data: many, columns, getRowId, virtual: true, maxHeight: '12rem', rowHeight: 40 },
+    })
+    const rendered = wrapper.findAll('[data-row-id]')
+    expect(rendered.length).toBeGreaterThan(0)
+    expect(rendered.length).toBeLessThan(many.length)
+    expect(wrapper.findAll('tbody tr[aria-hidden="true"]').length).toBeGreaterThan(0)
+  })
+
+  it('renders every row when not virtual', () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data: many, columns, getRowId, maxHeight: '12rem' },
+    })
+    expect(wrapper.findAll('[data-row-id]')).toHaveLength(many.length)
   })
 })

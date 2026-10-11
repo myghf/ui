@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends RowData">
-import { computed, ref, useSlots } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, useSlots } from 'vue'
 import {
   FlexRender,
   useTable,
@@ -13,6 +13,7 @@ import {
 import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
+import { virtualWindow } from '../../lib/virtual'
 import Button from '../button/Button.vue'
 import Checkbox from '../checkbox/Checkbox.vue'
 import Input from '../input/Input.vue'
@@ -83,6 +84,13 @@ const props = withDefaults(
     /** Total row count across all pages (server-side). */
     rowCount?: number
     pageSizeOptions?: number[]
+    /**
+     * Window the rows: render only the visible slice (requires `maxHeight`).
+     * Assumes a uniform `rowHeight`; expansion rows are not accounted for.
+     */
+    virtual?: boolean
+    /** Assumed height of one data row, in pixels. */
+    rowHeight?: number
   }>(),
   {
     size: 'default',
@@ -119,6 +127,8 @@ const props = withDefaults(
     pageSize: 10,
     rowCount: 0,
     pageSizeOptions: () => [5, 10, 20],
+    virtual: false,
+    rowHeight: 40,
   },
 )
 
@@ -178,6 +188,12 @@ const table = useTable({
       return props.columnPinning
     },
     get pagination() {
+      // TanStack paginates at its default pageSize unless told otherwise, so
+      // hand it `Infinity` when the footer is not in use — otherwise the body
+      // would be silently capped at `pageSize` rows.
+      if (!props.paginate && !props.manual) {
+        return { pageIndex: 0, pageSize: Number.POSITIVE_INFINITY }
+      }
       return { pageIndex: props.pageIndex, pageSize: props.pageSize }
     },
   },
@@ -262,6 +278,39 @@ const totalRows = computed(() =>
   props.manual ? props.rowCount : table.getFilteredRowModel().rows.length,
 )
 
+const scrollRef = ref<HTMLElement>()
+const scrollTop = ref(0)
+const viewportHeight = ref(0)
+let resizeObserver: ResizeObserver | undefined
+
+function onScroll(event: Event) {
+  if (!props.virtual) return
+  scrollTop.value = (event.target as HTMLElement).scrollTop
+}
+
+onMounted(() => {
+  if (typeof ResizeObserver === 'undefined' || !scrollRef.value) return
+  resizeObserver = new ResizeObserver((entries) => {
+    const entry = entries[0]
+    if (entry) viewportHeight.value = entry.contentRect.height
+  })
+  resizeObserver.observe(scrollRef.value)
+  viewportHeight.value = scrollRef.value.clientHeight
+})
+
+onBeforeUnmount(() => resizeObserver?.disconnect())
+
+/** The visible row window when virtualizing (requires `maxHeight`). */
+const windowRange = computed(() =>
+  props.virtual && props.maxHeight
+    ? virtualWindow(rows.value.length, props.rowHeight, scrollTop.value, viewportHeight.value)
+    : null,
+)
+
+const visibleRows = computed(() =>
+  windowRange.value ? rows.value.slice(windowRange.value.start, windowRange.value.end) : rows.value,
+)
+
 /** Human-readable chips for the active column filters, keyed by column id. */
 const filterChips = computed(() =>
   props.filters.map((filter) => {
@@ -340,9 +389,11 @@ function onRowClick(event: MouseEvent, rowId: string) {
 
 <template>
   <div
+    ref="scrollRef"
     :class="maxHeight ? 'overflow-auto' : undefined"
     :style="maxHeight ? { maxHeight } : undefined"
     :aria-busy="loading || undefined"
+    @scroll="onScroll"
   >
     <span v-if="loading" class="sr-only" role="status" aria-live="polite">{{ loadingLabel }}</span>
 
@@ -459,7 +510,13 @@ function onRowClick(event: MouseEvent, rowId: string) {
           </TableCell>
         </TableRow>
         <template v-else>
-          <template v-for="row in rows" :key="row.id">
+          <TableRow v-if="windowRange && windowRange.paddingTop > 0" class="border-0" aria-hidden="true">
+            <TableCell
+              :colspan="columnCount"
+              :style="{ height: `${windowRange.paddingTop}px`, padding: '0' }"
+            />
+          </TableRow>
+          <template v-for="row in visibleRows" :key="row.id">
             <TableRow
               :clickable="expandable"
               :data-row-id="row.id"
@@ -511,6 +568,16 @@ function onRowClick(event: MouseEvent, rowId: string) {
               </TableCell>
             </TableRow>
           </template>
+          <TableRow
+            v-if="windowRange && windowRange.paddingBottom > 0"
+            class="border-0"
+            aria-hidden="true"
+          >
+            <TableCell
+              :colspan="columnCount"
+              :style="{ height: `${windowRange.paddingBottom}px`, padding: '0' }"
+            />
+          </TableRow>
         </template>
       </TableBody>
     </Table>

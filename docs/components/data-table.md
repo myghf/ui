@@ -151,6 +151,17 @@ slot replaces the default footer.
 
 <<< ../.vitepress/theme/demos/data-table/pagination.vue
 
+### Virtual scrolling
+
+For very large datasets set `maxHeight` and `virtual` together: `DataTable` renders only the
+visible slice (plus a small overscan) and pads the rest with spacer rows, so the DOM stays small
+however many rows you pass. It assumes a uniform `rowHeight` (default `40`) and does not account
+for expansion rows, so use it with flat rows.
+
+```vue
+<DataTable :data="rows" :columns="columns" :get-row-id="getRowId" max-height="24rem" virtual />
+```
+
 ### DataTableFeatures
 
 `columns` is typed against `DataTableFeatures`, the feature set registered in
@@ -222,6 +233,8 @@ grouping — are **not** available through
 | `pageSize` | `number` | `10` | Rows per page. Bind with `v-model:page-size`. |
 | `rowCount` | `number` | `0` | Total rows across all pages (server-side). |
 | `pageSizeOptions` | `number[]` | `[5, 10, 20]` | Page-size choices in the footer. |
+| `virtual` | `boolean` | `false` | Window the rows (requires `maxHeight`). Assumes uniform row height. |
+| `rowHeight` | `number` | `40` | Assumed height of one data row, in pixels, when `virtual`. |
 
 ## Events
 

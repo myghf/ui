@@ -355,6 +355,26 @@ describe('a11y: navigation & data', () => {
     )
   })
 
+  it('DataTable (virtual)', async () => {
+    const columnHelper = createColumnHelper<DataTableFeatures, { id: string; patient: string }>()
+    const columns = columnHelper.columns([columnHelper.accessor('patient', { header: 'Patient' })])
+    const data = Array.from({ length: 30 }, (_, index) => ({
+      id: `r${index + 1}`,
+      patient: `Patient ${index + 1}`,
+    }))
+    await expectClean(
+      mountAny(UI.DataTable, {
+        props: {
+          data,
+          columns,
+          getRowId: (row: { id: string }) => row.id,
+          virtual: true,
+          maxHeight: '12rem',
+        },
+      }),
+    )
+  })
+
   it('TreeTable', async () => {
     await expectClean(
       mountAny(UI.TreeTable, {
