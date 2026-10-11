@@ -70,6 +70,7 @@ export default defineConfig({
               { text: 'InputNumber', link: '/components/input-number' },
               { text: 'Textarea', link: '/components/textarea' },
               { text: 'Password', link: '/components/password' },
+              { text: 'FileUpload', link: '/components/file-upload' },
               { text: 'Checkbox', link: '/components/checkbox' },
               { text: 'Switch', link: '/components/switch' },
               { text: 'RadioGroup', link: '/components/radio-group' },

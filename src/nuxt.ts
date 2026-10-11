@@ -51,6 +51,7 @@ export const AUTO_IMPORT_COMPONENTS = [
   'InputNumber',
   'Textarea',
   'Password',
+  'FileUpload',
   'Label',
   'FormField',
   'FormDescription',

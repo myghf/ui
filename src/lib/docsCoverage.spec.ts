@@ -59,6 +59,7 @@ const MAP: Record<string, string> = {
   InputNumber: 'components/input-number.md',
   Textarea: 'components/textarea.md',
   Password: 'components/password.md',
+  FileUpload: 'components/file-upload.md',
   Label: 'components/form-field.md',
   FormField: 'components/form-field.md',
   FormDescription: 'components/form-field.md',

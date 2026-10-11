@@ -5,7 +5,7 @@ import * as ui from './index'
 const EXPECTED = [
   'cn', 'toNumberOrNull', 'mergeFormatOptions', 'toPascalCase', 'resolveIconName', 'toneClasses', 'Icon',
   'getFirstDayOfWeek', 'getWeekdayLabels', 'getMonthLabel', 'formatLocalizedDate', 'formatLocalizedTime',
-  'Button', 'Input', 'InputNumber', 'Textarea', 'Password', 'Checkbox', 'Switch', 'RadioGroup', 'Combobox', 'Tag',
+  'Button', 'Input', 'InputNumber', 'Textarea', 'Password', 'FileUpload', 'Checkbox', 'Switch', 'RadioGroup', 'Combobox', 'Tag',
   'Label', 'FormField', 'FormDescription', 'FormMessage', 'useFormField', 'useFieldControl',
   'Alert', 'Message', 'Spinner', 'Skeleton', 'Progress', 'Avatar',
   'Tabs', 'TabsList', 'TabsTrigger', 'TabsContent',

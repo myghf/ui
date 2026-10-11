@@ -100,6 +100,10 @@ describe('a11y: form controls', () => {
     await expectClean(mountWithLabel(() => h(UI.Password, { modelValue: 'secret' })))
   })
 
+  it('FileUpload', async () => {
+    await expectClean(mountWithLabel(() => h(UI.FileUpload)))
+  })
+
   it('Select', async () => {
     await expectClean(
       mountWithLabel(() =>
@@ -274,6 +278,10 @@ describe('a11y: controls inside FormField', () => {
 
   it('Switch', async () => {
     await expectClean(mountInField(field, () => h(UI.Switch)))
+  })
+
+  it('FileUpload', async () => {
+    await expectClean(mountInField(field, () => h(UI.FileUpload)))
   })
 
   it('RadioGroup', async () => {

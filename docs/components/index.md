@@ -37,6 +37,7 @@ Inputs and controls for collecting and validating user data.
 | [InputNumber](/components/input-number) | `InputNumber` | Numeric field with `min`/`max`/`step`, `Intl` formatting, and optional stepper buttons. |
 | [Textarea](/components/textarea) | `Textarea` | Multi-line text field with a configurable row count. |
 | [Password](/components/password) | `Password` | Password field with a show/hide toggle and optional strength feedback. |
+| [FileUpload](/components/file-upload) | `FileUpload` | Drag-and-drop file input with a file list and per-file progress. |
 | [Checkbox](/components/checkbox) | `Checkbox` | Boolean control with an `aria-checked` state. |
 | [Switch](/components/switch) | `Switch` | On/off toggle for immediately-applied settings. |
 | [RadioGroup](/components/radio-group) | `RadioGroup` | Single-choice group for a small, always-visible set of options. |
