@@ -45,6 +45,10 @@ const open = ref('clinical')
 | --- | --- | --- | --- |
 | `value` | `string` | — | Identifies the item within the accordion. |
 | `title` | `string` | — | Header text. Falls back to the `title` slot. |
+| `headingLevel` | `2 \| 3 \| 4 \| 5 \| 6` | `3` | Heading level for the trigger, so the accordion fits the page outline. |
+
+> Set `headingLevel` to match your page's heading structure. reka's default is `h3`, which trips
+> the `heading-order` rule when an accordion sits directly under an `h1` with no intervening `h2`.
 
 ## Slots
 

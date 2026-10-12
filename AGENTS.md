@@ -31,7 +31,9 @@ dist/                   build output (gitignored, generated — never edit or co
 npm ci                 # clean install from the lockfile (use this in CI)
 npm run typecheck      # vue-tsc --noEmit
 npm test               # vitest run
+npm run test:browser   # playwright: axe across light/dark × LTR/RTL (needs `npx playwright install chromium`)
 npm run build          # vite build + copy tokens.css and tailwindPreset.js into dist/
+npm run check:package  # artifact assertions + publint + attw (run after build)
 npm run changeset      # add a changeset (alias of `npx changeset`)
 ```
 
@@ -42,9 +44,11 @@ npm run typecheck && npm test
 ```
 
 `npm test` includes the accessibility catalog (`src/a11y.spec.ts`, axe-core via
-`src/test-utils/a11y.ts`) and the token contrast guard (`src/lib/contrast.spec.ts`). A new
-component must be added to the a11y catalog. Pull requests run these checks through
-`.github/workflows/ci.yml`.
+`src/test-utils/a11y.ts`), the token contrast guard (`src/lib/contrast.spec.ts`), and the RTL
+source guard (`src/lib/rtlCoverage.spec.ts`). A new component must be added to the a11y catalog,
+and any component rendered in `tests/browser/Harness.vue` must stay accessible — the browser run
+asserts it. Pull requests run these checks, the build, `check:package`, and the browser tests
+through `.github/workflows/ci.yml`.
 
 ## Ground rules
 

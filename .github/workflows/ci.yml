@@ -36,5 +36,11 @@ jobs:
       - name: Check package (artifact, publint, attw)
         run: npm run check:package
 
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Browser accessibility tests (light/dark × LTR/RTL)
+        run: npm run test:browser
+
       - name: Build docs
         run: npm run docs:build

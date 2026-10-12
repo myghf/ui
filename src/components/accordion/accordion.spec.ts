@@ -40,4 +40,15 @@ describe('Accordion', () => {
     await wrapper.findAll('button')[1].trigger('click')
     expect(wrapper.emitted('update:modelValue')).toBeTruthy()
   })
+
+  it('wraps the trigger in a heading, default h3 and configurable', () => {
+    expect(mountAccordion().find('h3').exists()).toBe(true)
+
+    const custom = mount(Accordion, {
+      props: { modelValue: 'a' },
+      slots: { default: () => h(AccordionItem, { value: 'a', title: 'A', headingLevel: 2 }) },
+    })
+    expect(custom.find('h2').exists()).toBe(true)
+    expect(custom.find('h3').exists()).toBe(false)
+  })
 })

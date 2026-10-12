@@ -86,18 +86,20 @@ Follow the palette rules in [`DESIGN.md`](https://github.com/myghf/ui/blob/main/
 
 ## Known gaps
 
-- **Rendered contrast is verified by inspection.** The token palette is now guarded by
-  `src/lib/contrast.spec.ts` (WCAG AA for body text and brand tints, with documented
-  exceptions — see below), but axe cannot compute contrast inside jsdom and there is no
-  browser runner in CI, so *rendered* contrast on real pages is still checked against
-  `DESIGN.md`.
+- **Rendered contrast: body text is asserted; the brand exceptions are documented.** The palette
+  guard (`src/lib/contrast.spec.ts`) checks the tokens, and the browser tests (`tests/browser/`)
+  assert that body text meets AA against the real computed CSS in light **and** dark. The
+  brand-limited pairs — `muted` text (≈3.95:1) and the primary solid button (≈2.9:1) — are excluded
+  there and pinned as exceptions; see `DESIGN.md` §6 and
+  [issue #12](https://github.com/myghf/ui/issues/12).
 - **The primary solid button falls short of AA.** White text on `primary-500` (MYGHF Blue
   `#00A2DD`) is ≈2.9:1 — below AA (4.5:1) and even the 3:1 large-text threshold. It is pinned
   as a known exception in the contrast guard and in `DESIGN.md` §6; changing it is a brand
   decision (a darker blue or black text), not a code fix.
-- **No automated RTL visual test.** Direction is reviewed by inspection against the
-  logical-utility rule — see [RTL & bilingual](/guide/rtl). A source-level guard that fails on
-  physical utilities in components is planned.
+- **No pixel/visual regression test.** Direction and theme are covered functionally (the source
+  guard `src/lib/rtlCoverage.spec.ts`, plus axe in RTL and dark in `tests/browser/`), but nothing
+  compares screenshots, so pixel-correct mirroring is still reviewed by inspection against the
+  logical-utility rule — see [RTL & bilingual](/guide/rtl).
 - **Password strength feedback is visual.** The strength bars are `aria-hidden="true"`, so
   they are not announced; surface strength in text if it matters.
 - **Fonts are not bundled.** Helvetica Neue, Trajan Pro, GE SS Two, and Adobe Arabic fall
@@ -117,3 +119,10 @@ Follow the palette rules in [`DESIGN.md`](https://github.com/myghf/ui/blob/main/
 - **`src/lib/tokens.spec.ts`** checks that the token set matches the preset and that the dark
   block only overrides semantic tokens, and **`src/lib/darkCoverage.spec.ts`** asserts every
   light brand tint in a component has a `dark:` variant in the same file.
+- **`tests/browser/`** (`npm run test:browser`) is the browser level: Playwright renders a
+  component harness with real CSS and runs [`axe-core`](https://github.com/dequelabs/axe-core)
+  across light/dark × LTR/RTL, asserts body text meets AA against the computed colours, and
+  checks the tokens actually resolve — with `color-contrast` allowed to fail only for the
+  documented brand exceptions above.
+- **`src/lib/rtlCoverage.spec.ts`** fails when a component uses a physical left/right utility
+  instead of its logical equivalent.

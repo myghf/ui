@@ -253,6 +253,10 @@ manual:
   blue (e.g. `primary-700`, ≈6.6:1) or black text; until then it is pinned as a known exception in
   `src/lib/contrast.spec.ts` and tracked in
   [issue #12](https://github.com/myghf/ui/issues/12).
+- **Muted text contrast.** `--myghf-muted` (`#808080`, the brand mid-gray) is ≈3.95:1 on
+  `surface` — below AA for normal text (it passes for large text and non-text UI). Keep
+  `text-muted` to short, non-essential text, or use `text-foreground` where the text matters;
+  it is pinned as a known exception in `src/lib/contrast.spec.ts`.
 - **Typography.** The library previously shipped `DM Sans`; it is not a brand font and has been
   replaced by the Helvetica Neue stack. Helvetica Neue / Trajan Pro / GE SS Two / Adobe Arabic are
   not webfonts bundled here — consumers must supply them or rely on the fallbacks.
