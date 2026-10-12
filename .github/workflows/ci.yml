@@ -42,5 +42,8 @@ jobs:
       - name: Browser accessibility tests (light/dark × LTR/RTL)
         run: npm run test:browser
 
+      - name: Consumer smoke tests (clean Vue and Nuxt installs)
+        run: npm run test:consumer
+
       - name: Build docs
         run: npm run docs:build

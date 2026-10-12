@@ -40,6 +40,7 @@
     "typecheck": "vue-tsc --noEmit",
     "test": "vitest run",
     "test:browser": "playwright test",
+    "test:consumer": "node scripts/consumer-smoke.mjs",
     "check:package": "node scripts/check-package.mjs && publint && attw --pack . --profile esm-only --entrypoints . ./nuxt",
     "changeset": "changeset",
     "docs:dev": "vitepress dev docs",

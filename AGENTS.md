@@ -32,6 +32,7 @@ npm ci                 # clean install from the lockfile (use this in CI)
 npm run typecheck      # vue-tsc --noEmit
 npm test               # vitest run
 npm run test:browser   # playwright: axe across light/dark × LTR/RTL (needs `npx playwright install chromium`)
+npm run test:consumer  # installs the packed tarball in clean Vue + Nuxt apps and builds them (needs `npm run build` first)
 npm run build          # vite build + copy tokens.css and tailwindPreset.js into dist/
 npm run check:package  # artifact assertions + publint + attw (run after build)
 npm run changeset      # add a changeset (alias of `npx changeset`)

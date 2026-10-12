@@ -1,0 +1,9 @@
+{
+  "name": "myghf-ui-vue-consumer",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@myghf/ui": "workspace:.",
+    "vue": "^3.5.0"
+  }
+}

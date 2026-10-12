@@ -1,0 +1,10 @@
+{
+  "name": "myghf-ui-nuxt-consumer",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@myghf/ui": "workspace:.",
+    "@nuxtjs/tailwindcss": "^6.0.0",
+    "nuxt": "^4.0.0"
+  }
+}
