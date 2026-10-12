@@ -11,6 +11,10 @@ export default defineConfig({
       exclude: ['src/test-utils'],
       outDir: 'dist',
       tsconfigPath: './tsconfig.build.json',
+      // Roll the declarations into one file per entry. The per-file output kept
+      // extensionless relative imports (e.g. `./lib/date`) in index.d.ts, which
+      // don't resolve under `moduleResolution: node16/nodenext`.
+      rollupTypes: true,
     }),
   ],
   build: {

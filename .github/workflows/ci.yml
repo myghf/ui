@@ -30,5 +30,11 @@ jobs:
       - name: Test (includes accessibility and contrast guards)
         run: npm test
 
+      - name: Build package
+        run: npm run build
+
+      - name: Check package (artifact, publint, attw)
+        run: npm run check:package
+
       - name: Build docs
         run: npm run docs:build
