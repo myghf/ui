@@ -37,6 +37,11 @@ const props = withDefaults(
     size?: 'sm' | 'default'
     emptyLabel?: string
     sortable?: boolean
+    /**
+     * Active sort. Uncontrolled unless bound — the table sorts itself, but
+     * bind with `v-model:sorting` to own the state in the parent.
+     */
+    sorting?: SortingState
     expandable?: boolean
     expanded?: Record<string, boolean>
     stopRowToggleOnInteractiveCells?: boolean
@@ -147,7 +152,9 @@ const emit = defineEmits<{
 }>()
 const slots = useSlots()
 
-const sorting = ref<SortingState>([])
+const sortingState = ref<SortingState>([])
+/** The bound `sorting` prop, or the internal state when it is not bound. */
+const sorting = computed(() => props.sorting ?? sortingState.value)
 const getRowId = props.getRowId ? (row: T) => props.getRowId!(row) : undefined
 
 const table = useTable({
@@ -198,10 +205,13 @@ const table = useTable({
     },
   },
   onSortingChange: (updater) => {
-    sorting.value = typeof updater === 'function' ? updater(sorting.value) : updater
+    const next = typeof updater === 'function' ? updater(sorting.value) : updater
+    // Keep sorting ourselves only when the prop is not bound; a bound prop
+    // means the parent owns the state and writes it back via `update:sorting`.
+    if (props.sorting === undefined) sortingState.value = next
     emit(
       'update:sorting',
-      sorting.value.map((s) => ({ id: s.id, desc: s.desc })),
+      next.map((s) => ({ id: s.id, desc: s.desc })),
     )
   },
   onExpandedChange: (updater) => {

@@ -40,9 +40,11 @@ const getRowId = (row: (typeof data)[number]) => row.id
 
 ### Sorting
 
-Click a header to sort by that column; click again to reverse. Sorting state lives in the
-component and is reported through `update:sorting`. Set `sortable` to `false` to make every
-header static.
+Click a header to sort by that column; click again to reverse. By default the
+sort lives in the component and is reported through `update:sorting`. Bind
+`v-model:sorting` to own the state in the parent instead — the component then
+only sorts when you write the prop back, which is what a server-side sort
+(`manual`) needs. Set `sortable` to `false` to make every header static.
 
 <Demo>
   <DataTableSorting />
@@ -202,6 +204,7 @@ grouping — are **not** available through
 | `size` | `'sm' \| 'default'` | `'default'` | Compact or default text size. |
 | `emptyLabel` | `string` | `'No results'` | Message shown when there are no rows. |
 | `sortable` | `boolean` | `true` | Renders clicking/sorting headers for columns that can sort. |
+| `sorting` | `SortingState` | — | Active sort. Uncontrolled unless bound — bind with `v-model:sorting` to own it in the parent. |
 | `expandable` | `boolean` | `false` | Makes rows toggle a detail row. |
 | `expanded` | `Record<string, boolean>` | `{}` | Expansion map keyed by row id. Bind with `v-model:expanded`. |
 | `stopRowToggleOnInteractiveCells` | `boolean` | `true` | Keeps clicks on buttons/links/inputs from also toggling the row. |

@@ -17,7 +17,9 @@ interface DataTableProps {
   data: Referral[]
   columns: ColumnDef<DataTableFeatures, Referral>[]
   getRowId?: (row: Referral) => string
+  sorting?: { id: string; desc: boolean }[]
   expandable?: boolean
+  expanded?: Record<string, boolean>
   loading?: boolean
   loadingRows?: number
   loadingLabel?: string
@@ -236,6 +238,174 @@ describe('DataTable loading state', () => {
       props: { data, columns, getRowId, expandable: true, expanded: { r1: true } },
     })
     expect(wrapper.get('[data-row-id="r1"] button').attributes('aria-expanded')).toBe('true')
+  })
+})
+
+describe('DataTable sorting', () => {
+  // Deliberately not sorted by `patient`, so a sort is observable.
+  const unsorted: Referral[] = [
+    { id: 'r2', patient: 'Youssef Kamal' },
+    { id: 'r1', patient: 'Amina Farouk' },
+  ]
+  const rowIds = (wrapper: VueWrapper) =>
+    bodyRows(wrapper).map((row) => row.attributes('data-row-id'))
+
+  it('sorts the rows itself when sorting is not bound', async () => {
+    const wrapper = mount(TestDataTable, {
+      props: { data: unsorted, columns, getRowId },
+    })
+    expect(rowIds(wrapper)).toEqual(['r2', 'r1'])
+
+    await wrapper.get('thead button').trigger('click')
+    expect(rowIds(wrapper)).toEqual(['r1', 'r2'])
+    expect(wrapper.emitted('update:sorting')![0][0]).toEqual([
+      { id: 'patient', desc: false },
+    ])
+  })
+
+  it('sorts from the bound sorting prop', () => {
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data: unsorted,
+        columns,
+        getRowId,
+        sorting: [{ id: 'patient', desc: true }],
+      },
+    })
+    expect(rowIds(wrapper)).toEqual(['r2', 'r1'])
+  })
+
+  it('emits the sort but does not apply it when sorting is bound', async () => {
+    const onUpdateSorting = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data: unsorted,
+        columns,
+        getRowId,
+        sorting: [],
+        'onUpdate:sorting': onUpdateSorting,
+      },
+    })
+
+    await wrapper.get('thead button').trigger('click')
+
+    expect(onUpdateSorting).toHaveBeenCalledWith([{ id: 'patient', desc: false }])
+    // Controlled: the component leaves the rows alone until the parent
+    // writes the prop back.
+    expect(rowIds(wrapper)).toEqual(['r2', 'r1'])
+  })
+})
+
+describe('DataTable feature combinations', () => {
+  const many = Array.from({ length: 50 }, (_, index) => ({
+    id: `r${index + 1}`,
+    patient: `Patient ${index + 1}`,
+  }))
+
+  it('expands a visible row while virtualized', async () => {
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data: many,
+        columns,
+        getRowId,
+        expandable: true,
+        expanded: {},
+        virtual: true,
+        maxHeight: '12rem',
+        rowHeight: 40,
+      },
+      slots: {
+        expansion: () => h('span', { class: 'expansion-body' }, 'Details'),
+      },
+    })
+
+    // The parent owns the expanded map, as with every other state prop.
+    await wrapper.get('[data-row-id] button').trigger('click')
+    await wrapper.setProps({ expanded: { r1: true } })
+
+    expect(wrapper.findAll('.expansion-body')).toHaveLength(1)
+    // The expansion row renders inside the virtual window.
+    expect(wrapper.find('[data-row-id="r1"][data-state="expanded"]').exists()).toBe(true)
+  })
+
+  it('accumulates the selection across pages', async () => {
+    const onUpdateSelection = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns,
+        getRowId,
+        selectable: true,
+        paginate: true,
+        pageSize: 1,
+        selection: {},
+        'onUpdate:selection': onUpdateSelection,
+      },
+    })
+
+    await wrapper
+      .get('[data-row-id="r1"]')
+      .findComponent(Checkbox)
+      .vm.$emit('update:modelValue', true)
+    expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true })
+
+    // Page 2: the parent's accumulated map is carried over, so the toggle
+    // reports both rows rather than only the visible one.
+    await wrapper.setProps({ selection: { r1: true }, pageIndex: 1 })
+    await wrapper
+      .get('[data-row-id="r2"]')
+      .findComponent(Checkbox)
+      .vm.$emit('update:modelValue', true)
+    expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true, r2: true })
+  })
+
+  it('sorts a paginated table from the bound sorting prop', async () => {
+    const onUpdateSorting = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data: [
+          { id: 'r2', patient: 'Youssef Kamal' },
+          { id: 'r1', patient: 'Amina Farouk' },
+        ],
+        columns,
+        getRowId,
+        paginate: true,
+        pageSize: 1,
+        sorting: [],
+        'onUpdate:sorting': onUpdateSorting,
+      },
+    })
+
+    await wrapper.get('thead button').trigger('click')
+    expect(onUpdateSorting).toHaveBeenCalledWith([{ id: 'patient', desc: false }])
+
+    // The parent writes the sort back; page one now shows the new top row.
+    await wrapper.setProps({ sorting: [{ id: 'patient', desc: false }] })
+    expect(wrapper.get('[data-row-id]').attributes('data-row-id')).toBe('r1')
+  })
+
+  it('reports the filter and the server total together in manual mode', async () => {
+    const onUpdateGlobalFilter = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns,
+        getRowId,
+        manual: true,
+        paginate: true,
+        searchable: true,
+        rowCount: 50,
+        globalFilter: '',
+        'onUpdate:globalFilter': onUpdateGlobalFilter,
+      },
+    })
+
+    await wrapper.get('input').setValue('amin')
+
+    expect(onUpdateGlobalFilter).toHaveBeenCalledWith('amin')
+    // Manual mode: the rows are the server's, the footer the server total.
+    expect(bodyRows(wrapper)).toHaveLength(2)
+    expect(wrapper.text()).toContain('50')
   })
 })
 
