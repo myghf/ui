@@ -1,4 +1,28 @@
-import { addComponent, addImports, defineNuxtModule, logger } from '@nuxt/kit'
+import {
+  addComponent,
+  addImports,
+  defineNuxtModule,
+  hasNuxtModule,
+  logger,
+} from '@nuxt/kit'
+import type { Nuxt } from '@nuxt/schema'
+
+/** The module id `@nuxtjs/tailwindcss` is listed under in `nuxt.options.modules`. */
+const TAILWIND_MODULE_ID = '@nuxtjs/tailwindcss'
+
+/** Warned when `@nuxtjs/tailwindcss` never installs. */
+const NOT_DETECTED_MESSAGE =
+  "@nuxtjs/tailwindcss was not detected, so the @myghf/ui Tailwind preset and content glob were NOT added automatically. Add './node_modules/@myghf/ui/dist/**/*.js' to your Tailwind `content`, and import '@myghf/ui/tailwind-preset' and add the imported preset object to your `presets`, or set `myghfUi: { tailwind: false }` to silence this."
+
+/**
+ * Warned when the Tailwind module installed before this one with no
+ * `tailwindcss` config block — its options are resolved only at install
+ * time, so they can no longer be reached.
+ */
+const INSTALLED_WITHOUT_CONFIG_MESSAGE =
+  "@nuxtjs/tailwindcss is installed but has no `tailwindcss` config block, so the @myghf/ui Tailwind preset and content glob were NOT added. Register `@myghf/ui/nuxt` before `@nuxtjs/tailwindcss` to wire them automatically, or add this to `nuxt.config` (with `import myghfPreset from '@myghf/ui/tailwind-preset'`):\n" +
+  "tailwindcss: { config: { presets: [myghfPreset], content: ['./node_modules/@myghf/ui/dist/**/*.js'] } }\n" +
+  'or set `myghfUi: { tailwind: false }` to silence this and wire Tailwind yourself.'
 
 export interface ModuleOptions {
   /**
@@ -252,6 +276,37 @@ export function wireTailwindConfig<T extends TailwindLikeOptions>(
   return tailwind
 }
 
+/** Minimal shape of an entry in Nuxt's installed-modules registry. */
+interface InstalledModule {
+  meta?: { name?: string }
+}
+
+/**
+ * Returns whether `@nuxtjs/tailwindcss` has already run. Unlike
+ * `hasNuxtModule`, this ignores modules that are only listed in
+ * `nuxt.options.modules`: the Tailwind module resolves its options at
+ * install time, so one listed after this module can still be reached,
+ * while one listed before it cannot. The registry is private but is the
+ * one Nuxt's own `hasNuxtModule` reads, and it lives on `nuxt.options`
+ * in Nuxt 4 and on `nuxt` in Nuxt 3.
+ */
+export function hasInstalledTailwindModule(nuxt: Nuxt): boolean {
+  const options = nuxt.options as unknown as
+    | { _installedModules?: InstalledModule[] }
+    | undefined
+  const registries = [
+    options?._installedModules,
+    (nuxt as unknown as { _installedModules?: InstalledModule[] })
+      ._installedModules,
+  ]
+  return registries.some(
+    (registry) =>
+      registry?.some(
+        (module) => module?.meta?.name === TAILWIND_MODULE_ID,
+      ) ?? false,
+  )
+}
+
 export default defineNuxtModule<ModuleOptions>({
   meta: { name: '@myghf/ui', configKey: 'myghfUi' },
   defaults: { autoImports: true, prefix: '', tailwind: true },
@@ -262,20 +317,45 @@ export default defineNuxtModule<ModuleOptions>({
     if (options.tailwind !== false) {
       // Tailwind is provided by @nuxtjs/tailwindcss, which is an optional peer
       // and not a dependency here, so access its config defensively.
-      const tailwind = (nuxt.options as unknown as Record<string, unknown>).tailwindcss as
-        | TailwindLikeOptions
-        | undefined
+      const tailwind = (nuxt.options as unknown as Record<
+        string,
+        TailwindLikeOptions | undefined
+      >).tailwindcss
+      // Tailwind requires preset *objects*; it does not resolve string
+      // paths. The specifier is a variable so it is resolved at runtime by
+      // the consumer rather than bundled into this module.
+      const presetId = '@myghf/ui/tailwind-preset'
+      const preset = (await import(presetId)).default
+
       if (tailwind) {
-        // Tailwind requires preset *objects*; it does not resolve string paths.
-        // The specifier is a variable so it is resolved at runtime by the
-        // consumer rather than bundled into this module.
-        const presetId = '@myghf/ui/tailwind-preset'
-        const preset = (await import(presetId)).default
         wireTailwindConfig(tailwind, preset)
+      } else if (hasInstalledTailwindModule(nuxt)) {
+        // The Tailwind module installed before this one, and it resolves
+        // its options only at install time, so they can no longer be
+        // reached. Point at the config block that wires them.
+        logger.warn(INSTALLED_WITHOUT_CONFIG_MESSAGE)
       } else {
-        logger.warn(
-          "@nuxtjs/tailwindcss was not detected, so the @myghf/ui Tailwind preset and content glob were NOT added automatically. Add './node_modules/@myghf/ui/dist/**/*.js' to your Tailwind `content`, and import '@myghf/ui/tailwind-preset' and add the imported preset object to your `presets`, or set `myghfUi: { tailwind: false }` to silence this.",
-        )
+        // The Tailwind module has not installed yet. When it is listed
+        // after this module it resolves its options from
+        // `nuxt.options.tailwindcss`, so seed the preset and content
+        // glob there and the wiring is automatic. `modules:done` checks
+        // whether it ever installed; if it did not, undo the seed.
+        ;(nuxt.options as unknown as Record<
+          string,
+          TailwindLikeOptions
+        >).tailwindcss = {
+          config: {
+            presets: [preset],
+            content: [TAILWIND_CONTENT_GLOB],
+          },
+        }
+        nuxt.hook('modules:done', () => {
+          if (!hasNuxtModule(TAILWIND_MODULE_ID, nuxt)) {
+            delete (nuxt.options as unknown as Record<string, unknown>)
+              .tailwindcss
+            logger.warn(NOT_DETECTED_MESSAGE)
+          }
+        })
       }
     }
 

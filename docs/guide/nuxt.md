@@ -45,16 +45,44 @@ export default defineNuxtConfig({
 ```
 
 Tailwind wiring requires the [Tailwind module](https://tailwindcss.nuxtjs.org)
-(`@nuxtjs/tailwindcss`). Register `@myghf/ui/nuxt` **after** it — the module appends the
-content glob and preset to the Tailwind config at setup, so the Tailwind module must already
-be present:
+(`@nuxtjs/tailwindcss`). Register `@myghf/ui/nuxt` **before** it:
 
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', '@myghf/ui/nuxt'],
+  modules: ['@myghf/ui/nuxt', '@nuxtjs/tailwindcss'],
 })
 ```
+
+Listed first, `@myghf/ui/nuxt` seeds the Tailwind config that the Tailwind module resolves
+when it installs, so the preset and content glob are wired with no extra config. The
+Tailwind module resolves its options only at install time, so the reverse order cannot
+reach them — see [When the Tailwind module is listed first](#when-the-tailwind-module-is-listed-first).
+
+### When the Tailwind module is listed first
+
+If `@nuxtjs/tailwindcss` runs before `@myghf/ui/nuxt` and you have no `tailwindcss`
+config block, the preset and content glob are **not** wired — the module logs a warning
+that names the fix. Either reorder `modules` as above, or add the config block it points
+at:
+
+```ts
+// nuxt.config.ts
+import myghfPreset from '@myghf/ui/tailwind-preset'
+
+export default defineNuxtConfig({
+  modules: ['@nuxtjs/tailwindcss', '@myghf/ui/nuxt'],
+  tailwindcss: {
+    config: {
+      presets: [myghfPreset],
+      content: ['./node_modules/@myghf/ui/dist/**/*.js'],
+    },
+  },
+})
+```
+
+A `tailwindcss` block wires the preset in either module order. Set
+`myghfUi: { tailwind: false }` to opt out of the wiring entirely and silence the warning.
 
 ## Configure it
 
@@ -88,11 +116,11 @@ At setup the module adds:
 - **Tokens** — `@myghf/ui/tokens.css` is unshifted onto `css`, which loads the
   `--myghf-*` custom properties before your own stylesheets so your overrides still win by
   source order.
-- **Tailwind content** — when `@nuxtjs/tailwindcss` is present, it appends
-  `./node_modules/@myghf/ui/dist/**/*.js` to `tailwindcss.config.content` so Tailwind can
-  see the classes the library ships.
-- **Tailwind preset** — it also pushes the `@myghf/ui/tailwind-preset` object onto
-  `tailwindcss.config.presets`, giving you the brand scales, semantic colours, fonts,
+- **Tailwind content** — when `@nuxtjs/tailwindcss` is present, the library's content
+  glob (`./node_modules/@myghf/ui/dist/**/*.js`) is part of the Tailwind config, so
+  Tailwind can see the classes the library ships.
+- **Tailwind preset** — the `@myghf/ui/tailwind-preset` object is part of the same
+  Tailwind config, giving you the brand scales, semantic colours, fonts,
   shadows, and `darkMode: ['class', '.dark']`.
 - **Components** — when component auto-imports are enabled, every component export is
   registered with Nuxt's `addComponent`, so `<Button>`, `<FormField>`, `<DropdownMenu>`,

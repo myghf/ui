@@ -7,6 +7,7 @@ import myghfUiModule, {
   AUTO_IMPORT_COMPOSABLES,
   AUTO_IMPORT_UTILITIES,
   TAILWIND_CONTENT_GLOB,
+  hasInstalledTailwindModule,
   resolveAutoImports,
   wireTailwindConfig,
 } from './nuxt'
@@ -123,6 +124,32 @@ describe('@myghf/ui Nuxt module', () => {
       components: true,
       composables: false,
     })
+  })
+
+  it('detects an installed Tailwind module, not merely a listed one', () => {
+    const installed = { meta: { name: '@nuxtjs/tailwindcss' } }
+    // Nuxt 4 keeps the installed-modules registry on `nuxt.options`.
+    expect(
+      hasInstalledTailwindModule(
+        { options: { _installedModules: [installed] } } as unknown as Nuxt,
+      ),
+    ).toBe(true)
+    // Nuxt 3 keeps it on `nuxt` itself.
+    expect(
+      hasInstalledTailwindModule(
+        { _installedModules: [installed] } as unknown as Nuxt,
+      ),
+    ).toBe(true)
+    // A module that is only listed has not run yet, so its options
+    // are still reachable — that is not "installed".
+    expect(
+      hasInstalledTailwindModule(
+        { options: { modules: ['@nuxtjs/tailwindcss'] } } as unknown as Nuxt,
+      ),
+    ).toBe(false)
+    expect(
+      hasInstalledTailwindModule({ options: {} } as unknown as Nuxt),
+    ).toBe(false)
   })
 
   describe('wireTailwindConfig', () => {
