@@ -9,13 +9,18 @@
   <p><a href="https://ui.myfegypt.org"><strong>📖 Full documentation →</strong></a></p>
 </div>
 
-## Requirements
+## Compatibility
 
-| Dependency | Version |
-| --- | --- |
-| [`vue`](https://vuejs.org) | `^3.5.0` (peer) |
-| [`tailwindcss`](https://tailwindcss.com) | `^3.4.0` (peer) |
-| [`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) | `^6.0.0` (optional peer, Nuxt only) |
+| Dependency | Version | Notes |
+| --- | --- | --- |
+| [`vue`](https://vuejs.org) | `^3.5.0` (peer) | Vue 2 is not supported. |
+| [`tailwindcss`](https://tailwindcss.com) | `^3.4.0` (peer) | **Tailwind CSS v4 is not supported** — the preset is a v3-style JavaScript preset, and v4 configures through CSS instead. |
+| [`nuxt`](https://nuxt.com) | `^3.0.0 \|\| ^4.0.0` (optional peer) | Only needed for the `@myghf/ui/nuxt` module; plain Vue apps skip it. |
+| [`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) | `^6.0.0` (optional peer) | Required for the module's automatic Tailwind wiring. |
+| Node.js | `>=18.0.0` | The package ships ESM. Building it, and the release workflow, need Node `>=22.14.0`. |
+
+CI tests against these versions, including consumer smoke tests that
+install the packed tarball in clean Vue and Nuxt projects.
 
 ## Installation
 
@@ -64,17 +69,18 @@ An optional module ships at `@myghf/ui/nuxt`:
 ```ts
 // nuxt.config.ts
 export default defineNuxtConfig({
-  modules: ['@nuxtjs/tailwindcss', '@myghf/ui/nuxt'],
+  modules: ['@myghf/ui/nuxt', '@nuxtjs/tailwindcss'],
 })
 ```
 
-It transpiles the library, loads the design tokens, and auto-imports the components,
-composables, and utilities. When
-[`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) is installed (an optional peer) it
-also appends the `@myghf/ui/tailwind-preset` and the library content glob to your Tailwind
-config; without it the module logs a warning and you add those two entries yourself, or set
-`myghfUi: { tailwind: false }` to opt out. Install the Tailwind module explicitly if your app
-does not already have it:
+It transpiles the library, loads the design tokens, and auto-imports the
+components, composables, and utilities. Listed **before**
+[`@nuxtjs/tailwindcss`](https://tailwindcss.nuxtjs.org) (an optional peer —
+install it explicitly if your app does not already have it), the module also
+wires the `@myghf/ui/tailwind-preset` and the library content glob into your
+Tailwind config automatically. If the Tailwind module is listed first instead,
+the module logs a warning naming the `tailwindcss` config block that wires the
+same entries, or set `myghfUi: { tailwind: false }` to opt out.
 
 ```bash
 npm install -D @nuxtjs/tailwindcss
