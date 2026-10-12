@@ -1,5 +1,55 @@
 # @myghf/ui
 
+## 0.7.0
+
+### Minor Changes
+
+- b2689f3: Add browser-level accessibility tests and make the Accordion heading level configurable
+  
+  - New Playwright suite (`tests/browser/`, `npm run test:browser`) renders a component harness with
+    real CSS and runs axe across the light/dark × LTR/RTL matrix, asserts body text meets WCAG AA
+    against the computed colours, and checks the design tokens resolve. It runs in CI.
+  - `AccordionItem` accepts `headingLevel` (2–6, default 3) so the trigger heading fits the page
+    outline — the browser run caught that reka's default `h3` trips `heading-order` under an `h1`.
+  - Documentation: the accessibility guide now reflects the shipped guards and documents the muted
+    text contrast limitation (added to `DESIGN.md` §6).
+- f25b844: Add controlled sorting to DataTable
+  
+  `DataTable` now accepts a `sorting` prop. Unbound, it sorts itself as before;
+  bound with `v-model:sorting`, the component only emits `update:sorting` and
+  sorts when the parent writes the prop back — the shape a server-side sort
+  (`manual`) needs. Covers controlled and uncontrolled behaviour, plus
+  combination tests (virtualized expansion, cross-page selection, sorting with
+  pagination, manual mode with search).
+
+### Patch Changes
+
+- 5cc11fa: Ship type declarations that resolve under `node16`/`nodenext`
+  
+  The build emitted one declaration file per source file, leaving extensionless relative imports
+  (`./lib/date`) in `dist/index.d.ts`. Those do not resolve under
+  `moduleResolution: node16`/`nodenext`, so consumers on those settings got broken types (bundler
+  resolution was unaffected). Declarations are now rolled up into a single `index.d.ts` (and
+  `nuxt.d.ts`) per entry, which resolves under every mode.
+  
+  Also adds a `check:package` script (artifact assertions + `publint` + `attw`) and runs it, with the
+  build, in CI.
+- 2ec2b7b: Wire the Tailwind preset automatically in Nuxt
+  
+  The Nuxt module only wired the Tailwind preset and content glob when the
+  consumer happened to write a `tailwindcss` block in `nuxt.config` — the
+  documented `modules: ['@nuxtjs/tailwindcss', '@myghf/ui/nuxt']` setup got
+  no preset and only a misleading "not detected" warning, because
+  `@nuxtjs/tailwindcss` resolves its options at install time.
+  
+  The module now seeds `nuxt.options.tailwindcss` when the Tailwind module has
+  not installed yet, so listing `@myghf/ui/nuxt` **before** `@nuxtjs/tailwindcss`
+  wires everything with no extra config. When the Tailwind module has already
+  installed, the module warns with the exact `tailwindcss` block that wires it.
+  Detection uses Nuxt's installed-modules registry (new `hasInstalledTailwindModule`
+  helper, unit-tested) so a merely *listed* module is not mistaken for an
+  installed one.
+
 ## 0.6.0
 
 ### Minor Changes
