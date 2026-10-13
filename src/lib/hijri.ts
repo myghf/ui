@@ -22,7 +22,9 @@ function formatter(locale: string, options: Intl.DateTimeFormatOptions): Intl.Da
 
 /** Adds whole days in local time (unlike `new Date(ms + n*86400000)`, which breaks across DST). */
 export function addDays(date: Date, days: number): Date {
-  return new Date(date.getFullYear(), date.getMonth(), date.getDate() + days)
+  const out = new Date(date.getTime())
+  out.setDate(out.getDate() + days)
+  return out
 }
 
 /** The Hijri (Umm al-Qura) year, month, and day for a Gregorian date. */

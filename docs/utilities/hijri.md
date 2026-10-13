@@ -15,7 +15,9 @@ hijriMonthLabel(new Date(2024, 6, 7), 'en') // → 'Muharram 1446'
 
 ## `addDays(date, days)`
 
-Adds whole days in local time — unlike adding milliseconds, which breaks across a DST change.
+Adds whole days in local time, keeping the time of day and rolling
+month and year boundaries over — unlike adding milliseconds, which
+drifts across a DST change.
 
 ```ts
 function addDays(date: Date, days: number): Date
