@@ -5,6 +5,12 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { defineComponent, h, nextTick, ref } from 'vue'
 import * as UI from './index'
 
+// jsdom does not implement `scrollIntoView`, which reka's
+// listbox navigation calls when the highlight moves.
+if (typeof Element.prototype.scrollIntoView !== 'function') {
+  Element.prototype.scrollIntoView = () => {}
+}
+
 /**
  * The keyboard contracts of the interactive components.
  *
