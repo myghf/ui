@@ -6,6 +6,8 @@ import { describe, expect, it, vi } from 'vitest'
 import type { DataTableFeatures } from '../../lib/table'
 import Checkbox from '../checkbox/Checkbox.vue'
 import Skeleton from '../skeleton/Skeleton.vue'
+import TableBody from '../table/TableBody.vue'
+import TableRow from '../table/TableRow.vue'
 import DataTable from './DataTable.vue'
 
 interface Referral {
@@ -83,13 +85,25 @@ const getRowId = (row: Referral) => row.id
 
 const bodyRows = (wrapper: VueWrapper) => wrapper.findAll('tbody tr')
 
+/**
+ * The `TableRow` component instance for a row id. `DOMWrapper.findComponent`
+ * returns nothing under this Vue/VTU pair, so a row's child components are
+ * reached from the `TableRow` `VueWrapper` instead.
+ */
+const rowComponent = (wrapper: VueWrapper, rowId: string) =>
+  wrapper
+    .findAllComponents(TableRow)
+    .find((row) => row.attributes('data-row-id') === rowId)
+
 describe('DataTable loading state', () => {
   it('renders one skeleton per column for each loading row, and no data rows', () => {
     const wrapper = mount(TestDataTable, {
       props: { data, columns, getRowId, loading: true, loadingRows: 3 },
     })
 
-    const rows = bodyRows(wrapper)
+    // Traverse from the `TableBody` `VueWrapper`: `DOMWrapper.findAllComponents`
+    // returns nothing under this Vue/VTU pair.
+    const rows = wrapper.findComponent(TableBody).findAllComponents(TableRow)
     expect(rows).toHaveLength(3)
     for (const row of rows) {
       expect(row.findAllComponents(Skeleton)).toHaveLength(columns.length)
@@ -185,19 +199,19 @@ describe('DataTable loading state', () => {
   })
 
   it('toggles sorting when a header is clicked while not loading', async () => {
+    const onUpdateSorting = vi.fn()
     const wrapper = mount(TestDataTable, {
-      props: { data, columns, getRowId },
+      props: { data, columns, getRowId, 'onUpdate:sorting': onUpdateSorting },
     })
 
     const button = wrapper.get('thead button')
     await button.trigger('click')
 
-    const events = wrapper.emitted('update:sorting')
-    expect(events).toHaveLength(1)
-    expect(events![0][0]).toEqual([{ id: 'patient', desc: false }])
+    expect(onUpdateSorting).toHaveBeenCalledTimes(1)
+    expect(onUpdateSorting).toHaveBeenLastCalledWith([{ id: 'patient', desc: false }])
 
     await button.trigger('click')
-    expect(wrapper.emitted('update:sorting')![1][0]).toEqual([{ id: 'patient', desc: true }])
+    expect(onUpdateSorting).toHaveBeenLastCalledWith([{ id: 'patient', desc: true }])
   })
 
   it('does not emit update:expanded when a placeholder row is clicked', async () => {
@@ -251,16 +265,15 @@ describe('DataTable sorting', () => {
     bodyRows(wrapper).map((row) => row.attributes('data-row-id'))
 
   it('sorts the rows itself when sorting is not bound', async () => {
+    const onUpdateSorting = vi.fn()
     const wrapper = mount(TestDataTable, {
-      props: { data: unsorted, columns, getRowId },
+      props: { data: unsorted, columns, getRowId, 'onUpdate:sorting': onUpdateSorting },
     })
     expect(rowIds(wrapper)).toEqual(['r2', 'r1'])
 
     await wrapper.get('thead button').trigger('click')
     expect(rowIds(wrapper)).toEqual(['r1', 'r2'])
-    expect(wrapper.emitted('update:sorting')![0][0]).toEqual([
-      { id: 'patient', desc: false },
-    ])
+    expect(onUpdateSorting).toHaveBeenCalledWith([{ id: 'patient', desc: false }])
   })
 
   it('sorts from the bound sorting prop', () => {
@@ -343,8 +356,7 @@ describe('DataTable feature combinations', () => {
       },
     })
 
-    await wrapper
-      .get('[data-row-id="r1"]')
+    await rowComponent(wrapper, 'r1')!
       .findComponent(Checkbox)
       .vm.$emit('update:modelValue', true)
     expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true })
@@ -352,8 +364,7 @@ describe('DataTable feature combinations', () => {
     // Page 2: the parent's accumulated map is carried over, so the toggle
     // reports both rows rather than only the visible one.
     await wrapper.setProps({ selection: { r1: true }, pageIndex: 1 })
-    await wrapper
-      .get('[data-row-id="r2"]')
+    await rowComponent(wrapper, 'r2')!
       .findComponent(Checkbox)
       .vm.$emit('update:modelValue', true)
     expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true, r2: true })
@@ -420,7 +431,9 @@ describe('DataTable selection', () => {
     const wrapper = mount(TestDataTable, {
       props: { data, columns, getRowId, selectable: true, 'onUpdate:selection': onUpdate },
     })
-    wrapper.get('[data-row-id="r1"]').findComponent(Checkbox).vm.$emit('update:modelValue', true)
+    rowComponent(wrapper, 'r1')!
+      .findComponent(Checkbox)
+      .vm.$emit('update:modelValue', true)
     await nextTick()
     expect(onUpdate).toHaveBeenCalledWith({ r1: true })
   })
@@ -430,7 +443,8 @@ describe('DataTable selection', () => {
     const wrapper = mount(TestDataTable, {
       props: { data, columns, getRowId, selectable: true, 'onUpdate:selection': onUpdate },
     })
-    wrapper.get('thead').findComponent(Checkbox).vm.$emit('update:modelValue', true)
+    // The header "select all" checkbox is the first Checkbox rendered.
+    wrapper.findComponent(Checkbox).vm.$emit('update:modelValue', true)
     await nextTick()
     expect(onUpdate).toHaveBeenCalledWith({ r1: true, r2: true })
   })
