@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ChevronLeft, ChevronRight } from 'lucide-vue-next'
+import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import Button from '../button/Button.vue'
 import { pageRange, pageWindow, totalPages } from '../../lib/pagination'
 

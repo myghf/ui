@@ -11,7 +11,7 @@ import {
   DialogTrigger,
   VisuallyHidden,
 } from 'reka-ui'
-import { X } from 'lucide-vue-next'
+import { X } from '@lucide/vue'
 import { useMyGhfConfig } from '../../lib/config'
 
 export type DrawerPosition = 'left' | 'right' | 'top' | 'bottom' | 'start' | 'end'

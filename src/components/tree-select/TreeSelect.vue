@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T = unknown">
 import { computed, ref } from 'vue'
 import { PopoverContent, PopoverRoot, PopoverTrigger, TreeItem, TreeRoot } from 'reka-ui'
-import { Check, ChevronDown, Search, X } from 'lucide-vue-next'
+import { Check, ChevronDown, Search, X } from '@lucide/vue'
 import Tag from '../tag/Tag.vue'
 import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'

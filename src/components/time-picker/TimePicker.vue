@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useSlots, watch, type VNode } from 'vue'
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { Clock } from 'lucide-vue-next'
+import { Clock } from '@lucide/vue'
 import { useFieldControl } from '../../lib/formField'
 import {
   buildHourOptions,

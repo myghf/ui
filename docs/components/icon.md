@@ -6,7 +6,7 @@ import IconColor from '../.vitepress/theme/demos/icon/color.vue'
 # Icon
 
 `Icon` renders a [Lucide](https://lucide.dev) icon by name. It resolves the name to a
-component from `lucide-vue-next` at runtime, so no per-icon import is needed.
+component from `@lucide/vue` at runtime, so no per-icon import is needed.
 
 ```vue
 <script setup lang="ts">

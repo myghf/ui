@@ -13,7 +13,7 @@ import {
   ComboboxViewport,
   type AcceptableValue,
 } from 'reka-ui'
-import { Check, ChevronDown, X } from 'lucide-vue-next'
+import { Check, ChevronDown, X } from '@lucide/vue'
 import { cn } from '../../lib/cn'
 import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'

@@ -30,7 +30,7 @@ export default defineConfig({
       external: [
         'vue',
         'reka-ui',
-        'lucide-vue-next',
+        '@lucide/vue',
         '@internationalized/date',
         'clsx',
         'tailwind-merge',

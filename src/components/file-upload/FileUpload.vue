@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Upload, X } from 'lucide-vue-next'
+import { Upload, X } from '@lucide/vue'
 import { cn } from '../../lib/cn'
 import { useFieldControl } from '../../lib/formField'
 import Progress from '../progress/Progress.vue'

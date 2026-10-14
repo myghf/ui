@@ -1,4 +1,4 @@
-import * as Lucide from 'lucide-vue-next'
+import * as Lucide from '@lucide/vue'
 import { describe, expect, it } from 'vitest'
 import { resolveIconName, toPascalCase } from './icons'
 
