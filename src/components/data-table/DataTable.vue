@@ -10,7 +10,7 @@ import {
   type RowSelectionState,
   type SortingState,
 } from '@tanstack/vue-table'
-import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from 'lucide-vue-next'
+import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from '@lucide/vue'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
 import { virtualWindow } from '../../lib/virtual'

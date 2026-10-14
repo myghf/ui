@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useSlots, watch, type VNode } from 'vue'
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { Clock } from 'lucide-vue-next'
+import { Clock } from '@lucide/vue'
 import { useFieldControl } from '../../lib/formField'
 import {
   buildHourOptions,
@@ -313,7 +313,7 @@ defineExpose({ focus: () => triggerRef.value?.focus() })
           <button
             type="button"
             data-test="apply"
-            class="rounded bg-primary-500 px-3 py-1 text-sm text-white transition-colors hover:bg-primary-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+            class="rounded bg-primary-700 px-3 py-1 text-sm text-white transition-colors hover:bg-primary-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
             @click="commit(); open = false"
           >
             {{ labelFor('apply') }}

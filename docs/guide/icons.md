@@ -45,7 +45,7 @@ import { Icon } from '@myghf/ui'
 | `ChevronDown` | `ChevronDown` |
 
 Under the hood the component runs the name through `resolveIconName` (kebab-case
-normalization) and then `toPascalCase` before indexing the `lucide-vue-next` exports.
+normalization) and then `toPascalCase` before indexing the `@lucide/vue` exports.
 
 Guidance:
 
@@ -58,7 +58,7 @@ Guidance:
 - An **empty name also falls back to a circle**.
 
 Browse names in the [Lucide icon library](https://lucide.dev/icons). The library resolves
-against `lucide-vue-next` `^0.525.0`; icons added to Lucide after that release are not
+against `@lucide/vue` `^1.57.0`; icons added to Lucide after that release are not
 available through `Icon` until the dependency is bumped.
 
 ## Sizing and color
@@ -88,16 +88,16 @@ available through `Icon` until the dependency is bumped.
 
 Components like `Password` import lucide components directly for their own chrome. If you
 want to render a Lucide icon outside the `Icon` component (for example, in a slot that
-expects a component), install `lucide-vue-next` in your own app rather than relying on the
+expects a component), install `@lucide/vue` in your own app rather than relying on the
 library's transitive dependency:
 
 ```bash
-npm install lucide-vue-next
+npm install @lucide/vue
 ```
 
 ```vue
 <script setup lang="ts">
-import { HeartPulse } from 'lucide-vue-next'
+import { HeartPulse } from '@lucide/vue'
 </script>
 
 <template>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, useSlots, watch, type VNode } from 'vue'
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
-import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from 'lucide-vue-next'
+import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from '@lucide/vue'
 import { useFieldControl } from '../../lib/formField'
 import {
   buildHourOptions,
@@ -428,8 +428,8 @@ const display = computed(() => {
               :class="[
                 'flex h-8 items-center justify-center rounded-md text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
                 inRange(cell) ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/40 dark:text-primary-200' : 'hover:bg-surface-muted',
-                start && start.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
-                end && end.getTime() === cell.getTime() ? 'bg-primary-500 text-white hover:bg-primary-500' : '',
+                start && start.getTime() === cell.getTime() ? 'bg-primary-700 text-white' : '',
+                end && end.getTime() === cell.getTime() ? 'bg-primary-700 text-white' : '',
               ]"
               @click="pick(cell)"
             >
@@ -482,7 +482,7 @@ const display = computed(() => {
             <button
               type="button"
               :disabled="!start"
-              class="rounded bg-primary-500 px-3 py-1 text-sm text-white transition-colors hover:bg-primary-600 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              class="rounded bg-primary-700 px-3 py-1 text-sm text-white transition-colors hover:bg-primary-800 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
               @click="commit(); open = false"
             >
               {{ labelFor('apply') }}

@@ -12,7 +12,7 @@ missing or out of range. Tailwind 4 is outside the peer range: the preset target
 Tailwind 3's `presets` / `darkMode` config format.
 
 The library also depends on [Reka UI](https://reka-ui.com) for accessible primitives and
-on [`lucide-vue-next`](https://lucide.dev) for icons. They install with the package; you do
+on [`@lucide/vue`](https://lucide.dev) for icons. They install with the package; you do
 not list them yourself.
 
 ## Install

@@ -102,7 +102,7 @@ None. `TreeSelect` does not call `defineExpose`.
 
 - The trigger, popup, search field, and tags use semantic tokens (`bg-surface`,
   `text-foreground`, `border-border`, `surface-muted`), so both themes adapt automatically.
-  Selected-node rows use `bg-primary-500` with white marks.
+  Selected-node rows use `bg-primary-700` with white marks.
 - Indentation uses `paddingInlineStart`, so nesting mirrors under RTL, and the search icon is
   positioned with `start-2` while the input reserves space with `ps-7`. No physical
   directional utilities are used.

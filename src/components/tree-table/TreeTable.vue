@@ -1,7 +1,7 @@
 <script setup lang="ts" generic="T = unknown">
 import { computed } from 'vue'
 import { TreeItem, TreeRoot } from 'reka-ui'
-import { ChevronRight } from 'lucide-vue-next'
+import { ChevronRight } from '@lucide/vue'
 import { flattenVisible, type TreeNode } from '../../lib/tree'
 
 export interface TreeTableColumn {

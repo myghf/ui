@@ -88,6 +88,17 @@ bulk-actions bar is shown while rows are selected. Fill it through the `bulk-act
 receives the selected `rows` and a `clear` function. Pair it with [`toCsv`](/utilities/csv) +
 `downloadCsv` to export the selection — the demo's **Export** button does exactly that.
 
+**Selection is controlled.** `DataTable` owns no selection state of its own: every toggle emits
+`update:selection` with the complete new map, and the parent writes it back. Keep the map
+**accumulated** across pages, filters, and sorts — carry the previous map forward (merge the
+toggle) rather than replacing it with only the visible rows, or earlier selections are lost. The
+"preserves earlier-page selections in server-side mode" test pins this.
+
+**`manual` mode is page-scoped.** With `manual` (server-side data), the header checkbox and
+`toggleAllRowsSelected` operate on the rows in the current page — the row model — not on every
+matching record. To offer "select all N records", track that intent in the parent (for example a
+`selectAll` flag sent to the server) rather than relying on the checkbox.
+
 <Demo>
   <DataTableSelection />
 </Demo>

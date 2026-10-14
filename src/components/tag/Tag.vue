@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { X } from 'lucide-vue-next'
+import { X } from '@lucide/vue'
 import { toneClasses, type Tone } from '../../lib/tones'
 import Icon from '../icon/Icon.vue'
 

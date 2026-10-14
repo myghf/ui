@@ -6,7 +6,7 @@ import {
   AccordionTrigger,
 } from 'reka-ui'
 import { computed } from 'vue'
-import { ChevronDown } from 'lucide-vue-next'
+import { ChevronDown } from '@lucide/vue'
 
 const props = withDefaults(
   defineProps<{

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import * as Lucide from 'lucide-vue-next'
+import * as Lucide from '@lucide/vue'
 import { resolveIconName, toPascalCase } from '../../lib/icons'
 
 const props = withDefaults(defineProps<{ name: string; size?: number }>(), { size: 16 })

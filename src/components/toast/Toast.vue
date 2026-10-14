@@ -7,7 +7,7 @@ import {
   ToastRoot,
   ToastTitle,
 } from 'reka-ui'
-import { X } from 'lucide-vue-next'
+import { X } from '@lucide/vue'
 import { toneClasses, type Tone } from '../../lib/tones'
 import { useMyGhfConfig } from '../../lib/config'
 import Icon from '../icon/Icon.vue'

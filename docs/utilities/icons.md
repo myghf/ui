@@ -16,7 +16,7 @@ function toPascalCase(name: string): string
 ```
 
 Converts a name to PascalCase by splitting on `-` and capitalising the first letter of each
-part. This is the form `lucide-vue-next` uses for its component exports.
+part. This is the form `@lucide/vue` uses for its component exports.
 
 ### Parameters
 
@@ -75,7 +75,7 @@ resolveIconName('') // → 'circle'
 ## Combining the two
 
 `Icon` runs `resolveIconName` first and `toPascalCase` second before indexing the
-`lucide-vue-next` exports:
+`@lucide/vue` exports:
 
 ```ts
 import { resolveIconName, toPascalCase } from '@myghf/ui'

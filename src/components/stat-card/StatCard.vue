@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { ArrowDownRight, ArrowUpRight } from 'lucide-vue-next'
+import { ArrowDownRight, ArrowUpRight } from '@lucide/vue'
 import { cn } from '../../lib/cn'
 import { toneClasses, type Tone } from '../../lib/tones'
 
