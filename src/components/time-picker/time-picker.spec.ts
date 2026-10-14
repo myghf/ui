@@ -3,6 +3,7 @@ import { DOMWrapper, enableAutoUnmount, mount, VueWrapper } from '@vue/test-util
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import FormField from '../form-field/FormField.vue'
+import { createConfig, myghfConfigKey } from '../../lib/config'
 import TimePicker from './TimePicker.vue'
 
 // The panel is portalled into `document.body`, outside the wrapper tree, so
@@ -13,8 +14,16 @@ enableAutoUnmount(afterEach)
  * Mounts an open picker and flushes the tick the portal mounts on, so the panel
  * is present in the document by the time the test queries it.
  */
-async function open(props: Record<string, unknown> = {}, slots?: Record<string, string>) {
-  const wrapper = mount(TimePicker, { props: { defaultOpen: true, ...props }, slots })
+async function open(
+  props: Record<string, unknown> = {},
+  slots?: Record<string, string>,
+  global?: Record<string, unknown>,
+) {
+  const wrapper = mount(TimePicker, {
+    props: { defaultOpen: true, ...props },
+    slots,
+    global,
+  })
   await nextTick()
   return wrapper
 }
@@ -139,6 +148,20 @@ describe('TimePicker', () => {
 
     expect(en).toContain('Select time')
     expect(fr).toContain("Choisir l'heure")
+  })
+
+  it('localizes the placeholder from the provided config locale', async () => {
+    const enWrapper = await open({ locale: 'en-US' })
+    const en = enWrapper.get('[aria-haspopup="dialog"]').text()
+    enWrapper.unmount()
+
+    const arWrapper = await open({}, undefined, {
+      provide: { [myghfConfigKey]: createConfig({ locale: 'ar' }) },
+    })
+    const ar = arWrapper.get('[aria-haspopup="dialog"]').text()
+
+    expect(ar).toContain('اختر الوقت')
+    expect(ar).not.toBe(en)
   })
 
   it('renders labels from the labels prop', async () => {

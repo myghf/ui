@@ -3,6 +3,7 @@ import { DOMWrapper, enableAutoUnmount, mount, VueWrapper } from '@vue/test-util
 import { afterEach, describe, expect, it } from 'vitest'
 import { h, nextTick } from 'vue'
 import FormField from '../form-field/FormField.vue'
+import { createConfig, myghfConfigKey } from '../../lib/config'
 import DatePicker from './DatePicker.vue'
 
 // The panel is portalled into `document.body`, outside the wrapper tree, so
@@ -13,8 +14,16 @@ enableAutoUnmount(afterEach)
  * Mounts an open picker and flushes the tick the portal mounts on, so the panel
  * is present in the document by the time the test queries it.
  */
-async function open(props: Record<string, unknown> = {}, slots?: Record<string, string>) {
-  const wrapper = mount(DatePicker, { props: { mode: 'datetime', defaultOpen: true, ...props }, slots })
+async function open(
+  props: Record<string, unknown> = {},
+  slots?: Record<string, string>,
+  global?: Record<string, unknown>,
+) {
+  const wrapper = mount(DatePicker, {
+    props: { mode: 'datetime', defaultOpen: true, ...props },
+    slots,
+    global,
+  })
   await nextTick()
   return wrapper
 }
@@ -65,6 +74,21 @@ describe('DatePicker', () => {
     const fr = panel(frWrapper).get('[data-test="month-label"]').text()
 
     expect(en).not.toBe(fr)
+  })
+
+  it('localizes the month heading from the provided config locale', async () => {
+    const enWrapper = await open({ locale: 'en-US' })
+    const en = panel(enWrapper).get('[data-test="month-label"]').text()
+    enWrapper.unmount()
+
+    const arWrapper = await open({}, undefined, {
+      provide: { [myghfConfigKey]: createConfig({ locale: 'ar' }) },
+    })
+    const ar = panel(arWrapper).get('[data-test="month-label"]').text()
+
+    expect(ar).not.toBe(en)
+    // The Arabic month name (e.g. أكتوبر) falls in the Arabic script range.
+    expect(ar).toMatch(/[؀-ۿ]/)
   })
 
   it('honors weekStartsOn', async () => {

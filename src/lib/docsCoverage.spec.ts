@@ -26,6 +26,7 @@ const MAP: Record<string, string> = {
   buildMinuteOptions: 'utilities/date.md',
   to12Hour: 'utilities/date.md',
   from12Hour: 'utilities/date.md',
+  browserLocale: 'utilities/locale.md',
   getFirstDayOfWeek: 'utilities/locale.md',
   getWeekdayLabels: 'utilities/locale.md',
   getMonthLabel: 'utilities/locale.md',

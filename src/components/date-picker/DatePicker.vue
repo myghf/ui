@@ -2,6 +2,7 @@
 import { computed, ref, useSlots, watch, type VNode } from 'vue'
 import { PopoverContent, PopoverPortal, PopoverRoot, PopoverTrigger } from 'reka-ui'
 import { Calendar as CalendarIcon, ChevronLeft, ChevronRight, Clock } from '@lucide/vue'
+import { useProvidedLocale } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'
 import {
   buildHourOptions,
@@ -13,6 +14,7 @@ import {
   toTime,
 } from '../../lib/date'
 import {
+  browserLocale,
   formatLocalizedDate,
   formatLocalizedTime,
   getFirstDayOfWeek,
@@ -145,15 +147,10 @@ const props = withDefaults(
     // `invalid` defaults to `undefined` so Boolean casting does not swallow it
     // and it can fall through to the form field context.
     invalid: undefined,
-    // Runtime locale, best-effort, falling back to English. Inlined because
-    // `withDefaults` is hoisted and cannot reference local declarations.
-    locale: () => {
-      try {
-        return Intl.DateTimeFormat().resolvedOptions().locale || 'en'
-      } catch {
-        return 'en'
-      }
-    },
+    // Resolves the `locale` prop, then the provided config's locale, then the
+    // runtime locale. Imported helpers are safe to call here — only local
+    // declarations are unavailable, since `withDefaults` is hoisted.
+    locale: () => useProvidedLocale() ?? browserLocale(),
     defaultOpen: false,
   },
 )

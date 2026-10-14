@@ -87,3 +87,8 @@ export function provideMyGhfConfig(config: MyGhfConfig): MyGhfConfig {
 export function useMyGhfConfig(): MyGhfConfig {
   return inject(myghfConfigKey, defaultConfig)
 }
+
+/** The provided config's locale, or `undefined` when there is no provider. */
+export function useProvidedLocale(): string | undefined {
+  return inject(myghfConfigKey)?.locale
+}

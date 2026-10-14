@@ -7,8 +7,10 @@ import {
 } from 'reka-ui'
 import { computed, useAttrs } from 'vue'
 import Icon from '../icon/Icon.vue'
+import { useProvidedLocale } from '../../lib/config'
 import { mergeFormatOptions, toNumberOrNull } from '../../lib/number'
 import { useFieldControl } from '../../lib/formField'
+import { browserLocale } from '../../lib/locale'
 
 defineOptions({ inheritAttrs: false })
 
@@ -37,7 +39,15 @@ const props = withDefaults(
   }>(),
   // `invalid`/`required` default to `undefined` so Boolean casting does not
   // swallow them and they can fall through to the form field context.
-  { step: 1, size: 'default', invalid: undefined, required: undefined },
+  {
+    step: 1,
+    size: 'default',
+    invalid: undefined,
+    required: undefined,
+    // Resolves the `locale` prop, then the provided config's locale, then the
+    // runtime locale.
+    locale: () => useProvidedLocale() ?? browserLocale(),
+  },
 )
 
 const emit = defineEmits<{ 'update:modelValue': [value: number | null] }>()
