@@ -370,6 +370,62 @@ describe('DataTable feature combinations', () => {
     expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true, r2: true })
   })
 
+  it('preserves earlier-page selections in server-side (manual) mode', async () => {
+    const onUpdateSelection = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns,
+        getRowId,
+        selectable: true,
+        paginate: true,
+        manual: true,
+        pageSize: 1,
+        selection: {},
+        'onUpdate:selection': onUpdateSelection,
+      },
+    })
+
+    // Page 1: select r1. The parent accumulates { r1: true } and carries
+    // it onto page 2 — the component reports the whole accumulated map, so
+    // the earlier selection survives the page change.
+    await rowComponent(wrapper, 'r1')!
+      .findComponent(Checkbox)
+      .vm.$emit('update:modelValue', true)
+    expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true })
+
+    await wrapper.setProps({ selection: { r1: true }, pageIndex: 1, data: [data[1]] })
+    await rowComponent(wrapper, 'r2')!
+      .findComponent(Checkbox)
+      .vm.$emit('update:modelValue', true)
+    expect(onUpdateSelection).toHaveBeenLastCalledWith({ r1: true, r2: true })
+  })
+
+  it('selects only the current page from the header checkbox in manual mode', async () => {
+    const onUpdateSelection = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data: [data[1]], // page 2 holds only r2
+        columns,
+        getRowId,
+        selectable: true,
+        paginate: true,
+        manual: true,
+        pageSize: 1,
+        pageIndex: 1,
+        rowCount: data.length,
+        selection: {},
+        'onUpdate:selection': onUpdateSelection,
+      },
+    })
+
+    // The header checkbox reflects and toggles only the rows in the row
+    // model — the current page — not every matching record.
+    wrapper.findComponent(Checkbox).vm.$emit('update:modelValue', true)
+    await nextTick()
+    expect(onUpdateSelection).toHaveBeenCalledWith({ r2: true })
+  })
+
   it('sorts a paginated table from the bound sorting prop', async () => {
     const onUpdateSorting = vi.fn()
     const wrapper = mount(TestDataTable, {

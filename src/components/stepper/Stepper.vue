@@ -38,7 +38,7 @@ function state(index: number): 'complete' | 'current' | 'upcoming' {
             cn(
               'flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-medium',
               state(index) === 'complete'
-                ? 'bg-primary-500 text-white'
+                ? 'bg-primary-700 text-white'
                 : state(index) === 'current'
                   ? 'border-2 border-primary-500 text-primary-600'
                   : 'border border-border text-muted',

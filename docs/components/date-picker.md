@@ -133,6 +133,6 @@ None. `DatePicker` does not call `defineExpose`.
 - The popover and trigger use semantic tokens (`bg-surface`, `text-foreground`,
   `border-border`, `shadow-popover`). The in-range days use `primary-100` /
   `primary-800` with explicit `dark:bg-primary-900/40 dark:text-primary-200` variants, and the
-  selected endpoints use `primary-500` with white text, so both themes stay legible.
+  selected endpoints use `primary-700` with white text, so both themes stay legible.
 - The navigation chevrons use `rtl:rotate-180`, so "previous" and "next" point the correct way
   under RTL. The calendar grid and time controls are direction-neutral.

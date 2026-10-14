@@ -216,8 +216,9 @@ adapt automatically; only tinted or edge-case components need explicit `dark:` v
    `Alert`/`Message`, `Toast`, `InputNumber`, `Drawer`, and `ThemeToggle` (Button-style ghost styling
    plus semantic tokens) style from the shared semantic tokens (and the `lib/tones.ts` map) rather than
    raw colors; use the `*-900/40` / `*-200` dark-tint rule from §3 when a brand tint is needed.
-2. **Blue as primary.** Use `primary-500` for primary actions and brand surfaces; `warning-500` and
-   `error-500` as accents only.
+2. **Blue as primary.** Use `primary-500` for brand surfaces and interactive accents
+   (focus rings, links, selected-state borders); the primary **button** uses `primary-700`
+   with white text so it meets WCAG AA. `warning-500` and `error-500` as accents only.
 3. **Logo handling.** The library ships no logo. Consumers must use an official asset, preserve
    aspect ratio, respect the 2 cm minimum width and `x` clear space, and only use the white version
    on the four approved backgrounds.
@@ -248,11 +249,12 @@ manual:
   `255 255 255` for strict brand-white.
 - **Destructive button contrast.** White text on `error-500` (`#E9322B`) is ≈4.2:1 — just under
   AA for small text. For small destructive labels prefer `error-600` (≈5.3:1) or larger text.
-- **Primary button contrast.** White text on `primary-500` (MYGHF Blue `#00A2DD`) is ≈2.9:1 —
-  below AA and the 3:1 large-text threshold. The primary solid button should move to a darker
-  blue (e.g. `primary-700`, ≈6.6:1) or black text; until then it is pinned as a known exception in
-  `src/lib/contrast.spec.ts` and tracked in
-  [issue #12](https://github.com/myghf/ui/issues/12).
+- **Primary button contrast (resolved — was issue #12).** White text on
+  `primary-500` (MYGHF Blue `#00A2DD`) is ≈2.9:1 — below AA and the 3:1
+  large-text threshold. The primary action therefore uses `primary-700`
+  (≈6.6:1) with white text, and `primary-800` on hover. `src/lib/contrast.spec.ts`
+  asserts the pair meets AA and fails the suite if any component pairs
+  `bg-primary-500` with white text.
 - **Muted text contrast.** `--myghf-muted` (`#808080`, the brand mid-gray) is ≈3.95:1 on
   `surface` — below AA for normal text (it passes for large text and non-text UI). Keep
   `text-muted` to short, non-essential text, or use `text-foreground` where the text matters;

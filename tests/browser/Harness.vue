@@ -93,7 +93,7 @@ const bars = [
       <p data-contrast-probe class="text-foreground">Body text on the page background.</p>
 
       <Inline gap="sm">
-        <span data-token-probe class="rounded bg-primary-500 px-2 py-1 text-xs text-white">token probe</span>
+        <span data-token-probe class="rounded bg-primary-500 px-2 py-1 text-xs text-foreground">token probe</span>
         <span data-surface-probe class="rounded bg-surface px-2 py-1 text-xs text-foreground">surface probe</span>
       </Inline>
 

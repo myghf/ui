@@ -41,8 +41,9 @@ rules that come up most when building:
 
 1. **Tokens first.** Use `--myghf-*` variables or the preset's Tailwind classes. Never
    hard-code a hex value, and add a token only when no existing token fits.
-2. **Blue as primary.** Use `primary-500` for primary actions and brand surfaces; keep
-   gold and red as accents.
+2. **Blue as primary.** Use `primary-500` for brand surfaces and interactive
+   accents; the primary button uses `primary-700` so its white text meets WCAG
+   AA. Keep gold and red as accents.
 3. **Bilingual by default.** Prefer logical utilities (`ps-*`, `pe-*`, `ms-*`, `me-*`,
    `start-*`, `end-*`, `text-start`, `text-end`) over physical ones, and use `rtl:`
    variants for directional icons.

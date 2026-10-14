@@ -1,4 +1,5 @@
-import { readFileSync } from 'node:fs'
+import { readdirSync, readFileSync, statSync } from 'node:fs'
+import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
@@ -10,10 +11,12 @@ import { describe, expect, it } from 'vitest'
  * it parses `--myghf-*` RGB triples from `src/tokens.css` and applies the WCAG
  * relative-luminance formula to the pairs that `DESIGN.md` documents.
  *
- * Known brand limits (mid-gray text, the primary/red solid buttons) are pinned
- * with floors rather than AA thresholds so a regression is caught while the
+ * Known brand limits (mid-gray text and the red solid button) are pinned with
+ * floors rather than AA thresholds so a regression is caught while the
  * documented exception stays visible. See `DESIGN.md` §6.
  */
+
+const componentsDir = fileURLToPath(new URL('../components', import.meta.url))
 
 type Rgb = [number, number, number]
 
@@ -63,6 +66,22 @@ function token(map: Record<string, Rgb>, name: string): Rgb {
   return value
 }
 
+function vueFiles(dir: string): string[] {
+  return readdirSync(dir).flatMap((entry) => {
+    const full = join(dir, entry)
+    return statSync(full).isDirectory() ? vueFiles(full) : full.endsWith('.vue') ? [full] : []
+  })
+}
+
+/**
+ * A single class string that pairs `bg-primary-500` with white text. White on
+ * MYGHF Blue is ≈2.9:1 — below even the 3:1 large-text / non-text floor — so
+ * the pair is inaccessible at any size. The primary action uses `primary-700`
+ * instead; this guards the source so the pair cannot return.
+ */
+const WHITE_ON_PRIMARY =
+  /["'`][^"'`\n]*bg-primary-500[^"'`\n]*text-white[^"'`\n]*["'`]|["'`][^"'`\n]*text-white[^"'`\n]*bg-primary-500[^"'`\n]*["'`]/g
+
 const AA = 4.5
 
 describe('token contrast', () => {
@@ -107,9 +126,11 @@ describe('token contrast', () => {
     }
   })
 
-  it('solid button text meets WCAG AA where the palette allows', () => {
-    // White on the plum (secondary) button passes AA.
+  it('solid button text meets WCAG AA', () => {
+    // White on the plum (secondary) button and the dark blue (primary-700)
+    // button both pass AA.
     expect(contrast(WHITE, token(light, 'secondary-500'))).toBeGreaterThanOrEqual(AA)
+    expect(contrast(WHITE, token(light, 'primary-700'))).toBeGreaterThanOrEqual(AA)
   })
 
   it('keeps the documented brand contrast exceptions from regressing', () => {
@@ -118,12 +139,19 @@ describe('token contrast', () => {
       { label: 'muted on surface', value: contrast(token(light, 'muted'), token(light, 'surface')), floor: 3.9 },
       // White on MYGHF Red (destructive button) is a documented ≈4.2:1 caveat. DESIGN.md §6.
       { label: 'white on error-500', value: contrast(WHITE, token(light, 'error-500')), floor: 4.2 },
-      // White on MYGHF Blue (primary button) is well below AA — tracked in
-      // https://github.com/myghf/ui/issues/12; this floor only guards a regression.
-      { label: 'white on primary-500', value: contrast(WHITE, token(light, 'primary-500')), floor: 2.9 },
     ]
     for (const { label, value, floor } of exceptions) {
       expect(value, `${label} (measured ${value.toFixed(2)}:1)`).toBeGreaterThanOrEqual(floor)
     }
+  })
+
+  it('never pairs bg-primary-500 with white text', () => {
+    const offenders = vueFiles(componentsDir).flatMap((file) => {
+      const source = readFileSync(file, 'utf8')
+      return [...source.matchAll(WHITE_ON_PRIMARY)].map(
+        (match) => `${file.replace(`${componentsDir}/`, '')} → ${match[0]}`,
+      )
+    })
+    expect(offenders, `white on primary-500 found:\n${offenders.join('\n')}`).toEqual([])
   })
 })

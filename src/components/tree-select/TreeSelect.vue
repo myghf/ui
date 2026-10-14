@@ -128,7 +128,7 @@ function onUpdateItems(value: unknown) {
         >
           <span
             class="flex size-4 shrink-0 items-center justify-center rounded border border-border"
-            :class="stateOf(row.node) !== 'unchecked' && 'border-primary-500 bg-primary-500 text-white'"
+            :class="stateOf(row.node) !== 'unchecked' && 'border-primary-700 bg-primary-700 text-white'"
             aria-hidden="true"
           >
             <Check v-if="stateOf(row.node) === 'checked'" class="size-3" />

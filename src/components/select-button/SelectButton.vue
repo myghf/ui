@@ -98,7 +98,7 @@ watch(() => props.options, scheduleMeasure, { deep: true })
     <span
       v-show="indicator.ready"
       aria-hidden="true"
-      class="pointer-events-none absolute rounded bg-primary-500 transition-all duration-200 ease-out motion-reduce:transition-none"
+      class="pointer-events-none absolute rounded bg-primary-700 transition-all duration-200 ease-out motion-reduce:transition-none"
       :style="{
         left: `${indicator.left}px`,
         top: `${indicator.top}px`,

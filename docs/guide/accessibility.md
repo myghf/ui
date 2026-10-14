@@ -86,16 +86,13 @@ Follow the palette rules in [`DESIGN.md`](https://github.com/myghf/ui/blob/main/
 
 ## Known gaps
 
-- **Rendered contrast: body text is asserted; the brand exceptions are documented.** The palette
+- **Rendered contrast: body text is asserted; the brand exception is documented.** The palette
   guard (`src/lib/contrast.spec.ts`) checks the tokens, and the browser tests (`tests/browser/`)
   assert that body text meets AA against the real computed CSS in light **and** dark. The
-  brand-limited pairs — `muted` text (≈3.95:1) and the primary solid button (≈2.9:1) — are excluded
-  there and pinned as exceptions; see `DESIGN.md` §6 and
-  [issue #12](https://github.com/myghf/ui/issues/12).
-- **The primary solid button falls short of AA.** White text on `primary-500` (MYGHF Blue
-  `#00A2DD`) is ≈2.9:1 — below AA (4.5:1) and even the 3:1 large-text threshold. It is pinned
-  as a known exception in the contrast guard and in `DESIGN.md` §6; changing it is a brand
-  decision (a darker blue or black text), not a code fix.
+  brand-limited pair — `muted` text (≈3.95:1) — is excluded there and pinned as an
+  exception; see `DESIGN.md` §6. The primary solid button now meets AA: it uses
+  `primary-700` (≈6.6:1) with white text, and the guard fails if any component pairs
+  `bg-primary-500` with white text.
 - **No pixel/visual regression test.** Direction and theme are covered functionally (the source
   guard `src/lib/rtlCoverage.spec.ts`, plus axe in RTL and dark in `tests/browser/`), but nothing
   compares screenshots, so pixel-correct mirroring is still reviewed by inspection against the

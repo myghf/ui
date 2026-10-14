@@ -80,7 +80,7 @@ None. `SelectButton` does not call `defineExpose`.
 ## Dark mode & RTL
 
 - The track uses `bg-surface` with a `border-border` outline and the highlight uses
-  `primary-500` with white text, so it adapts to dark mode through the shared tokens.
+  `primary-700` with white text, so it adapts to dark mode through the shared tokens.
 - The highlight is positioned from the checked item's physical `offsetLeft` / `offsetTop`,
   which stays correct when the flex row mirrors under RTL — the measured box matches the
   item's rendered position. Items use symmetric padding and no physical directional
