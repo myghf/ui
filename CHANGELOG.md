@@ -1,5 +1,11 @@
 # @myghf/ui
 
+## 0.8.0
+
+### Minor Changes
+
+- 4c63e9d: feat: add TimePicker component — a localized time-only picker with 12/24-hour formats, configurable minute steps, and FormField wiring
+
 ## 0.7.1
 
 ### Patch Changes
