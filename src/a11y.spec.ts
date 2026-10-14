@@ -172,6 +172,10 @@ describe('a11y: form controls', () => {
     await expectClean(mount(UI.DatePicker, { props: { placeholder: 'Select date' } }))
   })
 
+  it('TimePicker', async () => {
+    await expectClean(mount(UI.TimePicker, { props: { modelValue: '09:30' } }))
+  })
+
   it('Combobox', async () => {
     await expectClean(
       mountWithLabel(() => h(UI.Combobox, { options: [{ label: 'Alpha', value: 'a' }] })),
@@ -437,6 +441,10 @@ describe('a11y: controls inside FormField', () => {
 
   it('DatePicker', async () => {
     await expectClean(mountInField(field, () => h(UI.DatePicker)))
+  })
+
+  it('TimePicker', async () => {
+    await expectClean(mountInField(field, () => h(UI.TimePicker)))
   })
 
   it('Combobox', async () => {

@@ -1,5 +1,12 @@
+import { readFileSync } from 'node:fs'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vitepress'
+
+// Read at build time so the docs topbar always shows the version Changesets
+// last bumped — the same version the release workflow publishes to npm.
+const { version } = JSON.parse(
+  readFileSync(fileURLToPath(new URL('../../package.json', import.meta.url)), 'utf8'),
+) as { version: string }
 
 export default defineConfig({
   title: 'MYGHF UI',
@@ -25,6 +32,7 @@ export default defineConfig({
       { text: 'Composables', link: '/composables/use-theme', activeMatch: '/composables/' },
       { text: 'Utilities', link: '/utilities/cn', activeMatch: '/utilities/' },
       { text: 'Tokens', link: '/reference/tokens', activeMatch: '/reference/' },
+      { text: `v${version}`, link: 'https://github.com/myghf/ui/releases' },
       { text: 'GitHub', link: 'https://github.com/myghf/ui' },
     ],
 
@@ -80,6 +88,7 @@ export default defineConfig({
               { text: 'SelectButton', link: '/components/select-button' },
               { text: 'Combobox', link: '/components/combobox' },
               { text: 'DatePicker', link: '/components/date-picker' },
+              { text: 'TimePicker', link: '/components/time-picker' },
               { text: 'TreeSelect', link: '/components/tree-select' },
               { text: 'TransferList', link: '/components/transfer-list' },
             ],
