@@ -17,6 +17,31 @@ export interface MyGhfLabels {
   moveAllToSource: string
   drawerTitle: string
   formErrorsTitle: string
+  // DataTable
+  emptyResults: string
+  loading: string
+  selectAllRows: string
+  selectRow: string
+  selected: string
+  toggleRow: string
+  search: string
+  searchPlaceholder: string
+  noResultsMatchFilters: string
+  clearFilters: string
+  // CommandPalette
+  typeACommand: string
+  searchCommands: string
+  commandPalette: string
+  commandPaletteDescription: string
+  // FileUpload
+  dropFilesPrompt: string
+  browse: string
+  remove: string
+  // TablePagination
+  rowsPerPage: string
+  of: string
+  previousPage: string
+  nextPage: string
 }
 
 export interface MyGhfConfig {
@@ -39,6 +64,27 @@ const EN: MyGhfLabels = {
   moveAllToSource: 'Move all to source',
   drawerTitle: 'Drawer',
   formErrorsTitle: 'Please fix the following:',
+  emptyResults: 'No results',
+  loading: 'Loading…',
+  selectAllRows: 'Select all rows',
+  selectRow: 'Select row',
+  selected: 'selected',
+  toggleRow: 'Toggle row',
+  search: 'Search',
+  searchPlaceholder: 'Search…',
+  noResultsMatchFilters: 'No results match your filters',
+  clearFilters: 'Clear filters',
+  typeACommand: 'Type a command…',
+  searchCommands: 'Search commands',
+  commandPalette: 'Command palette',
+  commandPaletteDescription: 'Search for and run a command.',
+  dropFilesPrompt: 'Drag and drop files here, or',
+  browse: 'browse',
+  remove: 'Remove',
+  rowsPerPage: 'Rows per page',
+  of: 'of',
+  previousPage: 'Previous page',
+  nextPage: 'Next page',
 }
 
 const AR: MyGhfLabels = {
@@ -54,6 +100,27 @@ const AR: MyGhfLabels = {
   moveAllToSource: 'نقل الكل إلى المصدر',
   drawerTitle: 'لوحة جانبية',
   formErrorsTitle: 'يرجى تصحيح ما يلي:',
+  emptyResults: 'لا توجد نتائج',
+  loading: 'جارٍ التحميل…',
+  selectAllRows: 'تحديد كل الصفوف',
+  selectRow: 'تحديد الصف',
+  selected: 'محدد',
+  toggleRow: 'تبديل الصف',
+  search: 'بحث',
+  searchPlaceholder: 'بحث…',
+  noResultsMatchFilters: 'لا توجد نتائج مطابقة لعوامل التصفية',
+  clearFilters: 'مسح عوامل التصفية',
+  typeACommand: 'اكتب أمرًا…',
+  searchCommands: 'بحث في الأوامر',
+  commandPalette: 'لوحة الأوامر',
+  commandPaletteDescription: 'ابحث عن أمر وشغّله.',
+  dropFilesPrompt: 'اسحب وأفلت الملفات هنا، أو',
+  browse: 'تصفح',
+  remove: 'إزالة',
+  rowsPerPage: 'صفوف لكل صفحة',
+  of: 'من',
+  previousPage: 'الصفحة السابقة',
+  nextPage: 'الصفحة التالية',
 }
 
 const LABEL_SETS: Record<string, MyGhfLabels> = { en: EN, ar: AR }

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Upload, X } from '@lucide/vue'
+import { useMyGhfConfig } from '../../lib/config'
 import { cn } from '../../lib/cn'
 import { useFieldControl } from '../../lib/formField'
 import Progress from '../progress/Progress.vue'
@@ -27,9 +28,9 @@ const props = withDefaults(
   {
     modelValue: () => [],
     multiple: false,
-    prompt: 'Drag and drop files here, or',
-    browseLabel: 'browse',
-    removeLabel: 'Remove',
+    prompt: () => useMyGhfConfig().labels.dropFilesPrompt,
+    browseLabel: () => useMyGhfConfig().labels.browse,
+    removeLabel: () => useMyGhfConfig().labels.remove,
     // `invalid`/`required` default to `undefined` so Boolean casting does not
     // swallow them and they can fall through to the form field context.
     invalid: undefined,
