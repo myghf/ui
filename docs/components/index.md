@@ -46,6 +46,7 @@ Inputs and controls for collecting and validating user data.
 | [SelectButton](/components/select-button) | `SelectButton` | Segmented control for a mutually exclusive set of options. |
 | [Combobox](/components/combobox) | `Combobox` | Searchable single/multi select with filtering and removable tags. |
 | [DatePicker](/components/date-picker) | `DatePicker` | Calendar field for a single date, a range, or a date and time. |
+| [TimePicker](/components/time-picker) | `TimePicker` | Time-only field with 12/24-hour formats and configurable minute steps. |
 | [TreeSelect](/components/tree-select) | `TreeSelect` | Tree dropdown that emits the selected leaf keys. |
 | [TransferList](/components/transfer-list) | `TransferList` | Moves items between available and selected lists. |
 

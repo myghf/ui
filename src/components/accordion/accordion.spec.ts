@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it, vi } from 'vitest'
 import { h } from 'vue'
 import Accordion from './Accordion.vue'
 import AccordionItem from './AccordionItem.vue'
@@ -36,9 +36,13 @@ describe('Accordion', () => {
   })
 
   it('emits update:modelValue when a trigger is clicked', async () => {
-    const wrapper = mountAccordion({ modelValue: '' })
+    // Assert on a listener spy, not `wrapper.emitted()`: under this
+    // Vue/VTU pair `emitted()` records nothing, even for a bare
+    // component that emits.
+    const onUpdate = vi.fn()
+    const wrapper = mountAccordion({ modelValue: '', 'onUpdate:modelValue': onUpdate })
     await wrapper.findAll('button')[1].trigger('click')
-    expect(wrapper.emitted('update:modelValue')).toBeTruthy()
+    expect(onUpdate).toHaveBeenCalledWith('b')
   })
 
   it('wraps the trigger in a heading, default h3 and configurable', () => {

@@ -94,6 +94,7 @@ const MAP: Record<string, string> = {
   Select: 'components/select.md',
   SelectButton: 'components/select-button.md',
   DatePicker: 'components/date-picker.md',
+  TimePicker: 'components/time-picker.md',
   Dialog: 'components/dialog.md',
   Drawer: 'components/drawer.md',
   DropdownMenu: 'components/dropdown-menu.md',

@@ -49,6 +49,7 @@ import {
   TabsTrigger,
   Tag,
   Textarea,
+  TimePicker,
   Timeline,
   TimelineItem,
   Tooltip,
@@ -65,6 +66,7 @@ const combobox = ref('')
 const text = ref('')
 const number = ref(3)
 const date = ref<Date | null>(null)
+const time = ref<string | null>('09:30')
 const files = ref<File[]>([])
 const page = ref(0)
 
@@ -162,6 +164,10 @@ const bars = [
 
         <FormField label="Admission date">
           <DatePicker v-model="date" />
+        </FormField>
+
+        <FormField label="Appointment time">
+          <TimePicker v-model="time" hour-format="12" :minute-step="15" />
         </FormField>
 
         <FormField label="Documents">

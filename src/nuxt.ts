@@ -99,6 +99,7 @@ export const AUTO_IMPORT_COMPONENTS = [
   'Select',
   'SelectButton',
   'DatePicker',
+  'TimePicker',
   'Dialog',
   'Drawer',
   'DropdownMenu',
