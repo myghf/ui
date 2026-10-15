@@ -4,6 +4,7 @@ import { NumberFieldRoot } from 'reka-ui'
 import { describe, expect, it, vi } from 'vitest'
 import { h, nextTick } from 'vue'
 import FormField from '../form-field/FormField.vue'
+import { createConfig, myghfConfigKey } from '../../lib/config'
 import InputNumber from './InputNumber.vue'
 
 describe('InputNumber', () => {
@@ -48,6 +49,17 @@ describe('InputNumber', () => {
   it('exposes a locale-formatted aria-valuetext', () => {
     const wrapper = mount(InputNumber, { props: { modelValue: 1234.5, locale: 'en-US' } })
     expect(wrapper.get('input').attributes('aria-valuetext')).toContain('1,234.5')
+  })
+
+  it('formats through the provided config locale', () => {
+    const wrapper = mount(InputNumber, {
+      props: { modelValue: 1234.5 },
+      global: { provide: { [myghfConfigKey]: createConfig({ locale: 'ar' }) } },
+    })
+    // The provider's locale drives both the aria-valuetext and reka's own
+    // number formatting. The generic `ar` locale keeps Western digits, so
+    // assert the locale that reaches the field rather than the glyphs.
+    expect(wrapper.props('locale')).toBe('ar')
   })
 
   it('omits aria-valuetext when there is no value', () => {

@@ -7,6 +7,26 @@ no locale data is bundled beyond what the runtime already provides.
 [DatePicker](/components/date-picker) uses these to render its calendar header, weekday row,
 and field text.
 
+## `browserLocale()`
+
+```ts
+function browserLocale(): string
+```
+
+Returns the runtime's preferred BCP-47 locale, read from
+`Intl.DateTimeFormat().resolvedOptions().locale`, falling back to `'en'`.
+
+**Returns:** `string` such as `'en-US'` or `'ar-EG'`.
+
+```ts
+import { browserLocale } from '@myghf/ui'
+
+browserLocale() // → 'en-US' (depends on the runtime)
+```
+
+The date and number components use this to default their `locale` prop, so they
+follow the runtime locale until a [config](/guide/i18n) provides one.
+
 ## `getFirstDayOfWeek(locale)`
 
 ```ts

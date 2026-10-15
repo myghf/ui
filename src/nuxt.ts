@@ -194,6 +194,7 @@ export const AUTO_IMPORT_UTILITIES = [
   'buildMinuteOptions',
   'to12Hour',
   'from12Hour',
+  'browserLocale',
   'getFirstDayOfWeek',
   'getWeekdayLabels',
   'getMonthLabel',

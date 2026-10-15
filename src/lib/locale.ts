@@ -36,3 +36,12 @@ export function formatLocalizedTime(date: Date, locale: string, hourFormat: '12'
       : { hour: 'numeric', minute: '2-digit', hour12: true }
   return new Intl.DateTimeFormat(locale, options).format(date)
 }
+
+/** The runtime's preferred BCP-47 locale, or `'en'` when it can't be read. */
+export function browserLocale(): string {
+  try {
+    return Intl.DateTimeFormat().resolvedOptions().locale || 'en'
+  } catch {
+    return 'en'
+  }
+}
