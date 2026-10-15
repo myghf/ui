@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import { ChevronLeft, ChevronRight } from '@lucide/vue'
 import Button from '../button/Button.vue'
+import { useMyGhfConfig } from '../../lib/config'
 import { pageRange, pageWindow, totalPages } from '../../lib/pagination'
 
 const props = withDefaults(
@@ -17,10 +18,10 @@ const props = withDefaults(
   }>(),
   {
     pageSizeOptions: () => [5, 10, 20],
-    rowsPerPageLabel: 'Rows per page',
-    ofLabel: 'of',
-    previousLabel: 'Previous page',
-    nextLabel: 'Next page',
+    rowsPerPageLabel: () => useMyGhfConfig().labels.rowsPerPage,
+    ofLabel: () => useMyGhfConfig().labels.of,
+    previousLabel: () => useMyGhfConfig().labels.previousPage,
+    nextLabel: () => useMyGhfConfig().labels.nextPage,
   },
 )
 

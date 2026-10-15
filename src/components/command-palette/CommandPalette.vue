@@ -9,6 +9,7 @@ import {
   DialogTitle,
   VisuallyHidden,
 } from 'reka-ui'
+import { useMyGhfConfig } from '../../lib/config'
 import Icon from '../icon/Icon.vue'
 import Input from '../input/Input.vue'
 
@@ -40,11 +41,11 @@ const props = withDefaults(
   {
     open: false,
     items: () => [],
-    placeholder: 'Type a command…',
-    emptyLabel: 'No results',
-    searchLabel: 'Search commands',
-    title: 'Command palette',
-    description: 'Search for and run a command.',
+    placeholder: () => useMyGhfConfig().labels.typeACommand,
+    emptyLabel: () => useMyGhfConfig().labels.emptyResults,
+    searchLabel: () => useMyGhfConfig().labels.searchCommands,
+    title: () => useMyGhfConfig().labels.commandPalette,
+    description: () => useMyGhfConfig().labels.commandPaletteDescription,
   },
 )
 
