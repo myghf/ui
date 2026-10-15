@@ -93,6 +93,8 @@ These components already handle direction:
 - **`DropdownMenu`** and **`Select`** — overlay positioning comes from Reka UI's popper
   primitives, which resolve the document direction and pass it to the positioner.
 
-> There is **no automated RTL visual test**. Correctness is reviewed against the
-> logical-utility rule above and verified by inspection, not by CI. A source-level guard that
-> fails on physical utilities in components is planned.
+> There is **no automated RTL visual test** yet. A source-level guard
+> (`rtlCoverage.spec.ts`) fails on physical utilities — including `left-*`/`right-*`
+> edge anchoring, with direction-neutral centering and the `Drawer`'s documented
+> physical positions excepted. Pixel-level RTL mirroring is still verified by
+> inspection, not by CI.
