@@ -115,16 +115,16 @@ function moveAllSource() {
 
     <div class="flex flex-row items-center justify-center gap-1 sm:flex-col">
       <Button variant="outline" size="icon-sm" :disabled="disabled || sourceSel.size === 0" :aria-label="labels.moveSelectedToTarget" @click="moveToTarget">
-        <ChevronRight class="size-4" />
+        <ChevronRight class="size-4 rtl:rotate-180" />
       </Button>
       <Button variant="outline" size="icon-sm" :disabled="disabled || targetSel.size === 0" :aria-label="labels.moveSelectedToSource" @click="moveToSource">
-        <ChevronLeft class="size-4" />
+        <ChevronLeft class="size-4 rtl:rotate-180" />
       </Button>
       <Button variant="ghost" size="icon-sm" :disabled="disabled" :aria-label="labels.moveAllToTarget" @click="moveAllTarget">
-        <ChevronsRight class="size-4" />
+        <ChevronsRight class="size-4 rtl:rotate-180" />
       </Button>
       <Button variant="ghost" size="icon-sm" :disabled="disabled" :aria-label="labels.moveAllToSource" @click="moveAllSource">
-        <ChevronsLeft class="size-4" />
+        <ChevronsLeft class="size-4 rtl:rotate-180" />
       </Button>
     </div>
 
