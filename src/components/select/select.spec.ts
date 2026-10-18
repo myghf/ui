@@ -1,10 +1,11 @@
 // @vitest-environment jsdom
 import { mount } from '@vue/test-utils'
 import { describe, expect, it } from 'vitest'
-import { computed, defineComponent, h, provide } from 'vue'
+import { computed, defineComponent, h, nextTick, provide, ref } from 'vue'
 import { formFieldKey, type FormFieldContext } from '../../lib/formField'
 import FormField from '../form-field/FormField.vue'
 import Select from './Select.vue'
+import type { AcceptableValue } from 'reka-ui'
 
 const context: FormFieldContext = {
   id: computed(() => 'field-1'),
@@ -115,5 +116,143 @@ describe('Select', () => {
     expect(wrapper.element.contains(listbox)).toBe(false)
 
     wrapper.unmount()
+  })
+
+  const clearableProps = () => ({
+    clearable: true,
+    modelValue: 'a',
+    options: [{ label: 'AAAA', value: 'a' }],
+    optionLabel: 'label',
+    optionValue: 'value',
+  })
+
+  it('places the clear button as a sibling of the trigger, not inside it', () => {
+    // reka-ui's SelectTrigger toggles open on `pointerdown`. A clear button nested
+    // inside that trigger button routes its pointer-down to the trigger and opens
+    // the select instead of clearing — so it must be a sibling, like Combobox.
+    const wrapper = mount(Select, { props: clearableProps() })
+    const trigger = wrapper.find('button[role="combobox"]')
+    const clearBtn = wrapper.find('button[aria-label="Clear selection"]')
+    expect(clearBtn.exists()).toBe(true)
+    expect(trigger.element.contains(clearBtn.element)).toBe(false)
+    expect(clearBtn.element.parentElement).toBe(trigger.element.parentElement)
+  })
+
+  it('does not open the select when the clear button is pressed', async () => {
+    const wrapper = mount(Select, { props: clearableProps() })
+    const trigger = wrapper.find('button[role="combobox"]')
+    const clearBtn = wrapper.find('button[aria-label="Clear selection"]')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+
+    await clearBtn.trigger('pointerdown')
+    await nextTick()
+
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+    expect(document.body.querySelector('[role="listbox"]')).toBeNull()
+  })
+
+  it('clears the value when the clear button is clicked', async () => {
+    const Host = defineComponent({
+      setup() {
+        const value = ref<unknown>('a')
+        return () =>
+          h(Select, {
+            modelValue: value.value as AcceptableValue,
+            clearable: true,
+            options: [{ label: 'AAAA', value: 'a' }],
+            optionLabel: 'label',
+            optionValue: 'value',
+            'onUpdate:modelValue': (v: unknown) => {
+              value.value = v
+            },
+          })
+      },
+    })
+    const wrapper = mount(Host)
+    const clearBtn = () => wrapper.find('button[aria-label="Clear selection"]')
+    expect(clearBtn().exists()).toBe(true)
+    expect(wrapper.find('button[role="combobox"]').attributes('aria-expanded')).toBe('false')
+
+    await clearBtn().trigger('pointerdown')
+    await clearBtn().trigger('click')
+    await nextTick()
+
+    // Pointer-down must not reach the trigger, so the select stays closed ...
+    expect(wrapper.find('button[role="combobox"]').attributes('aria-expanded')).toBe('false')
+    // ... and the click clears the value via v-model.
+    expect(clearBtn().exists()).toBe(false)
+  })
+
+  it('opens the select when the chevron is clicked', async () => {
+    const wrapper = mount(Select, {
+      props: {
+        options: [{ label: 'A', value: 'a' }],
+        optionLabel: 'label',
+        optionValue: 'value',
+      },
+    })
+    const chevron = wrapper.find('button[aria-label="Show options"]')
+    expect(chevron.exists()).toBe(true)
+    const trigger = wrapper.find('button[role="combobox"]')
+    expect(trigger.attributes('aria-expanded')).toBe('false')
+
+    await chevron.trigger('click')
+    await nextTick()
+
+    expect(trigger.attributes('aria-expanded')).toBe('true')
+  })
+
+  it('renders selected options as removable tags when multiple', () => {
+    const wrapper = mount(Select, {
+      props: {
+        multiple: true,
+        modelValue: ['a', 'b'],
+        options: [
+          { label: 'AAAA', value: 'a' },
+          { label: 'BBBB', value: 'b' },
+        ],
+        optionLabel: 'label',
+        optionValue: 'value',
+      },
+    })
+
+    expect(wrapper.findAll('button[aria-label="Remove"]')).toHaveLength(2)
+    expect(wrapper.text()).toContain('AAAA')
+    expect(wrapper.text()).toContain('BBBB')
+    // Tags replace the comma-joined display, so the trigger itself stays empty.
+    expect(wrapper.find('button[role="combobox"]').text()).not.toContain(',')
+  })
+
+  it('removes a single value when its tag is removed', async () => {
+    const Host = defineComponent({
+      setup() {
+        const value = ref<AcceptableValue[]>(['a', 'b'])
+        return () =>
+          h(Select, {
+            multiple: true,
+            modelValue: value.value,
+            options: [
+              { label: 'AAAA', value: 'a' },
+              { label: 'BBBB', value: 'b' },
+            ],
+            optionLabel: 'label',
+            optionValue: 'value',
+            'onUpdate:modelValue': (v: unknown) => {
+              value.value = v as AcceptableValue[]
+            },
+          })
+      },
+    })
+    const wrapper = mount(Host)
+
+    expect(wrapper.findAll('button[aria-label="Remove"]')).toHaveLength(2)
+
+    await wrapper.findAll('button[aria-label="Remove"]')[0].trigger('click')
+    await nextTick()
+
+    const removeButtons = wrapper.findAll('button[aria-label="Remove"]')
+    expect(removeButtons).toHaveLength(1)
+    expect(wrapper.text()).toContain('BBBB')
+    expect(wrapper.text()).not.toContain('AAAA')
   })
 })

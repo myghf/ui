@@ -15,6 +15,7 @@ import { Check, ChevronDown, X } from '@lucide/vue'
 import { cn } from '../../lib/cn'
 import { useMyGhfConfig } from '../../lib/config'
 import { useFieldControl } from '../../lib/formField'
+import Tag from '../tag/Tag.vue'
 
 const props = withDefaults(
   defineProps<{
@@ -84,6 +85,19 @@ const hasValue = computed(() =>
 function onClear() {
   emit('update:modelValue', props.multiple ? [] : null)
 }
+
+const selectedOptions = computed(() =>
+  props.multiple && Array.isArray(props.modelValue)
+    ? (props.modelValue as unknown[]).map((v) => props.options?.find((o) => valueOf(o) === v))
+    : [],
+)
+
+function remove(value: unknown) {
+  emit(
+    'update:modelValue',
+    (Array.isArray(props.modelValue) ? props.modelValue : []).filter((v) => v !== value),
+  )
+}
 </script>
 
 <template>
@@ -95,34 +109,55 @@ function onClear() {
     :required="required || undefined"
     @update:model-value="emit('update:modelValue', $event)"
   >
-    <SelectTrigger
+    <div
       :class="cn(
-        'flex w-full items-center justify-between gap-2 rounded-md border border-border bg-surface px-3 text-sm text-foreground shadow-sm transition-colors placeholder:text-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50',
-        size === 'sm' ? 'h-8 text-xs' : 'h-9',
-        invalid ? 'border-error-500 focus-visible:ring-error-500' : '',
-        $attrs.class as string || '',
+        'flex w-full flex-wrap items-center gap-1 rounded-md border border-border bg-surface px-3 text-sm text-foreground shadow-sm transition-colors focus-within:outline-none focus-within:ring-2 focus-within:ring-primary-500 disabled:cursor-not-allowed disabled:opacity-50',
+        size === 'sm' ? 'min-h-8 text-xs' : 'min-h-9',
+        invalid ? 'border-error-500 focus-within:ring-error-500' : '',
+        disabled ? 'cursor-not-allowed opacity-50' : '',
       )"
-      :id="id"
-      :aria-invalid="invalid || undefined"
-      :aria-describedby="describedBy"
-      v-bind="$attrs"
     >
-      <SelectValue :placeholder="placeholder">
-        <span class="truncate">{{ display || placeholder }}</span>
-      </SelectValue>
-      <span class="ms-auto flex shrink-0 items-center gap-1">
-        <button
-          v-if="clearable && hasValue"
-          type="button"
-          :aria-label="labels.clearSelection"
-          class="rounded p-0.5 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
-          @click.stop="onClear"
-        >
-          <X class="size-3.5" />
-        </button>
+      <Tag
+        v-for="opt in selectedOptions"
+        :key="String(valueOf(opt))"
+        tone="secondary"
+        removable
+        @remove="remove(valueOf(opt))"
+      >
+        {{ labelOf(opt) }}
+      </Tag>
+      <SelectTrigger
+        :class="cn(
+          'flex-1 flex items-center border-0 bg-transparent p-0 shadow-none outline-none',
+          $attrs.class as string || '',
+        )"
+        :id="id"
+        :aria-invalid="invalid || undefined"
+        :aria-describedby="describedBy"
+        v-bind="$attrs"
+      >
+        <SelectValue :placeholder="placeholder" class="flex-1 min-w-0">
+          <span class="block w-full min-w-0 truncate">{{ multiple && hasValue ? '' : display || placeholder }}</span>
+        </SelectValue>
+      </SelectTrigger>
+      <button
+        v-if="clearable && hasValue"
+        type="button"
+        :aria-label="labels.clearSelection"
+        class="shrink-0 rounded p-0.5 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        @click.stop="onClear"
+      >
+        <X class="size-3.5" />
+      </button>
+      <button
+        type="button"
+        :aria-label="labels.showOptions"
+        class="shrink-0 rounded p-0.5 text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+        @click="open = !open"
+      >
         <ChevronDown class="size-4 opacity-50" />
-      </span>
-    </SelectTrigger>
+      </button>
+    </div>
     <!-- reka-ui keeps an empty placeholder <div> in the DOM while the select is
          closed. In any `gap-*` flex container that extra zero-size item adds a
          gap, which vanishes when the popper opens — shifting sibling labels and
