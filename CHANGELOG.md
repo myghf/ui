@@ -1,5 +1,15 @@
 # @myghf/ui
 
+## 0.11.0
+
+### Minor Changes
+
+- fe04bae: feat: Select multi-select shows selected values as clearable tags instead of a comma-joined list
+
+### Patch Changes
+
+- fe04bae: fix: Select clear button now clears the value without opening the dropdown, and renders before the chevron icon
+
 ## 0.10.0
 
 ### Minor Changes
