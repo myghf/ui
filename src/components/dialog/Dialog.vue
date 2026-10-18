@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { computed, useSlots, type VNode } from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -27,7 +27,7 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:visible': [value: boolean]; close: [] }>()
 
 const labels = useMyGhfConfig().labels
-const slots = useSlots()
+const slots = useSlots() as Record<string, () => VNode[]>
 
 /**
  * reka-ui generates a description id for every dialog and always points

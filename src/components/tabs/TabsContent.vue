@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { TabsContent as RekaTabsContent } from 'reka-ui'
 
-const props = withDefaults(defineProps<{ value: string; padding?: boolean }>(), { padding: true })
+withDefaults(defineProps<{ value: string; padding?: boolean }>(), { padding: true })
 </script>
 
 <template>

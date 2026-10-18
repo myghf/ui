@@ -157,7 +157,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{ 'update:modelValue': [value: Date | [Date, Date] | null] }>()
 
-const slots = useSlots()
+const slots = useSlots() as Record<string, () => VNode[]>
 
 const { id, invalid, describedBy } = useFieldControl({
   id: () => props.inputId,

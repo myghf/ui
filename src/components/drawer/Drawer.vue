@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, useSlots } from 'vue'
+import { computed, useSlots, type VNode } from 'vue'
 import {
   DialogClose,
   DialogContent,
@@ -45,7 +45,7 @@ const props = withDefaults(
 const emit = defineEmits<{ 'update:open': [value: boolean]; open: []; close: [] }>()
 
 const labels = useMyGhfConfig().labels
-const slots = useSlots()
+const slots = useSlots() as Record<string, () => VNode[]>
 
 /**
  * reka-ui generates a description id for every drawer and always points
