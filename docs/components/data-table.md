@@ -5,6 +5,7 @@ import DataTableLoading from '../.vitepress/theme/demos/data-table/loading.vue'
 import DataTableSelection from '../.vitepress/theme/demos/data-table/selection.vue'
 import DataTableFiltering from '../.vitepress/theme/demos/data-table/filtering.vue'
 import DataTableColumns from '../.vitepress/theme/demos/data-table/columns.vue'
+import DataTableResponsive from '../.vitepress/theme/demos/data-table/responsive.vue'
 import DataTablePagination from '../.vitepress/theme/demos/data-table/pagination.vue'
 </script>
 
@@ -138,6 +139,43 @@ pins another).
 
 <<< ../.vitepress/theme/demos/data-table/columns.vue
 
+### Responsive columns
+
+Give a column `meta: { hideBelow }` and it hides while the viewport is narrower than that
+screen — Tailwind semantics, so `hideBelow: 'md'` hides below 768px:
+
+```ts
+columnHelper.accessor('waiting', {
+  header: 'Waiting (days)',
+  meta: { hideBelow: 'md' }, // 'sm' | 'md' | 'lg' | 'xl' | '2xl'
+})
+```
+
+The breakpoint never writes into `v-model:column-visibility`: viewport hiding is merged inside
+the table, and `update:columnVisibility` reports only your own changes. Above the breakpoint
+(e.g. desktop, and the first SSR render, where width is unknown until mount) every column is
+normal again. Columns you already hid through `column-visibility` are not surfaced by the
+breakpoint.
+
+Below the breakpoint the hidden values stay reachable through a row disclosure: each row gains
+the leading expander button — the same one `expandable` renders, labelled with
+`expandRowLabel` — and its expansion row lists the hidden columns as a `<dl>` of labels and
+values (values go through your `cell-<columnId>` slots when present). With `expandable` set,
+the list renders above your `expansion` slot content in the same row.
+
+| `meta` key | Type | Description |
+| --- | --- | --- |
+| `hideBelow` | `'sm' \| 'md' \| 'lg' \| 'xl' \| '2xl'` | Hide this column while the viewport is narrower than that screen. |
+
+<Demo>
+  <DataTableResponsive />
+</Demo>
+
+<<< ../.vitepress/theme/demos/data-table/responsive.vue
+
+Resize below 768px to collapse `Waiting (days)` into the row disclosures, and below 640px to
+collapse `Unit` as well.
+
 ### Pagination and server-side mode
 
 Set `paginate` to render the pagination footer (bound with `v-model:page-index` / `v-model:page-size`)
@@ -202,7 +240,9 @@ grouping — are **not** available through
 `columns` has the type
 `ColumnDef<typeof dataTableFeatures, T>[]`, so author them with
 `createColumnHelper<DataTableFeatures, T>()` from `@tanstack/vue-table`. A column's numeric
-`size` is read structurally and used as the column (header) width.
+`size` is read structurally and used as the column (header) width. Column `meta` is typed
+through the feature set's `columnMeta` slot — `hideBelow` (see Responsive columns), with the
+`DataTableColumnMeta` / `DataTableHideBelow` types exported from `@myghf/ui`.
 
 ## Props
 
@@ -259,7 +299,7 @@ grouping — are **not** available through
 | `update:selection` | `Record<string, boolean>` | Emitted with the new selection map. |
 | `update:globalFilter` | `string` | Emitted with the new global filter term. |
 | `update:filters` | `ColumnFiltersState` | Emitted with the new per-column filters. |
-| `update:columnVisibility` | `Record<string, boolean>` | Emitted with the new visibility map. |
+| `update:columnVisibility` | `Record<string, boolean>` | Emitted with the new visibility map. Breakpoint-forced hiding (Responsive columns) is merged inside the table and never appears here. |
 | `update:columnOrder` | `string[]` | Emitted with the new column order. |
 | `update:columnPinning` | `{ start?: string[]; end?: string[] }` | Emitted with the new pinning state. |
 | `update:pageIndex` | `number` | Emitted when the page changes. |
@@ -272,7 +312,7 @@ grouping — are **not** available through
 | --- | --- | --- |
 | `empty` | — | Replaces `emptyLabel` when there are no rows. |
 | `cell-<columnId>` | `{ row, cell, value }` | Overrides that column's cell. The column id is its accessor key (or `id`). |
-| `expansion` | `{ row }` | Content of the expansion row, shown for expanded rows only. |
+| `expansion` | `{ row }` | Content of the expansion row, shown for expanded rows only — after the responsive disclosure list, when one is active. |
 | `bulk-actions` | `{ rows, clear }` | Content of the bulk-actions bar, shown while rows are selected. |
 | `error` | — | Replaces the error text when `error` is set. |
 | `toolbar` | — | Extra controls in the toolbar (next to the search input and chips). |
@@ -306,6 +346,9 @@ and the events above.
 - With `selectable`, the header and row checkboxes are real [Checkbox](/components/checkbox)
   controls with `aria-label`s (`selectAllLabel`, and `selectRowLabel` plus the row number), and
   `aria-checked` reflects the selection. Clicking them never toggles row expansion.
+- Responsive columns (see above) reuse that same expander button — `aria-expanded`,
+  `aria-label` from `expandRowLabel` — so the disclosure is keyboard reachable, and the
+  hidden values render as a semantic `<dl>` of `dt`/`dd` pairs.
 
 ## Dark mode & RTL
 

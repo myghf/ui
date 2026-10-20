@@ -16,6 +16,20 @@ const VARIANTS = [
  */
 const HANDLED_SEPARATELY = new Set(['color-contrast'])
 
+type AxeResults = Awaited<ReturnType<AxeBuilder['analyze']>>
+
+/** Human-readable messages for every violation axe reports that we don't exempt. */
+function unexpectedViolations(violations: AxeResults['violations']): string[] {
+  return violations
+    .filter((violation) => !HANDLED_SEPARATELY.has(violation.id))
+    .map(
+      (violation) =>
+        `${violation.id} (${violation.impact}): ${violation.nodes
+          .map((node) => node.target.join(' '))
+          .join(', ')}`,
+    )
+}
+
 for (const variant of VARIANTS) {
   test.describe(variant.name, () => {
     test.beforeEach(async ({ page }) => {
@@ -25,15 +39,7 @@ for (const variant of VARIANTS) {
 
     test('has no unexpected accessibility violations', async ({ page }) => {
       const { violations } = await new AxeBuilder({ page }).analyze()
-      const unexpected = violations.filter((violation) => !HANDLED_SEPARATELY.has(violation.id))
-      expect(
-        unexpected.map(
-          (violation) =>
-            `${violation.id} (${violation.impact}): ${violation.nodes
-              .map((node) => node.target.join(' '))
-              .join(', ')}`,
-        ),
-      ).toEqual([])
+      expect(unexpectedViolations(violations)).toEqual([])
     })
 
     test('resolves the design tokens in real CSS', async ({ page }) => {
@@ -65,6 +71,24 @@ for (const variant of VARIANTS) {
         return (hi + 0.05) / (lo + 0.05)
       })
       expect(ratio).toBeGreaterThanOrEqual(4.5)
+    })
+  })
+}
+
+for (const variant of VARIANTS) {
+  test.describe(`narrow viewport / ${variant.name} (responsive DataTable disclosure)`, () => {
+    test.beforeEach(async ({ page }) => {
+      // Below `sm`: both harness DataTable columns with `hideBelow` collapse into
+      // the row disclosure, so axe covers the expander button and the <dl>.
+      await page.setViewportSize({ width: 375, height: 812 })
+      await page.goto(`/?dir=${variant.dir}&theme=${variant.theme}`)
+      await page.waitForSelector('[data-contrast-probe]')
+    })
+
+    test('renders the disclosure and has no unexpected accessibility violations', async ({ page }) => {
+      await expect(page.locator('tbody dl')).toBeVisible()
+      const { violations } = await new AxeBuilder({ page }).analyze()
+      expect(unexpectedViolations(violations)).toEqual([])
     })
   })
 }

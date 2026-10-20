@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { createColumnHelper } from '@tanstack/vue-table'
 import {
   Accordion,
   AccordionItem,
@@ -10,6 +11,8 @@ import {
   Button,
   Checkbox,
   Combobox,
+  DataTable,
+  type DataTableFeatures,
   DatePicker,
   DropdownMenu,
   DropdownMenuContent,
@@ -83,6 +86,23 @@ const bars = [
   { label: 'Neurology', value: 28 },
   { label: 'Oncology', value: 35 },
 ]
+
+interface HarnessRow {
+  id: string
+  patient: string
+  unit: string
+}
+const harnessRows: HarnessRow[] = [
+  { id: 'r1', patient: 'Amina Farouk', unit: 'Cardiology' },
+  { id: 'r2', patient: 'Youssef Kamal', unit: 'Neurology' },
+]
+const harnessColumnHelper = createColumnHelper<DataTableFeatures, HarnessRow>()
+const harnessColumns = harnessColumnHelper.columns([
+  harnessColumnHelper.accessor('patient', { header: 'Patient' }),
+  harnessColumnHelper.accessor('unit', { header: 'Unit', meta: { hideBelow: 'md' } }),
+])
+const getHarnessRowId = (row: HarnessRow) => row.id
+const harnessExpanded: Record<string, boolean> = { r1: true }
 </script>
 
 <template>
@@ -246,6 +266,13 @@ const bars = [
       </Table>
 
       <TablePagination v-model:page-index="page" :page-size="10" :total="35" />
+
+      <DataTable
+        :data="harnessRows"
+        :columns="harnessColumns"
+        :get-row-id="getHarnessRowId"
+        :expanded="harnessExpanded"
+      />
 
       <Inline gap="lg" align="center">
         <Sparkline :data="[4, 6, 5, 9, 7, 11]" label="Median wait times" />
