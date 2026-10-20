@@ -875,4 +875,19 @@ describe('DataTable responsive columns', () => {
       String(wrapper.findAll('thead th').length),
     )
   })
+
+  it('hides an accessorFn column whose id resolves from its string header', async () => {
+    const fnColumns = columnHelper.columns([
+      columnHelper.accessor('patient', { header: 'Patient' }),
+      columnHelper.accessor((row) => row.id, { header: 'Record', meta: { hideBelow: 'md' } }),
+    ])
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: fnColumns, getRowId, expanded: { r1: true } },
+    })
+    await nextTick()
+    expect(wrapper.get('thead').text()).not.toContain('Record')
+    expect(wrapper.get('tbody dl dt').text()).toBe('Record')
+    expect(wrapper.get('tbody dl dd').text()).toBe('r1')
+  })
 })

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { createColumnHelper } from '@tanstack/vue-table'
 import { DataTable, type DataTableFeatures } from '@myghf/ui'
 
@@ -30,8 +31,14 @@ const columns = columnHelper.columns([
   }),
 ])
 const getRowId = (row: Referral) => row.id
+const expanded = ref<Record<string, boolean>>({})
 </script>
 
 <template>
-  <DataTable :data="data" :columns="columns" :get-row-id="getRowId" />
+  <DataTable
+    v-model:expanded="expanded"
+    :data="data"
+    :columns="columns"
+    :get-row-id="getRowId"
+  />
 </template>

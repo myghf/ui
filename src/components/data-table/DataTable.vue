@@ -160,13 +160,74 @@ const sortingState = ref<SortingState>([])
 const sorting = computed(() => props.sorting ?? sortingState.value)
 const getRowId = props.getRowId ? (row: T) => props.getRowId!(row) : undefined
 
+const width = useViewportWidth()
+
 /**
- * Reads the effective column visibility. `useTable` reads `state` while it
- * constructs (before the table instance exists), so the viewport-aware merge is
- * installed after construction — construction and any pre-table reads see the
- * raw prop.
+ * Mirrors TanStack's column id resolution (`id` → `accessorKey` → string `header`,
+ * see constructColumn) so breakpoint hiding can key `columnVisibility` from the
+ * column defs alone. The controlled state must never read back through the table
+ * instance: TanStack reads `state` while deriving columns, so a table read from
+ * a state-derived computed would close a reactive loop.
  */
-let readColumnVisibility = (): Record<string, boolean> => props.columnVisibility
+function idOf(columnDef: ColumnDef<typeof dataTableFeatures, T>): string | undefined {
+  const { id, accessorKey, header } = columnDef as {
+    id?: unknown
+    accessorKey?: unknown
+    header?: unknown
+  }
+  const resolved =
+    id ??
+    (accessorKey !== undefined ? String(accessorKey).replaceAll('.', '_') : undefined) ??
+    (typeof header === 'string' ? header : undefined)
+  return resolved === undefined ? undefined : String(resolved)
+}
+
+/** Leaf columns the current viewport hides via `meta.hideBelow`, with their disclosure labels. */
+const breakpointHidden = computed<{ id: string; label: string }[]>(() => {
+  const viewport = width.value
+  if (viewport === null) return []
+  const hidden: { id: string; label: string }[] = []
+  const visit = (defs: readonly ColumnDef<typeof dataTableFeatures, T>[]): void => {
+    for (const def of defs) {
+      if ('columns' in def && def.columns && def.columns.length > 0) {
+        visit(def.columns)
+        continue
+      }
+      const hideBelow = def.meta?.hideBelow
+      if (hideBelow === undefined || !isBelow(hideBelow, viewport)) continue
+      const id = idOf(def)
+      // TanStack rejects defs it cannot id, so this column would never render anyway.
+      if (id === undefined) continue
+      hidden.push({ id, label: typeof def.header === 'string' ? def.header : id })
+    }
+  }
+  visit(props.columns)
+  return hidden
+})
+
+/** Ids the viewport forces hidden — merged into the table, never into the prop. */
+const breakpointHiddenIds = computed(
+  () => new Set(breakpointHidden.value.map((column) => column.id)),
+)
+
+/** Breakpoint-hidden columns the consumer has not hidden themselves: the disclosure's content. */
+const disclosureColumns = computed(() =>
+  breakpointHidden.value.filter((column) => props.columnVisibility[column.id] !== false),
+)
+
+const responsiveActive = computed(() => disclosureColumns.value.length > 0)
+/** The leading expander column: row expansion, or the responsive disclosure when active. */
+const showExpander = computed(() => props.expandable || responsiveActive.value)
+
+/** Props visibility merged with viewport-forced hides; identity when nothing is forced. */
+const effectiveColumnVisibility = computed<Record<string, boolean>>(() => {
+  const hidden = breakpointHiddenIds.value
+  // Identity when nothing is forced, so unaffected tables behave exactly as before.
+  if (hidden.size === 0) return props.columnVisibility
+  const merged = { ...props.columnVisibility }
+  for (const id of hidden) merged[id] = false
+  return merged
+})
 
 const table = useTable({
   features: dataTableFeatures,
@@ -197,7 +258,7 @@ const table = useTable({
       return props.filters
     },
     get columnVisibility() {
-      return readColumnVisibility()
+      return effectiveColumnVisibility.value
     },
     get columnOrder() {
       return props.columnOrder
@@ -244,7 +305,7 @@ const table = useTable({
     emit('update:filters', next)
   },
   onColumnVisibilityChange: (updater) => {
-    const current = readColumnVisibility()
+    const current = effectiveColumnVisibility.value
     const next = typeof updater === 'function' ? updater(current) : current
     // The updater ran against the viewport-merged state; give the consumer back
     // their own intent for viewport-managed keys so breakpoint hiding never
@@ -292,46 +353,12 @@ const table = useTable({
   },
 })
 
-const width = useViewportWidth()
-
-/** Leaf columns whose `meta.hideBelow` the current viewport hides. */
-const responsiveHidden = computed(() => {
-  const viewport = width.value
-  if (viewport === null) return []
-  return table.getAllLeafColumns().filter((column) => {
-    const hideBelow = column.columnDef.meta?.hideBelow
-    return hideBelow !== undefined && isBelow(hideBelow, viewport)
-  })
-})
-
-/** Ids the viewport forces hidden — merged into the table, never into the prop. */
-const breakpointHiddenIds = computed(() => new Set(responsiveHidden.value.map((column) => column.id)))
-
-/** Breakpoint-hidden columns the consumer has not hidden themselves: the disclosure's content. */
-const disclosureColumns = computed(() =>
-  responsiveHidden.value.filter((column) => props.columnVisibility[column.id] !== false),
-)
-
-const responsiveActive = computed(() => disclosureColumns.value.length > 0)
-/** The leading expander column: row expansion, or the responsive disclosure when active. */
-const showExpander = computed(() => props.expandable || responsiveActive.value)
-
-const effectiveColumnVisibility = computed<Record<string, boolean>>(() => {
-  const hidden = breakpointHiddenIds.value
-  // Identity when nothing is forced, so unaffected tables behave exactly as before.
-  if (hidden.size === 0) return props.columnVisibility
-  const merged = { ...props.columnVisibility }
-  for (const id of hidden) merged[id] = false
-  return merged
-})
-readColumnVisibility = () => effectiveColumnVisibility.value
-
 /** Disclosure entries for one row: label + cell per column hidden at this viewport. */
 function disclosureFor(row: Row<typeof dataTableFeatures, T>) {
   const cells = row.getAllCellsByColumnId()
   return disclosureColumns.value.map((column) => ({
     id: column.id,
-    label: typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id,
+    label: column.label,
     cell: cells[column.id],
   }))
 }
