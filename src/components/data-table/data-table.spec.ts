@@ -654,6 +654,29 @@ describe('DataTable columns', () => {
     expect(style).toContain('inset-inline-start')
   })
 
+  it('aligns a column header and its cells from meta.align', () => {
+    const alignColumns = columnHelper.columns([
+      columnHelper.accessor('patient', { header: 'Patient' }),
+      columnHelper.accessor('id', { header: 'ID', meta: { align: 'end' } }),
+      columnHelper.accessor('patient', {
+        id: 'record',
+        header: 'Record',
+        meta: { align: 'center' },
+      }),
+    ])
+    const wrapper = mount(TestDataTable, { props: { data, columns: alignColumns, getRowId } })
+
+    const heads = wrapper.findAll('thead th')
+    expect(heads[0].classes()).not.toContain('text-end')
+    expect(heads[0].classes()).not.toContain('text-center')
+    expect(heads[1].classes()).toContain('text-end')
+    expect(heads[2].classes()).toContain('text-center')
+
+    const cells = bodyRows(wrapper)[0].findAll('td')
+    expect(cells[1].classes()).toContain('text-end')
+    expect(cells[2].classes()).toContain('text-center')
+  })
+
   it('renders a resize handle per column when resizable', () => {
     const wrapper = mount(TestDataTable, {
       props: { data, columns, getRowId, resizable: true },

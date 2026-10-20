@@ -569,6 +569,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
             v-for="header in table.getHeaderGroups()[0]?.headers ?? []"
             :key="header.id"
             :width="widthOf(header.column.columnDef)"
+            :align="header.column.columnDef.meta?.align"
             :sort-direction="header.column.getCanSort() ? sortDirection(header.column.id) : undefined"
             :class="[resizable ? 'relative' : '', header.column.getIsPinned() ? 'bg-surface' : '']"
             :style="pinStyle(header.column)"
@@ -655,6 +656,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
               <TableCell
                 v-for="cell in row.getVisibleCells()"
                 :key="cell.id"
+                :align="cell.column.columnDef.meta?.align"
                 :class="cell.column.getIsPinned() ? 'bg-surface' : ''"
                 :style="pinStyle(cell.column)"
               >

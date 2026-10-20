@@ -9,12 +9,6 @@ export const SCREENS = { sm: 640, md: 768, lg: 1024, xl: 1280, '2xl': 1536 } as 
 /** Breakpoints a DataTable column can declare through `meta.hideBelow`. */
 export type DataTableHideBelow = keyof typeof SCREENS
 
-/** Per-column meta typed into `ColumnDef.meta` through the features' `columnMeta` slot. */
-export interface DataTableColumnMeta {
-  /** Hide the column while the viewport is narrower than this screen (Tailwind semantics). */
-  hideBelow?: DataTableHideBelow
-}
-
 /**
  * True while `width` is narrower than `screen`.
  * `isBelow('md', 700)` is true; `isBelow('md', 768)` is not — matching how
