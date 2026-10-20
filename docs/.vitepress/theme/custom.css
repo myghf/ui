@@ -37,6 +37,9 @@
   --vp-c-bg-alt: rgb(var(--myghf-surface-muted));
   --vp-c-bg-soft: rgb(var(--myghf-surface-muted));
   --vp-c-bg-elv: rgb(var(--myghf-surface));
+  /* The sidebar navigation shares the page background. VitePress defaults it to
+   * bg-alt, which code blocks and inputs also use — those must stay distinct. */
+  --vp-sidebar-bg-color: rgb(var(--myghf-background));
   /* text (site title uses --vp-c-neutral) */
   --vp-c-neutral: rgb(var(--myghf-foreground));
   --vp-c-neutral-inverse: rgb(var(--myghf-surface));
