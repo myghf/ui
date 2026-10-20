@@ -345,6 +345,32 @@ describe('a11y: navigation & data', () => {
     )
   })
 
+  it('DataTable (responsive disclosure)', async () => {
+    Object.defineProperty(window, 'innerWidth', { value: 500, configurable: true, writable: true })
+    window.dispatchEvent(new Event('resize'))
+    try {
+      const columnHelper = createColumnHelper<DataTableFeatures, { id: string; patient: string }>()
+      const columns = columnHelper.columns([
+        columnHelper.accessor('patient', { header: 'Patient' }),
+        columnHelper.accessor('id', { header: 'ID', meta: { hideBelow: 'md' } }),
+      ])
+      const data = [{ id: 'r1', patient: 'Amina Farouk' }]
+      await expectClean(
+        mountAny(UI.DataTable, {
+          props: {
+            data,
+            columns,
+            getRowId: (row: { id: string }) => row.id,
+            expanded: { r1: true },
+          },
+        }),
+      )
+    } finally {
+      Object.defineProperty(window, 'innerWidth', { value: 1024, configurable: true, writable: true })
+      window.dispatchEvent(new Event('resize'))
+    }
+  })
+
   it('DataTable (paginated)', async () => {
     const columnHelper = createColumnHelper<DataTableFeatures, { id: string; patient: string }>()
     const columns = columnHelper.columns([columnHelper.accessor('patient', { header: 'Patient' })])

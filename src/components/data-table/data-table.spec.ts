@@ -2,7 +2,7 @@
 import { mount, type VueWrapper } from '@vue/test-utils'
 import { createColumnHelper, type ColumnDef, type ColumnFiltersState } from '@tanstack/vue-table'
 import { h, nextTick, type DefineComponent } from 'vue'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 import type { DataTableFeatures } from '../../lib/table'
 import Checkbox from '../checkbox/Checkbox.vue'
 import Skeleton from '../skeleton/Skeleton.vue'
@@ -631,6 +631,9 @@ describe('DataTable columns', () => {
     })
     expect(wrapper.get('thead').text()).not.toContain('Patient')
     expect(wrapper.get('thead').text()).toContain('ID')
+    // The body must skip hidden cells too, or rows render an extra <td>.
+    expect(wrapper.get('tbody').text()).not.toContain('Amina Farouk')
+    expect(wrapper.get('tbody').text()).toContain('r1')
   })
 
   it('reorders columns from the order state', () => {
@@ -715,5 +718,161 @@ describe('DataTable virtualization', () => {
       props: { data: many, columns, getRowId, maxHeight: '12rem' },
     })
     expect(wrapper.findAll('[data-row-id]')).toHaveLength(many.length)
+  })
+})
+
+describe('DataTable responsive columns', () => {
+  const DEFAULT_WIDTH = 1024
+
+  function setWidth(value: number): void {
+    Object.defineProperty(window, 'innerWidth', { value, configurable: true, writable: true })
+    window.dispatchEvent(new Event('resize'))
+  }
+
+  const responsiveColumns = columnHelper.columns([
+    columnHelper.accessor('patient', { header: 'Patient' }),
+    columnHelper.accessor('id', { header: 'ID', meta: { hideBelow: 'md' } }),
+  ])
+
+  afterEach(() => setWidth(DEFAULT_WIDTH))
+
+  it('hides a hideBelow column below the breakpoint and restores it above', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: responsiveColumns, getRowId },
+    })
+    await nextTick()
+    expect(wrapper.get('thead').text()).not.toContain('ID')
+    expect(wrapper.get('thead').text()).toContain('Patient')
+    expect(wrapper.find('[data-row-id="r1"]').text()).not.toContain('r1')
+
+    setWidth(DEFAULT_WIDTH)
+    await nextTick()
+    expect(wrapper.get('thead').text()).toContain('ID')
+    expect(wrapper.find('[data-row-id="r1"]').text()).toContain('r1')
+  })
+
+  it('changes nothing above the breakpoint', async () => {
+    setWidth(DEFAULT_WIDTH)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: responsiveColumns, getRowId },
+    })
+    await nextTick()
+    expect(wrapper.get('thead').text()).toContain('ID')
+    expect(wrapper.find('[data-row-id="r1"] button').exists()).toBe(false)
+    expect(wrapper.find('tbody dl').exists()).toBe(false)
+  })
+
+  it('adds the disclosure expander below the breakpoint even when not expandable', async () => {
+    setWidth(500)
+    const onUpdateExpanded = vi.fn()
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns: responsiveColumns,
+        getRowId,
+        'onUpdate:expanded': onUpdateExpanded,
+      },
+    })
+    await nextTick()
+    const button = wrapper.get('[data-row-id="r1"] button[aria-expanded]')
+    expect(button.attributes('aria-expanded')).toBe('false')
+    await button.trigger('click')
+    expect(onUpdateExpanded).toHaveBeenCalledWith({ r1: true })
+  })
+
+  it('shows the hidden column as a definition list when the row is expanded', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: responsiveColumns, getRowId, expanded: { r1: true } },
+    })
+    await nextTick()
+    const dl = wrapper.get('tbody dl')
+    expect(dl.findAll('dt').map((dt) => dt.text())).toEqual(['ID'])
+    expect(dl.findAll('dd').map((dd) => dd.text())).toEqual(['r1'])
+    // Colspan must count the expander column and the hidden-but-present columns correctly.
+    expect(wrapper.get('tbody td[colspan]').attributes('colspan')).toBe(
+      String(wrapper.findAll('thead th').length),
+    )
+  })
+
+  it('renders the consumer cell slot for a disclosure value', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: responsiveColumns, getRowId, expanded: { r1: true } },
+      slots: { 'cell-id': (props: { value: string }) => h('span', {}, `#${props.value}`) },
+    })
+    await nextTick()
+    expect(wrapper.get('tbody dl dd').text()).toBe('#r1')
+  })
+
+  it('renders both the disclosure list and the expansion slot content', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: {
+        data,
+        columns: responsiveColumns,
+        getRowId,
+        expandable: true,
+        expanded: { r1: true },
+      },
+      slots: { expansion: () => h('span', {}, 'Extra details') },
+    })
+    await nextTick()
+    expect(wrapper.find('tbody dl').exists()).toBe(true)
+    expect(wrapper.text()).toContain('Extra details')
+  })
+
+  it('hides the disclosure row again when the viewport widens', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: responsiveColumns, getRowId, expanded: { r1: true } },
+    })
+    await nextTick()
+    expect(wrapper.find('tbody dl').exists()).toBe(true)
+
+    setWidth(DEFAULT_WIDTH)
+    await nextTick()
+    expect(wrapper.find('tbody dl').exists()).toBe(false)
+    expect(bodyRows(wrapper)).toHaveLength(2)
+  })
+
+  it('never emits viewport-forced hiding through update:column-visibility', async () => {
+    setWidth(500)
+    const onVisibility = vi.fn()
+    mount(TestDataTable, {
+      props: {
+        data,
+        columns: responsiveColumns,
+        getRowId,
+        'onUpdate:columnVisibility': onVisibility,
+      },
+    })
+    await nextTick()
+    setWidth(DEFAULT_WIDTH)
+    await nextTick()
+    expect(onVisibility).not.toHaveBeenCalled()
+  })
+
+  it('does not surface a column the consumer already hid', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data, columns: responsiveColumns, getRowId, columnVisibility: { id: false } },
+    })
+    await nextTick()
+    expect(wrapper.get('thead').text()).not.toContain('ID')
+    expect(wrapper.find('[data-row-id="r1"] button').exists()).toBe(false)
+    expect(wrapper.find('tbody dl').exists()).toBe(false)
+  })
+
+  it('keeps the empty-state colspan aligned with the rendered header count', async () => {
+    setWidth(500)
+    const wrapper = mount(TestDataTable, {
+      props: { data: [], columns: responsiveColumns, getRowId },
+    })
+    await nextTick()
+    expect(wrapper.get('tbody td[colspan]').attributes('colspan')).toBe(
+      String(wrapper.findAll('thead th').length),
+    )
   })
 })

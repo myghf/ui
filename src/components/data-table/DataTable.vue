@@ -6,12 +6,14 @@ import {
   type ColumnDef,
   type ColumnFiltersState,
   type ColumnPinningState,
+  type Row,
   type RowData,
   type RowSelectionState,
   type SortingState,
 } from '@tanstack/vue-table'
 import { ChevronDown, ChevronRight, ChevronUp, ChevronsUpDown } from '@lucide/vue'
 import { useMyGhfConfig } from '../../lib/config'
+import { isBelow, useViewportWidth } from '../../lib/responsive'
 import { dataTableFeatures } from '../../lib/table'
 import { shouldIgnoreRowToggle, toggleExpandedRow } from '../../lib/tableInteractions'
 import { virtualWindow } from '../../lib/virtual'
@@ -158,6 +160,14 @@ const sortingState = ref<SortingState>([])
 const sorting = computed(() => props.sorting ?? sortingState.value)
 const getRowId = props.getRowId ? (row: T) => props.getRowId!(row) : undefined
 
+/**
+ * Reads the effective column visibility. `useTable` reads `state` while it
+ * constructs (before the table instance exists), so the viewport-aware merge is
+ * installed after construction — construction and any pre-table reads see the
+ * raw prop.
+ */
+let readColumnVisibility = (): Record<string, boolean> => props.columnVisibility
+
 const table = useTable({
   features: dataTableFeatures,
   get columns() {
@@ -187,7 +197,7 @@ const table = useTable({
       return props.filters
     },
     get columnVisibility() {
-      return props.columnVisibility
+      return readColumnVisibility()
     },
     get columnOrder() {
       return props.columnOrder
@@ -234,8 +244,21 @@ const table = useTable({
     emit('update:filters', next)
   },
   onColumnVisibilityChange: (updater) => {
-    const next = typeof updater === 'function' ? updater(props.columnVisibility) : updater
-    emit('update:columnVisibility', next)
+    const current = readColumnVisibility()
+    const next = typeof updater === 'function' ? updater(current) : current
+    // The updater ran against the viewport-merged state; give the consumer back
+    // their own intent for viewport-managed keys so breakpoint hiding never
+    // leaks into `column-visibility`.
+    if (breakpointHiddenIds.value.size === 0) {
+      emit('update:columnVisibility', next)
+      return
+    }
+    const out: Record<string, boolean> = { ...next }
+    for (const id of breakpointHiddenIds.value) {
+      if (id in props.columnVisibility) out[id] = props.columnVisibility[id]
+      else delete out[id]
+    }
+    emit('update:columnVisibility', out)
   },
   onColumnOrderChange: (updater) => {
     const next = typeof updater === 'function' ? updater(props.columnOrder) : updater
@@ -268,14 +291,59 @@ const table = useTable({
     emit('update:pageSize', next.pageSize)
   },
 })
+
+const width = useViewportWidth()
+
+/** Leaf columns whose `meta.hideBelow` the current viewport hides. */
+const responsiveHidden = computed(() => {
+  const viewport = width.value
+  if (viewport === null) return []
+  return table.getAllLeafColumns().filter((column) => {
+    const hideBelow = column.columnDef.meta?.hideBelow
+    return hideBelow !== undefined && isBelow(hideBelow, viewport)
+  })
+})
+
+/** Ids the viewport forces hidden — merged into the table, never into the prop. */
+const breakpointHiddenIds = computed(() => new Set(responsiveHidden.value.map((column) => column.id)))
+
+/** Breakpoint-hidden columns the consumer has not hidden themselves: the disclosure's content. */
+const disclosureColumns = computed(() =>
+  responsiveHidden.value.filter((column) => props.columnVisibility[column.id] !== false),
+)
+
+const responsiveActive = computed(() => disclosureColumns.value.length > 0)
+/** The leading expander column: row expansion, or the responsive disclosure when active. */
+const showExpander = computed(() => props.expandable || responsiveActive.value)
+
+const effectiveColumnVisibility = computed<Record<string, boolean>>(() => {
+  const hidden = breakpointHiddenIds.value
+  // Identity when nothing is forced, so unaffected tables behave exactly as before.
+  if (hidden.size === 0) return props.columnVisibility
+  const merged = { ...props.columnVisibility }
+  for (const id of hidden) merged[id] = false
+  return merged
+})
+readColumnVisibility = () => effectiveColumnVisibility.value
+
+/** Disclosure entries for one row: label + cell per column hidden at this viewport. */
+function disclosureFor(row: Row<typeof dataTableFeatures, T>) {
+  const cells = row.getAllCellsByColumnId()
+  return disclosureColumns.value.map((column) => ({
+    id: column.id,
+    label: typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id,
+    cell: cells[column.id],
+  }))
+}
+
 const rows = computed(() => table.getRowModel().rows)
 const selectedRows = computed(() => table.getSelectedRowModel().rows)
-/** Includes the leading selection/expander columns. */
+/** Visible data columns plus the leading selection/expander columns. */
 const columnCount = computed(
   () =>
-    table.getAllLeafColumns().length +
+    table.getVisibleLeafColumns().length +
     (props.selectable ? 1 : 0) +
-    (props.expandable ? 1 : 0),
+    (showExpander.value ? 1 : 0),
 )
 /** Clamp to at least one placeholder row so 0/negative/fractional values still render. */
 const placeholderRowCount = computed(() => Math.max(1, Math.floor(props.loadingRows)))
@@ -392,7 +460,7 @@ function clearFilters() {
 
 function onRowClick(event: MouseEvent, rowId: string) {
   emit('row-click', rows.value.find((row) => row.id === rowId)?.original)
-  if (!props.expandable) return
+  if (!props.expandable && !responsiveActive.value) return
   if (props.stopRowToggleOnInteractiveCells && shouldIgnoreRowToggle(event.target)) return
   emit('update:expanded', toggleExpandedRow(props.expanded, rowId))
 }
@@ -467,7 +535,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
               @update:model-value="table.toggleAllRowsSelected($event)"
             />
           </TableHead>
-          <TableHead v-if="expandable" class="w-10">
+          <TableHead v-if="showExpander" class="w-10">
             <span class="sr-only">{{ expandRowLabel }}</span>
           </TableHead>
           <TableHead
@@ -529,7 +597,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
           </TableRow>
           <template v-for="row in visibleRows" :key="row.id">
             <TableRow
-              :clickable="expandable"
+              :clickable="showExpander"
               :data-row-id="row.id"
               :data-selected="row.getIsSelected() || undefined"
               :data-state="row.getIsExpanded() ? 'expanded' : undefined"
@@ -542,7 +610,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
                   @update:model-value="row.toggleSelected($event)"
                 />
               </TableCell>
-              <TableCell v-if="expandable" class="w-10">
+              <TableCell v-if="showExpander" class="w-10">
                 <button
                   type="button"
                   :aria-expanded="row.getIsExpanded()"
@@ -558,7 +626,7 @@ function onRowClick(event: MouseEvent, rowId: string) {
                 </button>
               </TableCell>
               <TableCell
-                v-for="cell in row.getAllCells()"
+                v-for="cell in row.getVisibleCells()"
                 :key="cell.id"
                 :class="cell.column.getIsPinned() ? 'bg-surface' : ''"
                 :style="pinStyle(cell.column)"
@@ -573,8 +641,26 @@ function onRowClick(event: MouseEvent, rowId: string) {
                 <FlexRender v-else :cell="cell" />
               </TableCell>
             </TableRow>
-            <TableRow v-if="row.getIsExpanded()" class="bg-surface-muted/30">
+            <TableRow
+              v-if="row.getIsExpanded() && (expandable || responsiveActive)"
+              class="bg-surface-muted/30"
+            >
               <TableCell :colspan="columnCount">
+                <dl v-if="disclosureColumns.length > 0" class="grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                  <template v-for="entry in disclosureFor(row)" :key="entry.id">
+                    <dt class="text-sm font-medium text-muted">{{ entry.label }}</dt>
+                    <dd class="text-sm text-foreground">
+                      <slot
+                        v-if="hasCellSlot(entry.id)"
+                        :name="`cell-${entry.id}`"
+                        :row="row"
+                        :cell="entry.cell"
+                        :value="entry.cell?.getValue()"
+                      />
+                      <FlexRender v-else-if="entry.cell" :cell="entry.cell" />
+                    </dd>
+                  </template>
+                </dl>
                 <slot name="expansion" :row="row" />
               </TableCell>
             </TableRow>
