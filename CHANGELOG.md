@@ -1,5 +1,12 @@
 # @myghf/ui
 
+## 0.12.0
+
+### Minor Changes
+
+- 5a25fa5: feat: DataTable responsive columns — hide columns below a breakpoint via meta.hideBelow, with a row-level disclosure for the hidden values
+- 62a3794: feat: DataTable column meta align — align a column's header and cells with logical text alignment
+
 ## 0.11.0
 
 ### Minor Changes
