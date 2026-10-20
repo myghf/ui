@@ -20,7 +20,7 @@ const columnHelper = createColumnHelper<DataTableFeatures, Referral>()
 const columns = columnHelper.columns([
   columnHelper.accessor('patient', { header: 'Patient', size: 200 }),
   columnHelper.accessor('unit', { header: 'Unit', size: 160 }),
-  columnHelper.accessor('waiting', { header: 'Waiting (days)', size: 140 }),
+  columnHelper.accessor('waiting', { header: 'Waiting (days)', size: 140, meta: { align: 'end' } }),
 ])
 const getRowId = (row: Referral) => row.id
 

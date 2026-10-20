@@ -176,6 +176,26 @@ the list renders above your `expansion` slot content in the same row.
 Resize below 768px to collapse `Waiting (days)` into the row disclosures, and below 640px to
 collapse `Unit` as well.
 
+### Header and cell alignment
+
+Set `meta.align` on a column to align its header **and** that column's cells. The value maps to
+logical properties (`text-start` / `text-center` / `text-end`), so it mirrors automatically under
+RTL:
+
+```ts
+columnHelper.accessor('waiting', {
+  header: 'Waiting (days)',
+  meta: { align: 'end' },
+})
+```
+
+| `meta` key | Type | Default | Description |
+| --- | --- | --- | --- |
+| `align` | `'start' \| 'center' \| 'end'` | `'start'` | Text alignment for the column's header and cells. |
+
+Sortable headers stay clickable when aligned — the sort button lines up with the aligned text.
+The columns demo end-aligns **Waiting (days)**.
+
 ### Pagination and server-side mode
 
 Set `paginate` to render the pagination footer (bound with `v-model:page-index` / `v-model:page-size`)
@@ -241,8 +261,9 @@ grouping — are **not** available through
 `ColumnDef<typeof dataTableFeatures, T>[]`, so author them with
 `createColumnHelper<DataTableFeatures, T>()` from `@tanstack/vue-table`. A column's numeric
 `size` is read structurally and used as the column (header) width. Column `meta` is typed
-through the feature set's `columnMeta` slot — `hideBelow` (see Responsive columns), with the
-`DataTableColumnMeta` / `DataTableHideBelow` types exported from `@myghf/ui`.
+through the feature set's `columnMeta` slot — `hideBelow` (see Responsive columns) and `align`
+(see Header and cell alignment), with the `DataTableColumnMeta` / `DataTableHideBelow` types
+exported from `@myghf/ui`.
 
 ## Props
 
