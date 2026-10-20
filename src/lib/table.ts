@@ -18,6 +18,7 @@ import {
   sortFns,
   tableFeatures,
 } from '@tanstack/vue-table'
+import type { DataTableColumnMeta } from './responsive'
 
 /**
  * Single registration point for the suite's engine.
@@ -42,6 +43,8 @@ export const dataTableFeatures = tableFeatures({
   expandedRowModel: createExpandedRowModel(),
   sortFns,
   filterFns,
+  // Type-only: types `ColumnDef.meta` (e.g. `hideBelow`) — phantom, stripped at runtime.
+  columnMeta: {} as DataTableColumnMeta,
 })
 
 export type DataTableFeatures = typeof dataTableFeatures
