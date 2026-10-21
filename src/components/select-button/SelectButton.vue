@@ -114,7 +114,7 @@ watch(() => props.options, scheduleMeasure, { deep: true })
       :value="valueOf(opt)"
       :disabled="disabled"
       class="relative inline-flex items-center justify-center rounded px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 data-[state=checked]:text-white data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
-      :class="block ? 'flex-1' : ''"
+      :style="{ flex: block ? '1 1 0%' : '1 1 auto' }"
     >
       <RadioGroupIndicator class="hidden" />
       {{ labelOf(opt) }}

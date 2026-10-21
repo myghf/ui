@@ -44,7 +44,9 @@ changes.
 ### Full-width (`block`)
 
 Without `block` the control fits its content even when its parent would stretch it. With
-`block` it fills the container's width and the options share it evenly.
+`block` it fills the container's width. In both cases the options stretch to fill the
+track completely — the group never leaves empty space inside itself, even when the row
+wraps onto multiple lines.
 
 <Demo>
   <SelectButtonBlock />

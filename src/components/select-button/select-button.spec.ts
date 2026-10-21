@@ -40,21 +40,21 @@ describe('SelectButton', () => {
     }
   })
 
-  it('sizes to its content width by default', () => {
+  it('sizes to its content width by default but lets options grow to fill the track', () => {
     const wrapper = mount(SelectButton, { props: { modelValue: 'a', options } })
     expect(wrapper.classes()).toContain('w-fit')
     expect(wrapper.classes()).not.toContain('w-full')
     for (const radio of wrapper.findAll('[role="radio"]')) {
-      expect(radio.classes()).not.toContain('flex-1')
+      expect((radio.element as HTMLElement).style.flex).toBe('1 1 auto')
     }
   })
 
-  it('expands to the full width of its container when block is set', () => {
+  it('fills the container and stretches options evenly when block is set', () => {
     const wrapper = mount(SelectButton, { props: { modelValue: 'a', options, block: true } })
     expect(wrapper.classes()).toContain('w-full')
     expect(wrapper.classes()).not.toContain('w-fit')
     for (const radio of wrapper.findAll('[role="radio"]')) {
-      expect(radio.classes()).toContain('flex-1')
+      expect((radio.element as HTMLElement).style.flex).toBe('1 1 0%')
     }
   })
 })
