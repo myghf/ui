@@ -13,13 +13,9 @@ const options = [
 
 <template>
   <div class="grid max-w-md gap-3">
-    <div class="border border-border p-3">
-      <SelectButton v-model="size" :options="options" aria-label="Fits content" />
-    </div>
+    <SelectButton v-model="size" :options="options" aria-label="Fits content" />
 
-    <div class="border border-border p-3">
-      <SelectButton v-model="size" :options="options" block aria-label="Fills container" />
-    </div>
+    <SelectButton v-model="size" :options="options" block aria-label="Fills container" />
 
     <p class="text-sm text-muted">Size: {{ size }}</p>
   </div>
