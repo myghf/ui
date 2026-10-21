@@ -14,4 +14,10 @@ describe('ThemeToggle', () => {
   it('offsets the focus ring against the dark background', () => {
     expect(mount(ThemeToggle).get('button').classes()).toContain('dark:focus-visible:ring-offset-background')
   })
+
+  it('scales the icon with the control size', () => {
+    expect(mount(ThemeToggle, { props: { size: 'sm' } }).get('button').classes()).toContain('[&_svg]:size-3.5')
+    expect(mount(ThemeToggle).get('button').classes()).toContain('[&_svg]:size-4')
+    expect(mount(ThemeToggle, { props: { size: 'lg' } }).get('button').classes()).toContain('[&_svg]:size-5')
+  })
 })

@@ -22,8 +22,9 @@ import { ThemeToggle } from '@myghf/ui'
 
 ### Sizes
 
-The three sizes mirror `Button`'s ghost treatment. All toggles in the example below share
-one controller, so clicking any of them updates the others.
+The three sizes mirror `Button`'s ghost treatment, and the icon scales with the control, so
+the sizes stay visually distinct even on a background-less button. All toggles in the
+example below share one controller, so clicking any of them updates the others.
 
 <Demo>
   <ThemeToggleSizes />
@@ -35,7 +36,7 @@ one controller, so clicking any of them updates the others.
 
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
-| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Control height and padding. |
+| `size` | `'sm' \| 'default' \| 'lg'` | `'default'` | Control height, padding, and icon size. |
 | `label` | `string` | `'Toggle theme'` | Accessible name, applied as `aria-label`. |
 
 ## Events
