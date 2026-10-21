@@ -39,6 +39,24 @@ describe('SelectButton', () => {
       expect(radio.attributes('data-disabled')).toBeDefined()
     }
   })
+
+  it('sizes to its content width by default', () => {
+    const wrapper = mount(SelectButton, { props: { modelValue: 'a', options } })
+    expect(wrapper.classes()).toContain('w-fit')
+    expect(wrapper.classes()).not.toContain('w-full')
+    for (const radio of wrapper.findAll('[role="radio"]')) {
+      expect(radio.classes()).not.toContain('flex-1')
+    }
+  })
+
+  it('expands to the full width of its container when block is set', () => {
+    const wrapper = mount(SelectButton, { props: { modelValue: 'a', options, block: true } })
+    expect(wrapper.classes()).toContain('w-full')
+    expect(wrapper.classes()).not.toContain('w-fit')
+    for (const radio of wrapper.findAll('[role="radio"]')) {
+      expect(radio.classes()).toContain('flex-1')
+    }
+  })
 })
 
 describe('SelectButton form-field wiring', () => {

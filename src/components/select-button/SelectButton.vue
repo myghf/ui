@@ -10,6 +10,7 @@ const props = withDefaults(
     optionLabel?: string
     optionValue?: string
     disabled?: boolean
+    block?: boolean
     invalid?: boolean
     required?: boolean
     id?: string
@@ -91,6 +92,7 @@ watch(() => props.options, scheduleMeasure, { deep: true })
     :aria-describedby="describedBy"
     :class="[
       'relative inline-flex flex-wrap items-center gap-1 rounded-md border border-border bg-surface p-1',
+      block ? 'w-full' : 'w-fit',
       invalid ? 'border-error-500' : '',
     ]"
     @update:model-value="emit('update:modelValue', $event)"
@@ -112,6 +114,7 @@ watch(() => props.options, scheduleMeasure, { deep: true })
       :value="valueOf(opt)"
       :disabled="disabled"
       class="relative inline-flex items-center justify-center rounded px-3 py-1 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 data-[state=checked]:text-white data-[disabled]:cursor-not-allowed data-[disabled]:opacity-50"
+      :class="block ? 'flex-1' : ''"
     >
       <RadioGroupIndicator class="hidden" />
       {{ labelOf(opt) }}

@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import SelectButtonBasic from '../.vitepress/theme/demos/select-button/basic.vue'
+import SelectButtonBlock from '../.vitepress/theme/demos/select-button/block.vue'
 </script>
 
 # SelectButton
 
 `SelectButton` is a segmented control: a row of mutually exclusive options with a sliding
 highlight behind the selected one. It is built on reka-ui's radio group, so it exposes
-`radiogroup` / `radio` semantics and arrow-key navigation.
+`radiogroup` / `radio` semantics and arrow-key navigation. By default it sizes to its
+content; pass `block` to stretch it to the full width of its container.
 
 ```vue
 <script setup lang="ts">
@@ -39,6 +41,17 @@ changes.
 
 <<< ../.vitepress/theme/demos/select-button/basic.vue
 
+### Full-width (`block`)
+
+Without `block` the control fits its content even when its parent would stretch it. With
+`block` it fills the container's width and the options share it evenly.
+
+<Demo>
+  <SelectButtonBlock />
+</Demo>
+
+<<< ../.vitepress/theme/demos/select-button/block.vue
+
 ## Props
 
 | Prop | Type | Default | Description |
@@ -48,6 +61,7 @@ changes.
 | `optionLabel` | `string` | `'label'` | Key whose value is shown as an option's label. |
 | `optionValue` | `string` | `'value'` | Key whose value is emitted as an option's value. |
 | `disabled` | `boolean` | `false` | Disables the whole group. |
+| `block` | `boolean` | `false` | Stretches the control to its container's width, spreading options evenly. |
 
 ## Events
 
@@ -75,7 +89,7 @@ None. `SelectButton` does not call `defineExpose`.
   ```
 - The moving highlight is `aria-hidden` and purely decorative; selection is conveyed by
   `aria-checked`, not by the highlight alone.
-- There is no `invalid` state and no size prop.
+- There is no `invalid` state; width is content-based unless `block` is set.
 
 ## Dark mode & RTL
 
