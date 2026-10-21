@@ -26,4 +26,24 @@ describe('Timeline', () => {
     const empty = mount(TimelineItem, { props: { title: 'Only a title' } })
     expect(empty.text()).toBe('Only a title')
   })
+
+  it('draws a connector rail on every item, suppressed on the last one', () => {
+    const wrapper = mount(Timeline, {
+      slots: {
+        default: () => [
+          h(TimelineItem, { title: 'Admitted' }),
+          h(TimelineItem, { title: 'Transferred' }),
+          h(TimelineItem, { title: 'Discharged' }),
+        ],
+      },
+    })
+    for (const li of wrapper.findAll('li')) {
+      const classes = li.classes()
+      expect(classes).toContain('!m-0')
+      expect(classes).toContain('after:absolute')
+      expect(classes).toContain('after:start-[4.5px]')
+      expect(classes).toContain('after:-bottom-5')
+      expect(classes).toContain('last:after:hidden')
+    }
+  })
 })

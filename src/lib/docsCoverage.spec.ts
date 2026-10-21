@@ -137,8 +137,8 @@ const MAP: Record<string, string> = {
   BarChart: 'components/charts.md',
   StatCard: 'components/dashboard.md',
   StatusBadge: 'components/dashboard.md',
-  Timeline: 'components/dashboard.md',
-  TimelineItem: 'components/dashboard.md',
+  Timeline: 'components/timeline.md',
+  TimelineItem: 'components/timeline.md',
   Stepper: 'components/dashboard.md',
 }
 

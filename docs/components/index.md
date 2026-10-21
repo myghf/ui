@@ -23,6 +23,7 @@ Components that trigger actions or present short, non-interactive information.
 | [Skeleton](/components/skeleton) | `Skeleton` | Pulsing placeholder block for loading layouts, with shape and size control. |
 | [Progress](/components/progress) | `Progress` | Horizontal progress bar, determinate or indeterminate. |
 | [Avatar](/components/avatar) | `Avatar` | Circular profile image that falls back to initials when no image is available. |
+| [Timeline](/components/timeline) | `Timeline`, `TimelineItem` | Chronological activity list whose bullets are joined by a vertical line. |
 | [ThemeToggle](/components/theme-toggle) | `ThemeToggle` | Button that flips the shared light/dark theme. |
 | [Icon](/components/icon) | `Icon` | Renders a Lucide icon by name. |
 
@@ -101,4 +102,4 @@ Operational and clinical building blocks.
 
 | Component | Exports | Summary |
 | --- | --- | --- |
-| [Dashboard](/components/dashboard) | `StatCard`, `StatusBadge`, `Timeline`, `TimelineItem`, `Stepper` | Metric card, status badge, activity timeline, and progress stepper. |
+| [Dashboard](/components/dashboard) | `StatCard`, `StatusBadge`, `Stepper` | Metric card, status badge, and progress stepper. |

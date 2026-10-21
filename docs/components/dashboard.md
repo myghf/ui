@@ -4,8 +4,8 @@ import DashboardBasic from '../.vitepress/theme/demos/dashboard/basic.vue'
 
 # Dashboard
 
-Small building blocks for operational and clinical dashboards: a metric card, a status badge, a
-timeline, and a stepper. They are presentation-only, so they drop into any layout (pair them with
+Small building blocks for operational and clinical dashboards: a metric card, a status badge,
+and a stepper. They are presentation-only, so they drop into any layout (pair them with
 [Grid/Stack](/components/layout)) and the [charts](/components/charts).
 
 ```vue
@@ -45,22 +45,6 @@ Slots: `value`, `hint`, and a default slot for extra content.
 | `label` | `string` | — | Label text. Falls back to the default slot. |
 | `pulse` | `boolean` | `false` | Animate the dot for a live/active status. |
 
-## Timeline
-
-`Timeline` renders a labelled `<ol>`; add `TimelineItem`s inside.
-
-| `Timeline` prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `label` | `string` | `'Activity'` | Accessible name for the list. |
-
-| `TimelineItem` prop | Type | Default | Description |
-| --- | --- | --- | --- |
-| `title` | `string` | — | Event title. Falls back to the `title` slot. |
-| `time` | `string` | — | Timestamp shown next to the title. |
-| `tone` | tone | `'info'` | Marker colour. |
-
-The `TimelineItem` default slot is the event body.
-
 ## Stepper
 
 | Prop | Type | Default | Description |
@@ -77,7 +61,6 @@ The default slot renders the current step's content; a `step` slot can override 
   sign/arrow are `aria-hidden`).
 - `StatusBadge`'s dot is decorative (`aria-hidden`); the label carries the meaning — never rely
   on colour alone, keep the text.
-- `Timeline` is a labelled `<ol>`; `TimelineItem` marks the timestamp up as `<time>`.
 - `Stepper` marks the active step with `aria-current="step"` and shows a check for completed
   steps (the icon is `aria-hidden`, so the label is the announcement).
 

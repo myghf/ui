@@ -66,6 +66,7 @@ export default defineConfig({
               { text: 'Skeleton', link: '/components/skeleton' },
               { text: 'Progress', link: '/components/progress' },
               { text: 'Avatar', link: '/components/avatar' },
+              { text: 'Timeline', link: '/components/timeline' },
               { text: 'ThemeToggle', link: '/components/theme-toggle' },
               { text: 'Icon', link: '/components/icon' },
             ],

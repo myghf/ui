@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { StatCard, StatusBadge, Stepper, Timeline, TimelineItem } from '@myghf/ui'
+import { StatCard, StatusBadge, Stepper } from '@myghf/ui'
 
 const step = ref(1)
 const steps = [{ label: 'Details' }, { label: 'Payment' }, { label: 'Review' }]
@@ -21,10 +21,5 @@ const steps = [{ label: 'Details' }, { label: 'Payment' }, { label: 'Review' }]
     </div>
 
     <Stepper :model-value="step" :steps="steps" label="Checkout" />
-
-    <Timeline label="Admission">
-      <TimelineItem title="Admitted" time="09:15" tone="success">Triage complete.</TimelineItem>
-      <TimelineItem title="Transferred to ward" time="11:40">Bed 12 assigned.</TimelineItem>
-    </Timeline>
   </div>
 </template>
