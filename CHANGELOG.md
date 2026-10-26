@@ -1,5 +1,16 @@
 # @myghf/ui
 
+## 0.13.0
+
+### Minor Changes
+
+- b13e10d: feat(timeline): join bullets with a connector line and give Timeline its own docs page
+
+### Patch Changes
+
+- 082261f: feat: SelectButton fits its content width, gains a block prop, and its options always stretch to fill the track
+- 9b00770: fix(theme-toggle): scale the icon with the size prop so the sizes are visually distinct
+
 ## 0.12.0
 
 ### Minor Changes
